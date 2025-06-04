@@ -55,7 +55,7 @@ cd fe
 
 2. Cài đặt dependencies:
 ```bash
-npm install
+npm installl
 ```
 
 3. Khởi động ứng dụng:
