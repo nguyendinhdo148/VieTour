@@ -7,6 +7,27 @@
 3. Git
 4. VS Code (khuyến nghị)
 
+VieJobs/
+├── be/ # Backend source code
+│ ├── src/
+│ │ ├── controllers/ # Route controllers
+│ │ ├── middleware/ # Custom middleware
+│ │ ├── models/ # Database models
+│ │ ├── routes/ # API routes
+│ │ └── server.js # Server configuration
+│ └── package.json
+│
+└── fe/ # Frontend source code
+├── src/
+│ ├── components/ # Reusable components
+│ │ ├── ui/ # UI components
+│ │ ├── admin/ # Admin components
+│ │ └── recruiter/# Recruiter components
+│ ├── redux/ # State management
+│ ├── types/ # TypeScript types
+│ └── App.tsx # Root component
+└── package.json
+
 ## Bước 1: Clone dự án
 
 ```bash
@@ -17,16 +38,19 @@ cd VieJobs
 ## Bước 2: Cài đặt Backend
 
 1. Di chuyển vào thư mục backend:
+
 ```bash
 cd be
 ```
 
 2. Cài đặt dependencies:
+
 ```bash
 npm install
 ```
 
 3. Tạo file `.env` trong thư mục `be` với nội dung:
+
 ```env
 MONGO_URI=
 PORT=8000
@@ -42,6 +66,7 @@ OPENAI_API_KEY=
 ```
 
 4. Khởi động server phát triển:
+
 ```bash
 npm run dev
 ```
@@ -49,16 +74,19 @@ npm run dev
 ## Bước 3: Cài đặt Frontend
 
 1. Mở terminal mới, di chuyển vào thư mục frontend:
+
 ```bash
 cd fe
 ```
 
 2. Cài đặt dependencies:
+
 ```bash
 npm install
 ```
 
 3. Khởi động ứng dụng:
+
 ```bash
 npm run dev
 ```
@@ -72,4 +100,3 @@ npm run dev
 ## Bước 5: Truy cập ứng dụng
 
 - http://localhost:5173
-
