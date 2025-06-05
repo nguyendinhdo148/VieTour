@@ -169,7 +169,7 @@ const Admin = () => {
               <Badge
                 variant="outline"
                 className="cursor-pointer hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 transition-colors"
-                onClick={() => navigate("/admin/users")}
+                onClick={() => navigate("/admin/user")}
               >
                 Xem tất cả <ChevronRight className="ml-1 h-4 w-4" />
               </Badge>
@@ -247,7 +247,7 @@ const Admin = () => {
               <Badge
                 variant="outline"
                 className="cursor-pointer hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 transition-colors"
-                onClick={() => navigate("/recruiter/jobs")}
+                onClick={() => navigate("/admin/jobs")}
               >
                 Quản lý
               </Badge>
