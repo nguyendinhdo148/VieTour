@@ -7,26 +7,30 @@
 3. Git
 4. VS Code (khuyến nghị)
 
+## Cấu trúc dự án
+
+```
 VieJobs/
 ├── be/ # Backend source code
-│ ├── src/
-│ │ ├── controllers/ # Route controllers
-│ │ ├── middleware/ # Custom middleware
-│ │ ├── models/ # Database models
-│ │ ├── routes/ # API routes
-│ │ └── server.js # Server configuration
-│ └── package.json
+│   ├── src/
+│   │   ├── controllers/ # Route controllers
+│   │   ├── middleware/ # Custom middleware
+│   │   ├── models/ # Database models
+│   │   ├── routes/ # API routes
+│   │   └── server.js # Server configuration
+│   └── package.json
 │
 └── fe/ # Frontend source code
-├── src/
-│ ├── components/ # Reusable components
-│ │ ├── ui/ # UI components
-│ │ ├── admin/ # Admin components
-│ │ └── recruiter/# Recruiter components
-│ ├── redux/ # State management
-│ ├── types/ # TypeScript types
-│ └── App.tsx # Root component
-└── package.json
+    ├── src/
+    │   ├── components/ # Reusable components
+    │   │   ├── ui/ # UI components
+    │   │   ├── admin/ # Admin components
+    │   │   └── recruiter/# Recruiter components
+    │   ├── redux/ # State management
+    │   ├── types/ # TypeScript types
+    │   └── App.tsx # Root component
+    └── package.json
+```
 
 ## Bước 1: Clone dự án
 
