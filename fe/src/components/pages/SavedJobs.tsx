@@ -14,6 +14,8 @@ const SavedJobs = () => {
       navigate("/login");
     } else if (user.role === "recruiter") {
       navigate("/recruiter");
+    } else if (user.role === "admin") {
+      navigate("/admin");
     }
   }, [user, navigate]);
 

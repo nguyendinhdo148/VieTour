@@ -86,7 +86,7 @@ const Browse = () => {
   );
 
   const filteredJobs = allJobs.filter((job) => {
-    const isActive = job.status === "active" && job.approval === "approval";
+    const isActive = job.status === "active" && job.approval === "approved";
     const keyword = searchedQuery.toLowerCase();
 
     const matchesTitle = job.title.toLowerCase().includes(keyword);

@@ -16,7 +16,7 @@ export interface Job {
   company: Company; // Company object instead of just an ID
   category: string; // e.g., "Engineering", "Marketing", etc.
   status: string; // e.g., "active", "draft", "closed".
-  approval: string;
+  approval: string; // e.g, "approved", "pending", "rejected".
   approvalNote: string;
   created_by: User; // Assuming user ID as a string
   applications: Application[]; // Array of application IDs
