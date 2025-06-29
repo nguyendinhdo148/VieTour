@@ -76,3 +76,53 @@ export const buildEmailTemplate = ({
 
   return { subject, html };
 };
+
+export const buildJobSuggestionsEmail = (user, suggestedJobs) => {
+  return `
+    <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f1f5f9; color: #1e293b;">
+      
+      <!-- HEADER -->
+      <div style="background-color: #1d4ed8; padding: 20px; border-radius: 8px 8px 0 0; text-align: center;">
+        <h1 style="color: white; margin: 0; font-size: 24px;">Gợi ý việc làm phù hợp cho bạn</h1>
+      </div>
+
+      <!-- CONTENT -->
+      <div style="background-color: white; padding: 24px; border-radius: 0 0 8px 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        <p style="font-size: 16px; margin-bottom: 16px;">Xin chào <strong>${
+          user.fullname || "bạn"
+        }</strong>,</p>
+        <p style="margin-bottom: 20px;">Dưới đây là <strong>${
+          suggestedJobs.length
+        }</strong> công việc phù hợp với CV của bạn:</p>
+
+        ${suggestedJobs
+          .map(
+            (job) => `
+          <div style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+            <h2 style="margin: 0 0 8px 0; color: #2563eb;">${job.title}</h2>
+            <p style="margin: 4px 0;">🏢 <strong>${
+              job.company?.name || "Công ty"
+            }</strong></p>
+            <p style="margin: 4px 0;">📍 ${job.location}</p>
+            <p style="margin: 4px 0;">💵 ${job.salary} Triệu VNĐ</p>
+            <p style="margin: 4px 0; color: #10b981;">⭐ Độ phù hợp: <strong>${Math.round(
+              job.matchScore
+            )}%</strong></p>
+            <a href="${process.env.FRONTEND_URL}/jobs/description/${job._id}" 
+              style="display: inline-block; margin-top: 10px; background-color: #2563eb; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;">
+              Xem chi tiết →
+            </a>
+          </div>
+        `
+          )
+          .join("")}
+        <div style="background-color: #1d4ed8; padding: 30px 20px; border-radius: 0 0 8px 8px; color: #ffffff; text-align: center;">
+          <p style="font-size: 14px; margin: 4px 0; color: #ffffff;">Tòa nhà A, Số 123 Nguyễn Huệ, Q.1, TP.HCM</p>
+          <p style="font-size: 12px; margin: 0; color: #ffffff;">
+            ©2014-2025 VieJobs Vietnam. All rights reserved.
+          </p>
+        </div>
+      </div>
+    </div>
+  `;
+};

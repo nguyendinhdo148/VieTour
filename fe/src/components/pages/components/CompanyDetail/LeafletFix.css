@@ -1,0 +1,30 @@
+/* Fix cho Leaflet marker icons */
+.leaflet-default-icon-path {
+  background-image: url("https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png");
+}
+
+.leaflet-default-shadow-path {
+  background-image: url("https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png");
+}
+
+/* Custom marker icon */
+.leaflet-marker-icon {
+  background: none;
+  border: none;
+}
+
+/* Popup styling */
+.leaflet-popup-content-wrapper {
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.leaflet-popup-content {
+  margin: 12px 16px;
+  font-family: inherit;
+}
+
+.leaflet-popup-tip {
+  background: white;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}

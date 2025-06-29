@@ -104,7 +104,7 @@ const LandingPage = () => {
               : "bg-transparent py-6"
           }`}
         >
-          <div className="container mx-auto px-4">
+          <div className="w-full px-8">
             <div className="flex justify-between items-center">
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
@@ -112,7 +112,7 @@ const LandingPage = () => {
                 transition={{ duration: 0.5 }}
                 className="flex items-center"
               >
-                <div className="text-2xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-600 to-purple-500 bg-clip-text text-transparent">
+                <div className="text-2xl md:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-600 to-purple-500 bg-clip-text text-transparent">
                   VieJobs CV
                 </div>
               </motion.div>

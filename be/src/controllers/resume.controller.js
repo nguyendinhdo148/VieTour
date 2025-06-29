@@ -10,6 +10,7 @@ const __dirname = dirname(__filename);
 
 import cloudinary from "../utils/cloudinary.js";
 import getDataUri from "../utils/dataUri.js";
+import { suggestJobsForResume } from "../services/suggestionService.js";
 
 export const createResume = async (req, res, next) => {
   try {
@@ -137,6 +138,8 @@ export const updateResume = async (req, res, next) => {
         .status(404)
         .json({ message: "Resume not found or you are not authorized" });
     }
+
+    await suggestJobsForResume(updatedResume);
 
     res.status(200).json(updatedResume);
   } catch (error) {

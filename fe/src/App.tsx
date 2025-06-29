@@ -7,6 +7,7 @@ import Jobs from "./components/pages/Jobs";
 import Browse from "./components/pages/Browse";
 import Profile from "./components/pages/Profile";
 import JobDescription from "./components/pages/JobDescription";
+import CompanyDetail from "./components/pages/CompanyDetail";
 import ForgotPassword from "./components/auth/ForgotPassword";
 import ResetPassword from "./components/auth/ResetPassword";
 import ScrollRestoration from "./components/pages/components/ScrollRestoration";
@@ -43,6 +44,7 @@ function App() {
         <Route path="/applied-jobs" element={<AppliedJob />} />
         <Route path="/saved-jobs" element={<SavedJobs />} />
         <Route path="/jobs/description/:id" element={<JobDescription />} />
+        <Route path="/company/:id" element={<CompanyDetail />} />
 
         {/* Recruiter routes */}
         <Route path="/recruiter" element={<RecruiterLayout />}>

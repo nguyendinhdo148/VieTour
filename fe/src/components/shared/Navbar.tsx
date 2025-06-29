@@ -45,7 +45,7 @@ const Navbar = () => {
 
   return (
     <div className="sticky top-0 z-50 w-full bg-white shadow">
-      <div className="flex items-center justify-between mx-auto max-w-7xl h-16">
+      <div className="flex items-center justify-between w-full px-6 h-18">
         <div className="mb-1">
           <Link to="/" className="block">
             <motion.div
@@ -54,10 +54,12 @@ const Navbar = () => {
               transition={{ duration: 0.5 }}
               className="flex items-center"
             >
-              <div className="flex flex-col items-start space-y-1">
-                <div className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-600 to-purple-500 bg-clip-text text-transparent">
-                  VieJobs
-                </div>
+              <div className="flex flex-col items-start">
+                <img
+                  src="/viejob.png"
+                  alt="VieJobs Logo"
+                  className="h-12 w-auto max-w-[160px] object-contain"
+                />
                 <p className="text-sm text-gray-600 italic font-medium leading-tight">
                   Kết nối nhanh – Phát triển bền
                 </p>

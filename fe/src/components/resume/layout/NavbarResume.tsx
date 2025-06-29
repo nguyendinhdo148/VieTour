@@ -64,7 +64,7 @@ const NavbarResume = () => {
           : "bg-transparent py-4"
       }`}
     >
-      <div className="flex items-center justify-between mx-auto px-6 max-w-7xl h-10">
+      <div className="flex items-center justify-between w-full px-8 h-10">
         <Link to="/resume" className="block">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -72,7 +72,7 @@ const NavbarResume = () => {
             transition={{ duration: 0.5 }}
             className="flex items-center"
           >
-            <div className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-500 bg-clip-text text-transparent">
+            <div className="text-2xl md:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-600 to-purple-500 bg-clip-text text-transparent">
               VieJobs CV
             </div>
           </motion.div>
