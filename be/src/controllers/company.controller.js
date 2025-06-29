@@ -94,6 +94,46 @@ export const getCompanyById = async (req, res, next) => {
   }
 };
 
+// for user - get company details
+export const getCompanyDetails = async (req, res, next) => {
+  try {
+    const companyId = req.params.id;
+    const company = await Company.findById(companyId);
+
+    if (!company) {
+      return res.status(404).json({
+        message: "Company not found.",
+        success: false,
+      });
+    }
+    return res.status(200).json({ company, success: true });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// for user - get jobs by company
+export const getJobByCompany = async (req, res, next) => {
+  try {
+    const companyId = req.params.id;
+    const jobs = await Job.find({
+      company: companyId,
+      status: "active",
+      approval: "approved",
+    }).populate("company", "name logo location");
+
+    if (!jobs) {
+      return res.status(404).json({
+        message: "Jobs not found.",
+        success: false,
+      });
+    }
+    return res.status(200).json({ jobs, success: true });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // for recruiter
 export const updateCompany = async (req, res, next) => {
   try {

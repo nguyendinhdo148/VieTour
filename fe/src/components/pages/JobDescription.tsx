@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
+import Navbar from "../shared/Navbar";
 import axios from "axios";
 import { API } from "@/utils/constant";
 import { useEffect } from "react";
@@ -8,11 +8,26 @@ import { useDispatch, useSelector } from "react-redux";
 import { setSingleJob } from "@/redux/jobSlice";
 import { RootState } from "@/redux/store";
 import { formatDistanceToNow } from "date-fns";
-import { vi } from "date-fns/locale"; // dùng locale tiếng Việt nếu muốn
+import { vi } from "date-fns/locale";
 import { Avatar, AvatarImage } from "../ui/avatar";
-import { motion } from "framer-motion"; // Import framer-motion
-import { CircleCheck, Dot, SquarePen } from "lucide-react";
+import { motion } from "framer-motion";
+import {
+  CircleCheck,
+  Dot,
+  SquarePen,
+  MapPin,
+  Clock,
+  DollarSign,
+  Users,
+  Globe,
+  Calendar,
+  Briefcase,
+  Star,
+  Building2,
+  Building,
+} from "lucide-react";
 import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
 
 const JobDescription = () => {
   const { singleJob } = useSelector((store: RootState) => store.job);
@@ -29,7 +44,7 @@ const JobDescription = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    window.scrollTo(0, 0); // cuộn lên đầu
+    window.scrollTo(0, 0);
   }, [jobId]);
 
   useEffect(() => {
@@ -82,206 +97,353 @@ const JobDescription = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto my-10 px-4">
-      <div className="flex items-start justify-between gap-4">
-        {/* Left: Company Info & Job Title */}
-        <div className="flex-1">
-          <div className="flex items-center gap-3 mb-4">
-            <Avatar className="size-16 rounded-xl border border-gray-300 bg-white shadow-sm">
-              <AvatarImage
-                src={singleJob?.company?.logo || "/default_company_logo.jpg"}
-                alt={singleJob?.company?.name}
-                className="object-contain p-1"
-              />
-            </Avatar>
-            <div>
-              <h1 className="font-bold text-2xl">{singleJob?.title}</h1>
-              <p className="text-gray-600">
-                {singleJob?.company?.name || "Công ty chưa xác định"}
-              </p>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+      <Navbar />
+
+      <div className="max-w-6xl mx-auto px-6 py-8">
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Main Content */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Job Header Card */}
+            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+              <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-6 text-white">
+                <div className="flex items-start gap-4">
+                  <Avatar className="size-20 rounded-2xl border-4 border-white/20 bg-white shadow-lg">
+                    <AvatarImage
+                      src={
+                        singleJob?.company?.logo || "/default_company_logo.jpg"
+                      }
+                      alt={singleJob?.company?.name}
+                      className="object-contain p-2"
+                    />
+                  </Avatar>
+                  <div className="flex-1">
+                    <h1 className="font-bold text-3xl mb-2 text-white">
+                      {singleJob?.title}
+                    </h1>
+                    <div className="flex items-center gap-2 text-blue-100 mb-3">
+                      <Building2 className="w-5 h-5" />
+                      <span className="text-lg font-medium">
+                        {singleJob?.company?.name || "Công ty chưa xác định"}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 text-blue-100">
+                      <MapPin className="w-4 h-4" />
+                      <span>{singleJob?.location}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-6">
+                {/* Key Info Badges */}
+                <div className="flex flex-wrap gap-3 mb-6">
+                  <div className="flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-xl font-medium">
+                    <Users className="w-4 h-4" />
+                    <span>{singleJob?.position} vị trí</span>
+                  </div>
+                  <div className="flex items-center gap-2 bg-purple-50 text-purple-700 px-4 py-2 rounded-xl font-medium">
+                    <Briefcase className="w-4 h-4" />
+                    <span>{singleJob?.jobType}</span>
+                  </div>
+                  <div className="flex items-center gap-2 bg-green-50 text-green-700 px-4 py-2 rounded-xl font-medium">
+                    <DollarSign className="w-4 h-4" />
+                    <span>{singleJob?.salary} triệu</span>
+                  </div>
+                  <div className="flex items-center gap-2 bg-orange-50 text-orange-700 px-4 py-2 rounded-xl font-medium">
+                    <Star className="w-4 h-4" />
+                    <span>{singleJob?.experienceLevel} năm KN</span>
+                  </div>
+                </div>
+
+                {/* Apply Button */}
+                <Button
+                  onClick={isApplied ? undefined : appliedJobHandle}
+                  disabled={isApplied}
+                  className={`w-full py-4 text-lg font-semibold rounded-xl shadow-lg ${
+                    isApplied
+                      ? "bg-gray-900 text-white cursor-not-allowed"
+                      : "cursor-pointer bg-gradient-to-r from-blue-600 to-indigo-700 text-white shadow-blue-200 hover:from-blue-500 hover:to-indigo-600 hover:scale-[1.02] hover:shadow-xl transition-all duration-200"
+                  }`}
+                >
+                  {isApplied ? (
+                    <div className="flex items-center gap-2">
+                      <CircleCheck className="w-5 h-5" />
+                      <span>Đã ứng tuyển</span>
+                    </div>
+                  ) : (
+                    <span className="">Ứng tuyển ngay</span>
+                  )}
+                </Button>
+              </div>
+            </div>
+
+            {/* Job Description */}
+            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                  <Briefcase className="w-5 h-5 text-blue-600" />
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900">
+                  Mô tả công việc
+                </h2>
+              </div>
+
+              <div className="prose prose-gray max-w-none">
+                <ul className="space-y-3">
+                  {singleJob?.description
+                    .split(/\.\s+/)
+                    .filter((sentence) => sentence.trim().length > 0)
+                    .map((sentence, index) => (
+                      <motion.li
+                        key={index}
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                        className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl"
+                      >
+                        <Dot className="w-6 h-6 text-blue-600 flex-shrink-0 mt-0.5" />
+                        <span className="text-gray-700 leading-relaxed">
+                          {sentence.trim()}
+                          {!sentence.trim().endsWith(".") && "."}
+                        </span>
+                      </motion.li>
+                    ))}
+                </ul>
+              </div>
+            </div>
+
+            {/* Requirements */}
+            {singleJob?.requirements && singleJob.requirements.length > 0 && (
+              <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 bg-yellow-100 rounded-xl flex items-center justify-center">
+                    <SquarePen className="w-5 h-5 text-yellow-600" />
+                  </div>
+                  <h2 className="text-2xl font-bold text-gray-900">
+                    Yêu cầu ứng viên
+                  </h2>
+                </div>
+
+                <div className="space-y-4">
+                  {singleJob?.requirements.map((req, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                      className="space-y-2"
+                    >
+                      {req
+                        .split(/\.\s+/)
+                        .filter((sentence) => sentence.trim().length > 0)
+                        .map((sentence, i) => (
+                          <div
+                            key={i}
+                            className="flex items-start gap-3 p-3 bg-yellow-50 rounded-xl"
+                          >
+                            <SquarePen className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                            <span className="text-gray-700 leading-relaxed">
+                              {sentence.trim()}
+                              {!sentence.trim().endsWith(".") && "."}
+                            </span>
+                          </div>
+                        ))}
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Benefits */}
+            {singleJob?.benefits && singleJob.benefits.length > 0 && (
+              <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
+                    <CircleCheck className="w-5 h-5 text-green-600" />
+                  </div>
+                  <h2 className="text-2xl font-bold text-gray-900">Phúc lợi</h2>
+                </div>
+
+                <div className="space-y-4">
+                  {singleJob?.benefits.map((benefit, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                      className="space-y-2"
+                    >
+                      {benefit
+                        .split(/\.\s+/)
+                        .filter((sentence) => sentence.trim().length > 0)
+                        .map((sentence, i) => (
+                          <div
+                            key={i}
+                            className="flex items-start gap-3 p-3 bg-green-50 rounded-xl"
+                          >
+                            <CircleCheck className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                            <span className="text-gray-700 leading-relaxed">
+                              {sentence.trim()}
+                              {!sentence.trim().endsWith(".") && "."}
+                            </span>
+                          </div>
+                        ))}
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Sidebar */}
+          <div className="lg:col-span-1">
+            <div className="sticky top-24">
+              {/* Job Details Card */}
+              <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 mb-6">
+                <h3 className="text-xl font-bold text-gray-900 mb-6">
+                  Chi tiết công việc
+                </h3>
+
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  transition={{ duration: 0.5 }}
+                  className="space-y-4"
+                >
+                  <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl">
+                    <Briefcase className="w-5 h-5 text-gray-600 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-medium text-gray-900">Vị trí</p>
+                      <p className="text-gray-600">{singleJob?.title}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl">
+                    <MapPin className="w-5 h-5 text-gray-600 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-medium text-gray-900">Địa điểm</p>
+                      <p className="text-gray-600">{singleJob?.location}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl">
+                    <Clock className="w-5 h-5 text-gray-600 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-medium text-gray-900">Kinh nghiệm</p>
+                      <p className="text-gray-600">
+                        {singleJob?.experienceLevel} năm
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl">
+                    <DollarSign className="w-5 h-5 text-gray-600 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-medium text-gray-900">Mức lương</p>
+                      <p className="text-gray-600">{singleJob?.salary} triệu</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl">
+                    <Users className="w-5 h-5 text-gray-600 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-medium text-gray-900">
+                        Số lượng tuyển
+                      </p>
+                      <p className="text-gray-600">{singleJob?.position}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl">
+                    <Globe className="w-5 h-5 text-gray-600 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-medium text-gray-900">Website</p>
+                      <a
+                        href={singleJob?.company.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-800 font-medium"
+                      >
+                        {singleJob?.company?.website
+                          ? new URL(singleJob.company.website).hostname
+                          : "N/A"}
+                      </a>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl">
+                    <Calendar className="w-5 h-5 text-gray-600 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-medium text-gray-900">Ngày đăng</p>
+                      <p className="text-gray-600">
+                        {formatDistanceToNow(
+                          new Date(singleJob?.createdAt || new Date()),
+                          {
+                            addSuffix: true,
+                            locale: vi,
+                          }
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+
+              {/* Company Info Card */}
+              <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+                <h3 className="text-xl font-bold text-gray-900 mb-4">
+                  Về công ty
+                </h3>
+                <Link
+                  to={`/company/${singleJob?.company?._id}`}
+                  className="block"
+                >
+                  <div className="flex items-center gap-3 mb-4 hover:bg-gray-50 p-2 rounded-lg transition-colors cursor-pointer">
+                    <Avatar className="size-12 rounded-xl border border-gray-200">
+                      <AvatarImage
+                        src={
+                          singleJob?.company?.logo ||
+                          "/default_company_logo.jpg"
+                        }
+                        alt={singleJob?.company?.name}
+                        className="object-contain p-1"
+                      />
+                    </Avatar>
+                    <div>
+                      <h4 className="font-semibold text-gray-900 hover:text-blue-600 transition-colors">
+                        {singleJob?.company?.name || "Công ty chưa xác định"}
+                      </h4>
+                      <p className="text-sm text-gray-600">
+                        {singleJob?.company?.description || "Thông tin công ty"}
+                      </p>
+                    </div>
+                  </div>
+                </Link>
+                <div className="space-y-2">
+                  {singleJob?.company?.website && (
+                    <a
+                      href={singleJob.company.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium"
+                    >
+                      <Globe className="w-4 h-4" />
+                      <span>Xem website</span>
+                    </a>
+                  )}
+                  <Link
+                    to={`/company/${singleJob?.company?._id}`}
+                    className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium"
+                  >
+                    <Building className="w-4 h-4" />
+                    <span>Xem chi tiết công ty</span>
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
-
-          {/* Badges */}
-          <div className="flex items-center gap-3 flex-wrap mb-6">
-            <Badge className="text-blue-600 bg-blue-100 font-medium rounded-full px-3 py-1">
-              {singleJob?.position} Vị trí
-            </Badge>
-            <Badge className="text-purple-600 bg-purple-100 font-medium rounded-full px-3 py-1">
-              {singleJob?.jobType}
-            </Badge>
-            <Badge className="text-green-600 bg-green-100 font-medium rounded-full px-3 py-1">
-              {singleJob?.salary} triệu
-            </Badge>
-          </div>
         </div>
-
-        {/* Right: Apply Button */}
-        <div>
-          <Button
-            onClick={isApplied ? undefined : appliedJobHandle}
-            disabled={isApplied}
-            variant="outline"
-            className={`rounded-lg cursor-pointer px-5 py-2 text-sm font-semibold shadow-md transition-colors duration-200 ${
-              isApplied
-                ? "bg-black text-white cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700 text-white"
-            }`}
-          >
-            {isApplied ? "Đã ứng tuyển" : "Ứng tuyển ngay"}
-          </Button>
-        </div>
-      </div>
-
-      {/* Description */}
-      <div className="bg-white p-6 rounded-xl shadow-sm mb-6">
-        <h2 className="text-lg font-semibold text-gray-800 mb-2 border-b pb-2">
-          Mô tả công việc
-        </h2>
-        <ul className="list-none text-gray-700 leading-relaxed space-y-2 pl-0">
-          {singleJob?.description
-            .split(/\.\s+/)
-            .filter((sentence) => sentence.trim().length > 0)
-            .map((sentence, index) => (
-              <motion.li
-                key={index}
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="flex items-start"
-              >
-                <Dot className="size-5 text-black flex-shrink-0 mt-1" />
-                <span>
-                  {sentence.trim()}
-                  {/* Thêm dấu chấm nếu câu không kết thúc bằng dấu chấm */}
-                  {!sentence.trim().endsWith(".") && "."}
-                </span>
-              </motion.li>
-            ))}
-        </ul>
-      </div>
-
-      {/* Requirements Section */}
-      {singleJob?.requirements && singleJob.requirements.length > 0 && (
-        <div className="bg-white p-6 rounded-xl shadow-sm mb-6">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">
-            Yêu cầu ứng viên
-          </h2>
-          <ul className="list-disc list-inside text-gray-700 leading-relaxed space-y-1">
-            {singleJob?.requirements.map((req, index) => (
-              <motion.li
-                key={index}
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="flex flex-col gap-1"
-              >
-                {/* Xử lý từng đoạn văn bản có dấu chấm */}
-                {req
-                  .split(/\.\s+/)
-                  .filter((sentence) => sentence.trim().length > 0)
-                  .map((sentence, i) => (
-                    <div key={i} className="flex items-start gap-2">
-                      <SquarePen className="size-5 text-yellow-500 flex-shrink-0 mt-1" />
-                      <span>
-                        {sentence.trim()}
-                        {/* Thêm dấu chấm nếu câu không kết thúc bằng dấu chấm */}
-                        {!sentence.trim().endsWith(".") && "."}
-                      </span>
-                    </div>
-                  ))}
-              </motion.li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {singleJob?.benefits && singleJob.benefits.length > 0 && (
-        <div className="bg-white p-6 rounded-xl shadow-sm mb-6">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">
-            Phúc lợi
-          </h2>
-          <ul className="list-disc list-inside text-gray-700 leading-relaxed space-y-1">
-            {singleJob?.benefits.map((benefit, index) => (
-              <motion.li
-                key={index}
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="flex flex-col gap-1"
-              >
-                {/* Xử lý từng đoạn văn bản có dấu chấm */}
-                {benefit
-                  .split(/\.\s+/)
-                  .filter((sentence) => sentence.trim().length > 0)
-                  .map((sentence, i) => (
-                    <div key={i} className="flex items-start gap-2">
-                      <CircleCheck className="size-5 text-green-600 flex-shrink-0 mt-1" />
-                      <span>
-                        {sentence.trim()}
-                        {/* Thêm dấu chấm nếu câu không kết thúc bằng dấu chấm */}
-                        {!sentence.trim().endsWith(".") && "."}
-                      </span>
-                    </div>
-                  ))}
-              </motion.li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {/* Job Details */}
-      <div className="bg-white p-6 rounded-xl shadow-sm">
-        <h2 className="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">
-          Chi tiết công việc
-        </h2>
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: "auto" }}
-          transition={{ duration: 0.5 }}
-          className="space-y-2 text-gray-700"
-        >
-          <p>
-            <strong className="text-gray-800">Vị trí:</strong>{" "}
-            {singleJob?.title}
-          </p>
-          <p>
-            <strong className="text-gray-800">Địa điểm:</strong>{" "}
-            {singleJob?.location}
-          </p>
-          <p>
-            <strong className="text-gray-800">Kinh nghiệm:</strong>{" "}
-            {singleJob?.experienceLevel} năm
-          </p>
-          <p>
-            <strong className="text-gray-800">Mức lương:</strong>{" "}
-            {singleJob?.salary} triệu
-          </p>
-          <p>
-            <strong className="text-gray-800">Số lượng tuyển:</strong>{" "}
-            {singleJob?.position}
-          </p>
-          <p>
-            <strong className="text-gray-800">Website:</strong>{" "}
-            <a
-              href={singleJob?.company.website}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 hover:underline"
-            >
-              {singleJob?.company?.website
-                ? new URL(singleJob.company.website).hostname
-                : "N/A"}
-            </a>
-          </p>
-          <p>
-            <strong className="text-gray-800">Ngày đăng:</strong>{" "}
-            {formatDistanceToNow(new Date(singleJob?.createdAt || new Date()), {
-              addSuffix: true,
-              locale: vi,
-            })}
-          </p>
-        </motion.div>
       </div>
     </div>
   );

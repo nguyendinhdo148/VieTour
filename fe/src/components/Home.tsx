@@ -9,6 +9,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import BrandCarousel from "./BrandsCarousel";
+import JobMarketDashboard from "./JobMarketDashboard";
 
 const Home = () => {
   const { user } = useSelector((state: RootState) => state.auth);
@@ -35,7 +37,10 @@ const Home = () => {
         <Navbar />
         <HeroSection />
         <CategoryCarousel />
+
         <LatestJobs />
+        <BrandCarousel />
+        <JobMarketDashboard />
         <Footer />
       </motion.div>
     </AnimatePresence>

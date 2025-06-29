@@ -243,7 +243,9 @@ const Candidates = () => {
                       </div>
                     </TableCell>
                     <TableCell className="max-w-[300px]">
-                      <div className="font-medium truncate">{app.job?.title}</div>
+                      <div className="font-medium truncate">
+                        {app.job?.title}
+                      </div>
                       <div className="text-sm text-gray-500">
                         {app.job?.company.name}
                       </div>
@@ -256,7 +258,9 @@ const Candidates = () => {
                     <TableCell className="text-center">
                       {new Date(app.createdAt).toLocaleDateString("vi-VN")}
                     </TableCell>
-                    <TableCell className="text-center">{getStatusBadge(app.status)}</TableCell>
+                    <TableCell className="text-center">
+                      {getStatusBadge(app.status)}
+                    </TableCell>
                     <TableCell className="text-right">
                       <ActionButtons
                         applicant={app.applicant}
