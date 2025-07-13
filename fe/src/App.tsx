@@ -26,6 +26,7 @@ import Admin from "./components/admin/screeens/Admin";
 import CompanyAdmin from "./components/admin/screeens/CompanyAdmin";
 import JobManagerAdmin from "./components/admin/screeens/JobManagerAdmin";
 import UserManagerAdmin from "./components/admin/screeens/UserManagerAdmin";
+import Chatbot from "./components/Chatbot";
 
 function App() {
   return (
@@ -72,6 +73,7 @@ function App() {
         reverseOrder={false}
         toastOptions={{ duration: 2000 }}
       />
+      <Chatbot />
     </>
   );
 }
