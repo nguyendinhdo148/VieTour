@@ -24,7 +24,6 @@ import {
   Briefcase,
   Star,
   Building2,
-  Building,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
@@ -54,7 +53,7 @@ const JobDescription = () => {
           withCredentials: true,
         });
         if (res.data.success) {
-          console.log(res.data.job);
+          // console.log(res.data.job);
           dispatch(setSingleJob(res.data.job));
         }
       } catch (error) {
@@ -399,7 +398,7 @@ const JobDescription = () => {
                   to={`/company/${singleJob?.company?._id}`}
                   className="block"
                 >
-                  <div className="flex items-center gap-3 mb-4 hover:bg-gray-50 p-2 rounded-lg transition-colors cursor-pointer">
+                  <div className="flex items-center gap-3 hover:bg-gray-50 p-2 rounded-lg transition-colors cursor-pointer">
                     <Avatar className="size-12 rounded-xl border border-gray-200">
                       <AvatarImage
                         src={
@@ -414,32 +413,10 @@ const JobDescription = () => {
                       <h4 className="font-semibold text-gray-900 hover:text-blue-600 transition-colors">
                         {singleJob?.company?.name || "Công ty chưa xác định"}
                       </h4>
-                      <p className="text-sm text-gray-600">
-                        {singleJob?.company?.description || "Thông tin công ty"}
-                      </p>
+                      <p className="text-sm text-gray-600">Thông tin công ty</p>
                     </div>
                   </div>
                 </Link>
-                <div className="space-y-2">
-                  {singleJob?.company?.website && (
-                    <a
-                      href={singleJob.company.website}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium"
-                    >
-                      <Globe className="w-4 h-4" />
-                      <span>Xem website</span>
-                    </a>
-                  )}
-                  <Link
-                    to={`/company/${singleJob?.company?._id}`}
-                    className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium"
-                  >
-                    <Building className="w-4 h-4" />
-                    <span>Xem chi tiết công ty</span>
-                  </Link>
-                </div>
               </div>
             </div>
           </div>

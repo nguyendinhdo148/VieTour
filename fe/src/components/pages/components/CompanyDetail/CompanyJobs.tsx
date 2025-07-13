@@ -145,7 +145,7 @@ const CompanyJobs = ({ jobs, isJobsLoading }: CompanyJobsProps) => {
                     </span>
                     <span className="flex items-center gap-1">
                       <DollarSign className="h-4 w-4" />
-                      Thỏa thuận
+                      {job.salary} triệu
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
@@ -162,9 +162,9 @@ const CompanyJobs = ({ jobs, isJobsLoading }: CompanyJobsProps) => {
                 <Link to={`/jobs/description/${job._id}`}>
                   <Button
                     size="sm"
-                    className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700"
+                    className="bg-gradient-to-r cursor-pointer text-white from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700"
                   >
-                    <Rocket className="h-4 w-4 mr-2" />
+                    <Rocket className="size-4" />
                     Ứng tuyển
                   </Button>
                 </Link>

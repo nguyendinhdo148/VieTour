@@ -224,7 +224,7 @@ const Footer = () => {
                     >
                       <Link
                         to={link.href}
-                        className="text-gray-600 hover:text-blue-600 transition-all duration-300 text-sm leading-6 flex items-center group py-2 rounded-lg"
+                        className="text-gray-600 gap-x-1 hover:text-blue-600 transition-all duration-300 text-sm leading-6 flex items-center group py-2 rounded-lg"
                       >
                         <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300 text-blue-500" />
                         <span className="group-hover:translate-x-1 transition-transform duration-300">
