@@ -23,8 +23,8 @@ router.post(
 );
 router.get("/", isAuthenticated, isRecruiter, getCompanies);
 router.get("/:id", isAuthenticated, getCompanyById);
-router.get("/details/:id", getCompanyDetails);
-router.get("/jobs/:id", getJobByCompany);
+router.get("/detail/:slug", getCompanyDetails);
+router.get("/jobs/:slug", getJobByCompany);
 router.put(
   "/update-company/:id",
   isAuthenticated,

@@ -6,6 +6,7 @@ export interface Job {
   _id: string;
   title: string;
   description: string;
+  slug: string;
   requirements: string[];
   benefits: string[]; // Assuming benefits is an array of strings
   salary: number;

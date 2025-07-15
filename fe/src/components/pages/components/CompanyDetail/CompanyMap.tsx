@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MapIcon, Navigation, ExternalLink } from "lucide-react";
+import { MapIcon, ExternalLink } from "lucide-react";
 import type { Company } from "@/types/company";
 import "./LeafletFix.css";
 
@@ -446,7 +446,7 @@ const CompanyMap = ({ company }: CompanyMapProps) => {
   );
 
   useEffect(() => {
-    if (!mapContainer || !company.location) return;
+    if (!mapContainer || !company.address) return;
 
     const initMap = async () => {
       const L = await import("leaflet");
@@ -473,7 +473,7 @@ const CompanyMap = ({ company }: CompanyMapProps) => {
 
       try {
         const locationData = await geocodeWithMultipleProviders(
-          company.location || ""
+          company.address || ""
         );
 
         if (locationData) {
@@ -580,7 +580,7 @@ const CompanyMap = ({ company }: CompanyMapProps) => {
                   ⚠️ Không tìm thấy vị trí chính xác
                 </div>
                 <div style="font-size: 12px; color: #6b7280; line-height: 1.4; margin-bottom: 8px;">
-                  Địa chỉ gốc: <em>${company.location}</em>
+                  Địa chỉ gốc: <em>${company.address}</em>
                 </div>
                 <div style="font-size: 11px; color: #16a34a; background: #f0f9ff; padding: 4px 8px; border-radius: 6px; margin-top: 6px;">
                   💡 Hiển thị tại trung tâm TP.HCM
@@ -611,15 +611,16 @@ const CompanyMap = ({ company }: CompanyMapProps) => {
     };
   }, [
     mapContainer,
-    company.location,
+    company.address,
     company.name,
     map,
     geocodeWithMultipleProviders,
   ]);
 
+  /*
   const handleGetDirections = () => {
-    if (company.location) {
-      const encodedAddress = encodeURIComponent(company.location);
+    if (company.address) {
+      const encodedAddress = encodeURIComponent(company.address);
       window.open(
         `https://www.openstreetmap.org/search?query=${encodedAddress}`,
         "_blank",
@@ -627,12 +628,13 @@ const CompanyMap = ({ company }: CompanyMapProps) => {
       );
     }
   };
+  */
 
   const handleOpenInMaps = () => {
-    if (company.location) {
-      const encodedAddress = encodeURIComponent(company.location);
+    if (company.address) {
+      const encodedAddress = encodeURIComponent(company.address);
       window.open(
-        `https://maps.google.com/maps?q=${encodedAddress}`,
+        `https://maps.google.com/maps?q=${company.name}+${encodedAddress}`,
         "_blank",
         "noopener,noreferrer"
       );
@@ -655,7 +657,7 @@ const CompanyMap = ({ company }: CompanyMapProps) => {
               className="aspect-video bg-gray-100 rounded-2xl overflow-hidden border border-gray-200 shadow-inner"
               style={{ minHeight: "240px" }}
             />
-            {loading && company.location && (
+            {loading && company.address && (
               <div className="absolute inset-0 flex items-center justify-center bg-white/90 backdrop-blur-sm z-10 rounded-2xl">
                 <div className="flex items-center gap-3">
                   <div className="relative">
@@ -672,7 +674,7 @@ const CompanyMap = ({ company }: CompanyMapProps) => {
                 </div>
               </div>
             )}
-            {!company.location && (
+            {!company.address && (
               <div className="absolute inset-0 flex items-center justify-center bg-gray-50 z-10 rounded-2xl">
                 <div className="text-center">
                   <MapIcon className="h-12 w-12 text-gray-300 mx-auto mb-3" />
@@ -690,12 +692,13 @@ const CompanyMap = ({ company }: CompanyMapProps) => {
             <div className="flex items-start justify-center gap-2 mb-3">
               <MapIcon className="h-4 w-4 text-emerald-600 mt-0.5 flex-shrink-0" />
               <span className="font-medium text-gray-800 text-sm break-words leading-relaxed">
-                {company.location || "Địa chỉ chưa được cập nhật"}
+                {`${company.name + ", "}${company.address}` ||
+                  "Địa chỉ chưa được cập nhật"}
               </span>
             </div>
-            {company.location && (
+            {company.address && (
               <div className="flex gap-2 justify-center mt-3 flex-wrap">
-                <Button
+                {/* <Button
                   size="sm"
                   variant="outline"
                   onClick={handleGetDirections}
@@ -703,7 +706,7 @@ const CompanyMap = ({ company }: CompanyMapProps) => {
                 >
                   <Navigation className="h-4 w-4" />
                   Chỉ đường
-                </Button>
+                </Button> */}
                 <Button
                   size="sm"
                   variant="outline"

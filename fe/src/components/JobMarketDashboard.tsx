@@ -118,7 +118,7 @@ const JobMarketDashboard = () => {
                 <div className="space-y-4">
                   {activeJobs.map((job, index) => (
                     <Link
-                      to={`/jobs/description/${job._id}`}
+                      to={`/job/detail/${job.slug}`}
                       key={index}
                       className="block"
                     >

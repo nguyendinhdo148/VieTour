@@ -99,7 +99,7 @@ const LatestJobCards = ({ job }: LatestJobCardsProps) => {
         </div>
 
         {/* Apply Button */}
-        <Link to={`/jobs/description/${job?._id}`} className="relative z-10">
+        <Link to={`/job/detail/${job?.slug}`} className="relative z-10">
           <Button className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-2.5 px-4 rounded-xl transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg font-medium">
             Ứng tuyển ngay
           </Button>
@@ -233,7 +233,7 @@ const LatestJobCards = ({ job }: LatestJobCardsProps) => {
 
               {/* Panel Apply Button */}
               <div className="mt-4 pt-2">
-                <Link to={`/jobs/description/${job?._id}`}>
+                <Link to={`/job/detail/${job?.slug}`}>
                   <Button className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-2 px-4 rounded-xl transition-all duration-300 cursor-pointer text-sm font-medium shadow-md hover:shadow-lg">
                     Ứng tuyển ngay
                   </Button>

@@ -261,8 +261,8 @@ function renderBotMessage(text: string) {
         <div className="flex flex-col gap-3">
           {jobs.map((job, idx) => {
             const isInternal =
-              job.url.startsWith("/jobs/description/") ||
-              job.url.startsWith(window.location.origin + "/jobs/description/");
+              job.url.startsWith("/job/detail/") ||
+              job.url.startsWith(window.location.origin + "/job/detail/");
             const path = job.url.startsWith(window.location.origin)
               ? job.url.replace(window.location.origin, "")
               : job.url;
@@ -318,7 +318,7 @@ function renderBotMessage(text: string) {
           <div key={idx}>
             {subparts.map((part, i) => {
               if (urlRegex.test(part)) {
-                const isRelative = part.startsWith("/jobs/description/");
+                const isRelative = part.startsWith("/job/detail/");
                 const href = isRelative ? window.location.origin + part : part;
                 return (
                   <a

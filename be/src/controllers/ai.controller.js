@@ -385,7 +385,7 @@ function formatJobResults(jobs, parsedData) {
    ${details}
    🔗 Xem chi tiết: ${
      process.env.FRONTEND_URL || "http://localhost:5173"
-   }/jobs/description/${job._id}`;
+   }/job/detail/${job.slug}`;
     })
     .join("\n\n");
 

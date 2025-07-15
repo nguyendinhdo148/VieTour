@@ -106,7 +106,7 @@ const Job = ({ job, savedJobs, onJobSaveChange }: JobProps) => {
       </div>
 
       <div className="flex items-center gap-3 mt-4">
-        <Link to={`/jobs/description/${job?._id}`} className="flex-1">
+        <Link to={`/job/detail/${job?.slug}`} className="flex-1">
           <Button className="w-full py-2 px-6 bg-[#00b14f] text-white hover:bg-[#009640] cursor-pointer">
             Xem chi tiết
           </Button>

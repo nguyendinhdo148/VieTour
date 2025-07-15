@@ -1,4 +1,3 @@
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { setJobsForUserIsSaved } from "@/redux/saveJobSlice";
 import { RootState } from "@/redux/store";
@@ -94,13 +93,11 @@ const SavedJobsTable = () => {
               >
                 {/* Logo công ty */}
                 <div className="size-20 rounded-md overflow-hidden flex items-center justify-center bg-white border border-gray-200">
-                  <Avatar className="size-14">
-                    <AvatarImage
-                      src={saveJob.job.company.logo}
-                      alt={saveJob.job.company.name}
-                      className="object-cover"
-                    />
-                  </Avatar>
+                  <img
+                    src={saveJob.job.company.logo}
+                    alt={saveJob.job.company.name}
+                    className="size-14 object-contain"
+                  />
                 </div>
 
                 {/* Nội dung công việc */}
@@ -145,7 +142,7 @@ const SavedJobsTable = () => {
                 {/* Nút thao tác */}
                 <div className="flex flex-col gap-2 self-end md:self-center">
                   <Link
-                    to={`/jobs/description/${saveJob.job?._id}`}
+                    to={`/job/detail/${saveJob.job?.slug}`}
                     className="flex-1"
                   >
                     <Button className="bg-green-500 hover:bg-green-600 text-white cursor-pointer transition-colors duration-200">

@@ -6,7 +6,7 @@ import { Toaster } from "react-hot-toast";
 import Jobs from "./components/pages/Jobs";
 import Browse from "./components/pages/Browse";
 import Profile from "./components/pages/Profile";
-import JobDescription from "./components/pages/JobDescription";
+import JobDetail from "./components/pages/JobDetail";
 import CompanyDetail from "./components/pages/CompanyDetail";
 import ForgotPassword from "./components/auth/ForgotPassword";
 import ResetPassword from "./components/auth/ResetPassword";
@@ -44,8 +44,8 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/applied-jobs" element={<AppliedJob />} />
         <Route path="/saved-jobs" element={<SavedJobs />} />
-        <Route path="/jobs/description/:id" element={<JobDescription />} />
-        <Route path="/company/:id" element={<CompanyDetail />} />
+        <Route path="/job/detail/:slug" element={<JobDetail />} />
+        <Route path="/company/detail/:slug" element={<CompanyDetail />} />
 
         {/* Recruiter routes */}
         <Route path="/recruiter" element={<RecruiterLayout />}>

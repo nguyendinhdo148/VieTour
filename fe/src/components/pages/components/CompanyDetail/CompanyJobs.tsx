@@ -14,6 +14,7 @@ import {
   ChevronUp,
   ChevronDown,
   Bell,
+  UserRound,
 } from "lucide-react";
 import type { Job } from "@/types/job";
 
@@ -134,18 +135,25 @@ const CompanyJobs = ({ jobs, isJobsLoading }: CompanyJobsProps) => {
                   <h4 className="font-bold text-gray-800 text-xl group-hover:text-emerald-700 transition-colors mb-2">
                     {job.title}
                   </h4>
-                  <div className="flex items-center gap-4 text-sm text-gray-600 mb-3">
-                    <span className="flex items-center gap-1">
-                      <MapPin className="h-4 w-4" />
-                      {job.location}
-                    </span>
+                  <div className="flex-1 items-center gap-4 text-sm text-gray-600 mb-3">
+                    <div className="flex items-start gap-1">
+                      <MapPin className="h-4 w-4 mt-0.5" />
+                      <span className="max-w-[600px] ">
+                        Địa chỉ: {job.location}
+                      </span>
+                    </div>
                     <span className="flex items-center gap-1">
                       <Clock className="h-4 w-4" />
+                      Ngày đăng:{" "}
                       {new Date(job.createdAt).toLocaleDateString("vi-VN")}
                     </span>
                     <span className="flex items-center gap-1">
                       <DollarSign className="h-4 w-4" />
-                      {job.salary} triệu
+                      Lương: {job.salary} triệu
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <UserRound className="h-4 w-4 mt-[-4px]" />
+                      Số lượng tuyển: {job.position} người
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
@@ -159,7 +167,7 @@ const CompanyJobs = ({ jobs, isJobsLoading }: CompanyJobsProps) => {
                 </div>
               </div>
               <div className="flex items-center">
-                <Link to={`/jobs/description/${job._id}`}>
+                <Link to={`/job/detail/${job.slug}`}>
                   <Button
                     size="sm"
                     className="bg-gradient-to-r cursor-pointer text-white from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700"

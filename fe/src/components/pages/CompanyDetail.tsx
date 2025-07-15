@@ -14,7 +14,7 @@ import CompanyNotFound from "./components/CompanyDetail/CompanyNotFound";
 import "./components/CompanyDetail/CompanyAnimations.css";
 
 const CompanyDetail = () => {
-  const { id } = useParams<{ id: string }>();
+  const { slug } = useParams<{ slug: string }>();
   const [company, setCompany] = useState<Company | null>(null);
   const [jobs, setJobs] = useState<Job[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -25,7 +25,7 @@ const CompanyDetail = () => {
     const fetchCompanyDetail = async () => {
       try {
         setIsLoading(true);
-        const response = await axios.get(`${API}/company/details/${id}`, {
+        const response = await axios.get(`${API}/company/detail/${slug}`, {
           withCredentials: true,
         });
         if (response.data.success) {
@@ -42,7 +42,7 @@ const CompanyDetail = () => {
     const fetchCompanyJobs = async () => {
       try {
         setIsJobsLoading(true);
-        const response = await axios.get(`${API}/company/jobs/${id}`, {
+        const response = await axios.get(`${API}/company/jobs/${slug}`, {
           withCredentials: true,
         });
         if (response.data.success) {
@@ -55,13 +55,13 @@ const CompanyDetail = () => {
       }
     };
 
-    if (id) {
+    if (slug) {
       fetchCompanyDetail();
       fetchCompanyJobs();
       // Simulate view count increment
       setTimeout(() => setViewCount((prev) => prev + 1), 2000);
     }
-  }, [id]);
+  }, [slug]);
 
   if (isLoading) {
     return <CompanyLoading />;
