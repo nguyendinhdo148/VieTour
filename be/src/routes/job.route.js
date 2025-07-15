@@ -4,7 +4,7 @@ import rateLimit from "express-rate-limit";
 import {
   createJob,
   getAllJobs,
-  getJobById,
+  getJobBySlug,
   getRecruiterJobs,
   updateJob,
   deleteJob,
@@ -29,7 +29,7 @@ router
   .get("/all-jobs", getAllJobs)
   .get("/recruiter-jobs", isAuthenticated, isRecruiter, getRecruiterJobs)
   .get("/suggestions", suggestionsLimiter, suggestions)
-  .get("/:id", getJobById);
+  .get("/detail/:slug", getJobBySlug);
 router.put("/update-job/:id", isAuthenticated, isRecruiter, updateJob);
 router.delete("/delete-job/:id", isAuthenticated, isRecruiter, deleteJob);
 

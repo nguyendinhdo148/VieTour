@@ -3,14 +3,23 @@ import { Job } from "../models/job.model.js";
 import { Application } from "../models/application.model.js";
 import cloudinary from "../utils/cloudinary.js";
 import getDataUri from "../utils/dataUri.js";
+import slugify from "slugify";
+
+function generateCompanySlug(name, location, taxCode) {
+  const nameSlug = slugify(name, { lower: true, strict: true });
+  const locationSlug = slugify(location, { lower: true, strict: true });
+  const taxCodeSuffix = taxCode.slice(-6);
+
+  return `${nameSlug}-${locationSlug}-${taxCodeSuffix}`;
+}
 
 // for recruiter
 export const createCompany = async (req, res, next) => {
   try {
-    const { name, description, website, location, taxCode } = req.body;
+    const { name, description, website, location, address, taxCode } = req.body;
     const files = req.files;
 
-    // Kiểm tra tên công ty trùng
+    // Kiểm tra taxCode trùng
     let company = await Company.findOne({ taxCode });
     if (company) {
       return res.status(400).json({
@@ -35,11 +44,15 @@ export const createCompany = async (req, res, next) => {
       businessLicense = uploadRes.secure_url;
     }
 
+    const slug = generateCompanySlug(name, location, taxCode);
+
     company = await Company.create({
       name,
+      slug: slug,
       description,
       website,
       location,
+      address,
       taxCode,
       logo,
       businessLicense,
@@ -97,8 +110,8 @@ export const getCompanyById = async (req, res, next) => {
 // for user - get company details
 export const getCompanyDetails = async (req, res, next) => {
   try {
-    const companyId = req.params.id;
-    const company = await Company.findById(companyId);
+    const companySlug = req.params.slug;
+    const company = await Company.findOne({ slug: companySlug });
 
     if (!company) {
       return res.status(404).json({
@@ -115,9 +128,19 @@ export const getCompanyDetails = async (req, res, next) => {
 // for user - get jobs by company
 export const getJobByCompany = async (req, res, next) => {
   try {
-    const companyId = req.params.id;
+    const companySlug = req.params.slug;
+
+    const company = await Company.findOne({ slug: companySlug });
+
+    if (!company) {
+      return res.status(404).json({
+        message: "Company not found.",
+        success: false,
+      });
+    }
+
     const jobs = await Job.find({
-      company: companyId,
+      company: company._id,
       status: "active",
       approval: "approved",
     }).populate("company", "name logo location");
@@ -137,7 +160,7 @@ export const getJobByCompany = async (req, res, next) => {
 // for recruiter
 export const updateCompany = async (req, res, next) => {
   try {
-    const { name, description, website, location, taxCode } = req.body;
+    const { name, description, website, location, address, taxCode } = req.body;
 
     const files = req.files; // req.files là một object chứa các file được upload
 
@@ -169,7 +192,17 @@ export const updateCompany = async (req, res, next) => {
       businessLicense = uploadRes.secure_url;
     }
 
-    const updateData = { name, description, website, location, taxCode };
+    const slug = generateCompanySlug(name, location, taxCode);
+
+    const updateData = {
+      name,
+      slug: slug,
+      description,
+      website,
+      location,
+      address,
+      taxCode,
+    };
 
     if (logo) {
       updateData.logo = logo;

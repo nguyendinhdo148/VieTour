@@ -70,8 +70,12 @@ const CompanyHero = ({ company, jobs, viewCount }: CompanyHeroProps) => {
           <div className="flex items-center gap-8 w-full">
             <div className="relative group">
               <div className="absolute -inset-1 bg-gradient-to-r from-white/30 to-white/10 rounded-3xl blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt"></div>
-              <Avatar className="relative size-40 rounded-xl border-4 border-white/40 shadow-2xl group-hover:scale-105 transition-transform duration-300">
-                <AvatarImage src={company.logo || ""} alt={company.name} />
+              <Avatar className="relative size-38 rounded-lg border-4 border-white/40 shadow-2xl group-hover:scale-105 transition-transform duration-300">
+                <AvatarImage
+                  src={company.logo || ""}
+                  alt={company.name}
+                  className="object-contain"
+                />
                 <AvatarFallback className="bg-white text-emerald-600 text-3xl font-bold">
                   {company.name.charAt(0)}
                 </AvatarFallback>
@@ -81,7 +85,7 @@ const CompanyHero = ({ company, jobs, viewCount }: CompanyHeroProps) => {
               </div>
             </div>
 
-            <div className="flex-1">
+            <div className="flex-1 mt-4">
               <div className="flex items-center gap-3 mb-3">
                 <h1 className="text-5xl font-bold text-white drop-shadow-lg">
                   {company.name}

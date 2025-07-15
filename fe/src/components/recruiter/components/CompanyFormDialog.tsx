@@ -26,6 +26,7 @@ const initialFormData = {
   description: "",
   website: "",
   location: "",
+  address: "",
   logo: null as File | null,
   businessLicense: null as File | null,
   taxCode: "",
@@ -60,6 +61,7 @@ const CompanyFormDialog = ({
         description: company.description || "",
         website: company.website || "",
         location: company.location || "",
+        address: company.address || "",
         logo: null,
         businessLicense: null,
         taxCode: company.taxCode || "",
@@ -122,6 +124,7 @@ const CompanyFormDialog = ({
       submitFormData.append("description", formData.description.trim());
       submitFormData.append("website", formData.website.trim());
       submitFormData.append("location", formData.location.trim());
+      submitFormData.append("address", formData.address.trim());
       if (formData.logo) {
         submitFormData.append("logo", formData.logo);
       }
@@ -235,12 +238,25 @@ const CompanyFormDialog = ({
 
           {/* Location */}
           <div className="grid gap-2">
-            <Label htmlFor="location">Địa điểm</Label>
+            <Label htmlFor="location">Trụ sở (Tên tỉnh thành phố, VD: HCM, Hà Nội,...)</Label>
             <Input
               id="location"
               value={formData.location}
               onChange={(e) =>
                 setFormData({ ...formData, location: e.target.value })
+              }
+              placeholder="Trụ sở công ty"
+            />
+          </div>
+
+          {/* Address */}
+          <div className="grid gap-2">
+            <Label htmlFor="address">Địa điểm</Label>
+            <Input
+              id="address"
+              value={formData.address}
+              onChange={(e) =>
+                setFormData({ ...formData, address: e.target.value })
               }
               placeholder="Địa chỉ công ty"
             />

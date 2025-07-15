@@ -182,7 +182,10 @@ const Company = () => {
               <TableHeader>
                 <TableRow className="hover:bg-gray-50 transition">
                   <TableHead className="w-[200px]">Công ty</TableHead>
-                  <TableHead className="text-center">Địa điểm</TableHead>
+                  <TableHead className="text-center">Trụ sở</TableHead>
+                  <TableHead className="text-center w-[200px]">
+                    Địa điểm
+                  </TableHead>
                   <TableHead className="text-center">Website</TableHead>
                   <TableHead className="text-center">Mã số thuế</TableHead>
                   <TableHead className="text-center">
@@ -220,8 +223,11 @@ const Company = () => {
                       </div>
                     </TableCell>
                     <TableCell className="text-center">
-                      <div className="truncate max-w-[400px]">
-                        {company.location}
+                      <div className="truncate">{company.location}</div>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <div className="truncate max-w-[200px] ">
+                        {company.address || "Chưa cập nhật địa điểm"}
                       </div>
                     </TableCell>
                     <TableCell className="text-center">

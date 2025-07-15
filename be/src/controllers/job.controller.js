@@ -1,5 +1,15 @@
 import { Job } from "../models/job.model.js";
 import { Company } from "../models/company.model.js";
+import slugify from "slugify";
+
+function generateJobSlug(title, companyName, companyLocation, companyId) {
+  const titleSlug = slugify(title, { lower: true, strict: true });
+  const nameSlug = slugify(companyName, { lower: true, strict: true });
+  const locationSlug = slugify(companyLocation, { lower: true, strict: true });
+  const idSuffix = companyId.slice(-6);
+
+  return `${titleSlug}-${nameSlug}-${locationSlug}-${idSuffix}`;
+}
 
 // for recruiter
 export const createJob = async (req, res, next) => {
@@ -67,10 +77,18 @@ export const createJob = async (req, res, next) => {
       });
     }
 
+    const slug = generateJobSlug(
+      title,
+      companyDoc.name,
+      companyDoc.location,
+      companyDoc._id.toString()
+    );
+
     // create job
     const job = await Job.create({
       title,
       description,
+      slug: slug,
       requirements,
       benefits,
       salary: Number(salary),
@@ -127,10 +145,10 @@ export const getAllJobs = async (req, res, next) => {
 };
 
 // for student
-export const getJobById = async (req, res, next) => {
+export const getJobBySlug = async (req, res, next) => {
   try {
-    const jobId = req.params.id;
-    const job = await Job.findById(jobId)
+    const jobBySlug = req.params.slug;
+    const job = await Job.findOne({ slug: jobBySlug })
       .populate("company")
       .populate({
         path: "applications",
@@ -185,6 +203,18 @@ export const updateJob = async (req, res, next) => {
   try {
     const jobId = req.params.id;
     const job = await Job.findById(jobId);
+    const { title, company, ...otherJobDetails } = req.body;
+
+    const companyDoc = await Company.findById(company);
+
+    const slug = generateJobSlug(
+      title,
+      companyDoc.name,
+      companyDoc.location,
+      companyDoc._id.toString()
+    );
+
+    // console.log(slug);
 
     if (!job) {
       return res.status(404).json({
@@ -200,7 +230,15 @@ export const updateJob = async (req, res, next) => {
       });
     }
 
-    const updatedJob = await Job.findByIdAndUpdate(jobId, req.body, {
+    const updateData = {
+      title,
+      slug,
+      ...otherJobDetails,
+    };
+
+    // console.log("Update Data:", updateData);
+
+    const updatedJob = await Job.findByIdAndUpdate(jobId, updateData, {
       new: true,
     });
 

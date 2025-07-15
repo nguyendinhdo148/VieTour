@@ -7,8 +7,6 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setSingleJob } from "@/redux/jobSlice";
 import { RootState } from "@/redux/store";
-import { formatDistanceToNow } from "date-fns";
-import { vi } from "date-fns/locale";
 import { Avatar, AvatarImage } from "../ui/avatar";
 import { motion } from "framer-motion";
 import {
@@ -28,7 +26,7 @@ import {
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 
-const JobDescription = () => {
+const JobDetail = () => {
   const { singleJob } = useSelector((store: RootState) => store.job);
   const { user } = useSelector((store: RootState) => store.auth);
 
@@ -38,18 +36,18 @@ const JobDescription = () => {
 
   const navigate = useNavigate();
   const params = useParams();
-  const jobId = params.id;
+  const jobSlug = params.slug;
 
   const dispatch = useDispatch();
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [jobId]);
+  }, [jobSlug]);
 
   useEffect(() => {
     const fetchSingleJob = async () => {
       try {
-        const res = await axios.get(`${API}/job/${jobId}`, {
+        const res = await axios.get(`${API}/job/detail/${jobSlug}`, {
           withCredentials: true,
         });
         if (res.data.success) {
@@ -61,7 +59,7 @@ const JobDescription = () => {
       }
     };
     fetchSingleJob();
-  }, [jobId, dispatch]);
+  }, [jobSlug, dispatch]);
 
   const appliedJobHandle = async () => {
     if (!user) {
@@ -71,7 +69,7 @@ const JobDescription = () => {
 
     try {
       const res = await axios.post(
-        `${API}/application/apply-job/${jobId}`,
+        `${API}/application/apply-job/${singleJob?._id}`,
         {},
         {
           withCredentials: true,
@@ -126,9 +124,9 @@ const JobDescription = () => {
                         {singleJob?.company?.name || "Công ty chưa xác định"}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2 text-blue-100">
-                      <MapPin className="w-4 h-4" />
-                      <span>{singleJob?.location}</span>
+                    <div className="flex items-start gap-2 text-blue-100">
+                      <MapPin className="size-4" />
+                      <span className="text-sm">{singleJob?.location}</span>
                     </div>
                   </div>
                 </div>
@@ -376,13 +374,9 @@ const JobDescription = () => {
                     <div>
                       <p className="font-medium text-gray-900">Ngày đăng</p>
                       <p className="text-gray-600">
-                        {formatDistanceToNow(
-                          new Date(singleJob?.createdAt || new Date()),
-                          {
-                            addSuffix: true,
-                            locale: vi,
-                          }
-                        )}
+                        {new Date(
+                          singleJob?.createdAt ?? ""
+                        ).toLocaleDateString("vi-VN")}
                       </p>
                     </div>
                   </div>
@@ -395,7 +389,7 @@ const JobDescription = () => {
                   Về công ty
                 </h3>
                 <Link
-                  to={`/company/${singleJob?.company?._id}`}
+                  to={`/company/detail/${singleJob?.company?.slug}`}
                   className="block"
                 >
                   <div className="flex items-center gap-3 hover:bg-gray-50 p-2 rounded-lg transition-colors cursor-pointer">
@@ -426,4 +420,4 @@ const JobDescription = () => {
   );
 };
 
-export default JobDescription;
+export default JobDetail;

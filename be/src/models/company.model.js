@@ -6,6 +6,10 @@ const companySchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    slug: {
+      type: String,
+      required: true,
+    },
     description: {
       type: String,
     },
@@ -13,6 +17,9 @@ const companySchema = new mongoose.Schema(
       type: String,
     },
     location: {
+      type: String,
+    },
+    address: {
       type: String,
     },
     logo: {
