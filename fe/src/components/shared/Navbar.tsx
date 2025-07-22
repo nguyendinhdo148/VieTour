@@ -8,6 +8,11 @@ import {
   Heart,
   ChevronDown,
   FileText,
+  PiggyBank,
+  Smartphone,
+  LineChart,
+  Coins,
+  Brain,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,6 +22,11 @@ import { API } from "@/utils/constant";
 import { setUser } from "@/redux/authSlice";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@radix-ui/react-hover-card";
 
 const Navbar = () => {
   const { user } = useSelector((store: RootState) => store.auth);
@@ -88,6 +98,98 @@ const Navbar = () => {
               Việc làm
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-indigo-600 transition-all duration-300 group-hover:w-full"></span>
             </Link>
+            <HoverCard openDelay={100} closeDelay={300}>
+              <HoverCardTrigger asChild>
+                <span className="text-gray-700 hover:text-indigo-600 font-medium transition-colors relative group cursor-pointer px-2 py-1">
+                  Công cụ
+                  <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-indigo-600 transition-all duration-300 group-hover:w-full"></span>
+                </span>
+              </HoverCardTrigger>
+
+              <HoverCardContent
+                align="center"
+                sideOffset={12} // tạo khoảng cách dropdown với trigger
+                className="relative w-[450px] grid grid-cols-2 gap-6 p-6 bg-white rounded-xl shadow-2xl border border-gray-100 z-50"
+              >
+                <div
+                  className="absolute -top-2 left-1/2 -translate-x-1/2 w-0 h-0 
+                            border-l-8 border-r-8 border-b-8 border-l-transparent 
+                            border-r-transparent border-b-gray-200"
+                ></div>
+
+                {/* Cột 1 */}
+                <div>
+                  <h4 className="text-sm font-semibold text-gray-500 mb-4 uppercase tracking-wide">
+                    Hỗ trợ ứng viên
+                  </h4>
+                  <ul className="space-y-3">
+                    <li>
+                      <Link
+                        to="/tools/resume-review"
+                        className="flex items-center gap-3 text-gray-700 hover:text-indigo-600 transition"
+                      >
+                        <FileText className="w-4 h-4 text-indigo-500" />
+                        Phân tích CV
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/tools/mbti"
+                        className="flex items-center gap-3 text-gray-700 hover:text-indigo-600 transition"
+                      >
+                        <Brain className="w-4 h-4 text-indigo-500" />
+                        Trắc nghiệm MBTI
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/tools/gross-net"
+                        className="flex items-center gap-3 text-gray-700 hover:text-indigo-600 transition"
+                      >
+                        <Coins className="w-4 h-4 text-indigo-500" />
+                        Tính lương Gross/Net
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Cột 2 */}
+                <div>
+                  <h4 className="text-sm font-semibold text-gray-500 mb-4 uppercase tracking-wide">
+                    Tiện ích khác
+                  </h4>
+                  <ul className="space-y-3">
+                    <li>
+                      <Link
+                        to="/tools/compound-interest"
+                        className="flex items-center gap-3 text-gray-700 hover:text-indigo-600 transition"
+                      >
+                        <LineChart className="w-4 h-4 text-indigo-500" />
+                        Tính lãi suất kép
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/tools/saving-plan"
+                        className="flex items-center gap-3 text-gray-700 hover:text-indigo-600 transition"
+                      >
+                        <PiggyBank className="w-4 h-4 text-indigo-500" />
+                        Kế hoạch tiết kiệm
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/mobile-app"
+                        className="flex items-center gap-3 text-gray-700 hover:text-indigo-600 transition"
+                      >
+                        <Smartphone className="w-4 h-4 text-indigo-500" />
+                        Tải ứng dụng di động
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+              </HoverCardContent>
+            </HoverCard>
             <Link
               to={"/resume"}
               className="text-gray-700 hover:text-indigo-600 font-medium transition-colors relative group"

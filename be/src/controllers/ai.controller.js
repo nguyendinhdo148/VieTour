@@ -1,5 +1,20 @@
 import { OpenAI } from "openai";
 import { Job } from "../models/job.model.js";
+import pdfjsLib from "pdfjs-dist/legacy/build/pdf.js";
+import path from "path";
+import { fileURLToPath } from "url";
+import { createCanvas } from "canvas";
+import Tesseract from "tesseract.js";
+import axios from "axios";
+
+// Lấy đường dẫn tuyệt đối tới pdf.worker.js
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const workerPath = path.join(
+  __dirname,
+  "../../node_modules/pdfjs-dist/legacy/build/pdf.worker.js"
+);
+pdfjsLib.GlobalWorkerOptions.workerSrc = workerPath;
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -8,6 +23,108 @@ const openai = new OpenAI({
 const openai2 = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY_2,
 });
+
+export const resumeReview = async (req, res, next) => {
+  try {
+    const resume = req.file;
+
+    if (!resume) {
+      return res.status(400).json({
+        success: false,
+        message: "No resume file uploaded!",
+      });
+    }
+
+    if (resume.size > 5 * 1024 * 1024) {
+      return res.status(400).json({
+        success: false,
+        message: "File size exceeds 5MB limit!",
+      });
+    }
+
+    // 1. Ưu tiên trích xuất text từ PDF (dạng text)
+    let extractedText = "";
+    try {
+      const pdf = await pdfjsLib.getDocument({ data: resume.buffer }).promise;
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const textContent = await page.getTextContent();
+        const pageText = textContent.items.map((item) => item.str).join(" ");
+        extractedText += pageText + "\n";
+      }
+      extractedText = extractedText.trim();
+    } catch (err) {
+      // Không log lỗi ra terminal
+    }
+
+    // Nếu text quá ngắn, fallback sang OCR (scan image)
+    if (!extractedText || extractedText.length < 30) {
+      try {
+        const pdf = await pdfjsLib.getDocument({ data: resume.buffer }).promise;
+        const page = await pdf.getPage(1);
+        const viewport = page.getViewport({ scale: 2 });
+        const canvas = createCanvas(viewport.width, viewport.height);
+        const context = canvas.getContext("2d");
+        const renderContext = {
+          canvasContext: context,
+          viewport: viewport,
+        };
+        await page.render(renderContext).promise;
+        const imageBuffer = canvas.toBuffer("image/png");
+        const result = await Tesseract.recognize(imageBuffer, "eng", {
+          logger: () => {}, // Không log ra terminal
+        });
+        extractedText = result.data.text?.trim();
+      } catch (err) {
+        // Không log lỗi ra terminal
+      }
+    }
+
+    if (!extractedText || extractedText.length < 30) {
+      return res.status(400).json({
+        success: false,
+        message: "Could not extract meaningful text from the resume.",
+      });
+    }
+
+    // 2. Gửi text lên Gemini API (Google Generative Language API)
+    try {
+      const geminiApiKey = process.env.GEMINI_API_KEY;
+      const geminiApiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=${geminiApiKey}`;
+      const prompt = `Xem lại sơ yếu lý lịch sau đây và đưa ra phản hồi mang tính xây dựng về
+                    điểm mạnh, điểm yếu và các lĩnh vực cần cải thiện.
+                    Nội dung sơ yếu lý lịch:\n\n${extractedText}.`;
+
+      const geminiRes = await axios.post(geminiApiUrl, {
+        contents: [{ parts: [{ text: prompt }] }],
+      });
+      const feedback =
+        geminiRes.data.candidates?.[0]?.content?.parts?.[0]?.text ||
+        "Không nhận được phản hồi từ AI";
+
+      return res.json({
+        success: true,
+        feedback,
+      });
+    } catch (err) {
+      return res.status(500).json({
+        success: false,
+        message:
+          "Gemini API error: " +
+          (err?.response?.data?.error?.message ||
+            err.message ||
+            "Unknown error"),
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Resume review failed! " + (error?.message || "Unknown error"),
+    });
+    next(error);
+  }
+};
 
 export const generate_description = async (req, res, next) => {
   const { title, category } = req.body;
