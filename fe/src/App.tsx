@@ -27,6 +27,7 @@ import CompanyAdmin from "./components/admin/screeens/CompanyAdmin";
 import JobManagerAdmin from "./components/admin/screeens/JobManagerAdmin";
 import UserManagerAdmin from "./components/admin/screeens/UserManagerAdmin";
 import Chatbot from "./components/Chatbot";
+import ResumeReview from "./components/pages/ResumeReview";
 
 function App() {
   return (
@@ -46,6 +47,7 @@ function App() {
         <Route path="/saved-jobs" element={<SavedJobs />} />
         <Route path="/job/detail/:slug" element={<JobDetail />} />
         <Route path="/company/detail/:slug" element={<CompanyDetail />} />
+        <Route path="/tools/resume-review" element={<ResumeReview />} />
 
         {/* Recruiter routes */}
         <Route path="/recruiter" element={<RecruiterLayout />}>

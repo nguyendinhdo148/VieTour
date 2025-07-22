@@ -65,40 +65,45 @@ const Profile = () => {
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
             <div className="flex items-center gap-6">
               <div className="relative group">
-                <Avatar className="w-20 h-20 ring-2 ring-gray-300">
-                  <AvatarImage
-                    src={user?.profile?.profilePhoto}
-                    alt={user?.fullname}
-                    className="object-cover"
+                <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-full blur opacity-25 group-hover:opacity-40 transition duration-300"></div>
+                <div className="relative">
+                  <Avatar className="size-20 ring-4 ring-white shadow-2xl shadow-black/10">
+                    <AvatarImage
+                      src={user?.profile?.profilePhoto || "/placeholder.svg"}
+                      alt={user?.fullname}
+                      className="object-cover"
+                    />
+                    <AvatarFallback className="bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 text-white text-2xl font-bold">
+                      {user?.fullname
+                        ?.split(" ")
+                        .map((n) => n[0])
+                        .join("")}
+                    </AvatarFallback>
+                  </Avatar>
+
+                  {/* Camera Upload Button */}
+                  <Label
+                    htmlFor="avatar-upload"
+                    className="absolute -bottom-2 -right-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white p-2 rounded-full cursor-pointer shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-100 group"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full blur opacity-0 group-hover:opacity-50 transition duration-300"></div>
+                    <div className="relative">
+                      {isUploading ? (
+                        <Loader2 className="size-4 animate-spin" />
+                      ) : (
+                        <Camera className="size-4" />
+                      )}
+                    </div>
+                  </Label>
+                  <Input
+                    id="avatar-upload"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleAvatarUpload}
+                    disabled={isUploading}
+                    className="hidden"
                   />
-                  <AvatarFallback className="bg-gray-100 text-gray-700">
-                    {user?.fullname
-                      ?.split(" ")
-                      .map((n) => n[0])
-                      .join("")}
-                  </AvatarFallback>
-                </Avatar>
-
-                {/* Nút overlay */}
-                <Label
-                  htmlFor="avatar-upload"
-                  className="absolute bottom-0 right-0 bg-gray-500 text-white p-1.5 rounded-full cursor-pointer hover:bg-gray-600 shadow-md transition"
-                >
-                  {isUploading ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <Camera className="w-4 h-4" />
-                  )}
-                </Label>
-
-                <Input
-                  id="avatar-upload"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleAvatarUpload}
-                  disabled={isUploading}
-                  className="hidden"
-                />
+                </div>
               </div>
               <div>
                 <h1 className="text-2xl font-semibold text-gray-800">
