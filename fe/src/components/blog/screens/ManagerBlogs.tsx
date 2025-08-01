@@ -1,0 +1,386 @@
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import toast from "react-hot-toast";
+import { API } from "@/utils/constant";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { useDispatch, useSelector } from "react-redux";
+import type { RootState } from "@/redux/store";
+import { setBlogsForAuthor } from "@/redux/blogSlice";
+import {
+  Plus,
+  Eye,
+  Edit3,
+  Trash2,
+  Tag,
+  FolderOpen,
+  FileText,
+  AlertCircle,
+  BookOpen,
+  Clock,
+  TrendingUp,
+  Shield,
+} from "lucide-react";
+import Navbar from "@/components/shared/Navbar";
+import { stripHtmlTags } from "@/components/helpers/stripHTML";
+import { SkeletonManagerBlogs } from "../components/skeletons/SkeletonManagerBlogs";
+import Swal from "sweetalert2";
+
+interface StatsCardProps {
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  label: string;
+  value: string | number;
+  color: string;
+  trend?: string;
+  description?: string;
+}
+
+const ManagerBlogs = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const { blogsForAuthor } = useSelector((store: RootState) => store.blog);
+
+  const { user } = useSelector((store: RootState) => store.auth);
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    }
+  }, [user, navigate]);
+
+  const fetchBlogs = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await axios.get(`${API}/blog/author-blogs`, {
+        withCredentials: true,
+      });
+      if (res.data.success) {
+        dispatch(setBlogsForAuthor(res.data.blogs));
+      } else {
+        setError("Không lấy được danh sách bài viết");
+      }
+    } catch (err) {
+      console.log(err);
+      setError("Lỗi kết nối máy chủ");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchBlogs();
+  }, []);
+
+  const handleDelete = async (id: string) => {
+    const result = await Swal.fire({
+      title: "Bạn có chắc muốn xóa bài viết này ?",
+      text: "Hành động này không thể hoàn tác!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Xóa",
+      cancelButtonText: "Hủy",
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+    });
+
+    if (!result.isConfirmed) return;
+    try {
+      const res = await axios.delete(`${API}/blog/delete-blog/${id}`, {
+        withCredentials: true,
+      });
+      if (res.data.success) {
+        toast.success("Xóa bài viết thành công");
+        fetchBlogs();
+      } else {
+        toast.error(res.data.message || "Xóa bài viết thất bại");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Lỗi khi gọi API xóa bài viết");
+    }
+  };
+
+  const EmptyState = () => (
+    <div className="flex items-center justify-center min-h-[60vh]">
+      <Card className="max-w-lg w-full text-center bg-white border border-gray-100 shadow-lg">
+        <CardContent className="p-12 space-y-6">
+          <div className="relative">
+            <div className="mx-auto w-20 h-20 bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl flex items-center justify-center border border-blue-100">
+              <FileText className="w-10 h-10 text-blue-600" />
+            </div>
+            <div className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center shadow-lg">
+              <Plus className="w-4 h-4 text-white" />
+            </div>
+          </div>
+          <div className="space-y-3">
+            <h3 className="text-xl font-bold text-gray-900">
+              Chưa có bài viết nào
+            </h3>
+            <p className="text-gray-600 leading-relaxed">
+              Bắt đầu hành trình viết blog của bạn bằng cách tạo bài viết đầu
+              tiên
+            </p>
+          </div>
+          <Link to="/blog/create-blog">
+            <Button
+              size="lg"
+              className="cursor-pointer bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+            >
+              <Plus className="w-5 h-5 mr-2" />
+              Tạo bài viết mới
+            </Button>
+          </Link>
+        </CardContent>
+      </Card>
+    </div>
+  );
+
+  const ErrorState = () => (
+    <div className="flex items-center justify-center min-h-[60vh]">
+      <Card className="max-w-lg w-full text-center bg-white border border-red-100 shadow-lg">
+        <CardContent className="p-12 space-y-6">
+          <div className="mx-auto w-20 h-20 bg-red-50 rounded-2xl flex items-center justify-center border border-red-100">
+            <AlertCircle className="w-10 h-10 text-red-500" />
+          </div>
+          <div className="space-y-3">
+            <h3 className="text-xl font-bold text-red-900">Có lỗi xảy ra</h3>
+            <p className="text-red-700 leading-relaxed">{error}</p>
+          </div>
+          <Button
+            onClick={fetchBlogs}
+            variant="outline"
+            size="lg"
+            className="border-red-200 text-red-700 hover:bg-red-50 bg-transparent"
+          >
+            Thử lại
+          </Button>
+        </CardContent>
+      </Card>
+    </div>
+  );
+
+  const StatsCard = ({
+    icon: Icon,
+    label,
+    value,
+    color,
+    trend,
+    description,
+  }: StatsCardProps) => (
+    <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-500 group overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-br from-white/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      <CardContent className="p-8 relative">
+        <div className="flex items-center gap-6">
+          <div
+            className={`w-16 h-16 rounded-2xl flex items-center justify-center ${color} shadow-xl group-hover:scale-110 transition-transform duration-500`}
+          >
+            <Icon className="w-8 h-8 text-white" />
+          </div>
+          <div className="flex-1">
+            <p className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-2">
+              {label}
+            </p>
+            <div className="flex items-center gap-4 mb-2">
+              <p className="text-3xl font-bold text-gray-900">{value}</p>
+              {trend && (
+                <div className="flex items-center gap-1 text-green-600 bg-green-50 px-3 py-1 rounded-full">
+                  <TrendingUp className="w-4 h-4" />
+                  <span className="text-sm font-bold">{trend}</span>
+                </div>
+              )}
+            </div>
+            {description && (
+              <p className="text-sm text-gray-600">{description}</p>
+            )}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Navbar />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Header Section */}
+        <div className="mb-8">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            <div className="space-y-4">
+              <h1 className="text-5xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text text-transparent">
+                Quản lý bài viết
+              </h1>
+              <p className="text-lg text-gray-600 leading-relaxed max-w-2xl">
+                Quản lý và theo dõi tất cả bài viết của bạn một cách hiệu quả
+              </p>
+            </div>
+            <Link to="/blog/create-blog">
+              <Button
+                size="lg"
+                className="w-full text-lg cursor-pointer lg:w-auto  bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 hover:from-blue-600 hover:to-purple-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 px-8"
+              >
+                <Plus className="size-6 mr-3" />
+                Tạo bài viết mới
+              </Button>
+            </Link>
+          </div>
+        </div>
+
+        {/* Stats Section */}
+        {!loading && !error && blogsForAuthor.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+            <StatsCard
+              icon={BookOpen}
+              label="Tổng bài viết"
+              value={blogsForAuthor.length}
+              color="bg-gradient-to-br from-blue-500 to-blue-600"
+              trend="+12%"
+              description="Tất cả bài viết"
+            />
+            <StatsCard
+              icon={Eye}
+              label="Tổng lượt xem"
+              value={blogsForAuthor
+                .reduce((total, blog) => total + (blog.views || 0), 0)
+                .toLocaleString("vi-VN")}
+              color="bg-gradient-to-br from-green-500 to-emerald-600"
+              trend="+24%"
+              description="Tất cả lượt xem"
+            />
+            <StatsCard
+              icon={Clock}
+              label="Chờ duyệt"
+              value={0}
+              color="bg-gradient-to-br from-yellow-500 to-orange-600"
+              description="Cần phê duyệt"
+            />
+            <StatsCard
+              icon={Shield}
+              label="Đã phê duyệt"
+              value={0}
+              color="bg-gradient-to-br from-purple-500 to-pink-600"
+              trend="+15%"
+              description="Bài viết hợp lệ"
+            />
+          </div>
+        )}
+
+        {/* Content Section */}
+        {loading ? (
+          <SkeletonManagerBlogs />
+        ) : blogsForAuthor.length === 0 ? (
+          <EmptyState />
+        ) : error ? (
+          <ErrorState />
+        ) : (
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3 auto-rows-fr">
+            {blogsForAuthor.map((blog, index) => (
+              <Card
+                key={index}
+                className="group overflow-hidden bg-white border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 flex flex-col h-full"
+              >
+                {/* Gradient Header */}
+                <div className="h-2 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 group-hover:h-2 transition-all duration-300" />
+
+                <CardContent className="p-6 space-y-4 flex-1 flex flex-col">
+                  {/* Title */}
+                  <h3 className="font-bold text-2xl leading-tight text-gray-900 group-hover:text-blue-600 transition-colors duration-200 line-clamp-2">
+                    {blog.title}
+                  </h3>
+
+                  {/* Date */}
+                  <div className="flex items-center gap-2 text-sm text-gray-500">
+                    <div className="size-6 bg-blue-50 rounded-xl flex items-center justify-center group-hover:bg-blue-100 transition-colors duration-300">
+                      <Clock className="size-4 text-blue-600" />
+                    </div>
+                    <span>
+                      {new Date(blog.createdAt).toLocaleDateString("vi-VN")}
+                    </span>
+                  </div>
+
+                  {/* Content Preview */}
+                  <p className="text-gray-600 text-base leading-relaxed line-clamp-4">
+                    {stripHtmlTags(blog.content)}
+                  </p>
+
+                  {/* Category */}
+                  <div className="flex items-center gap-2">
+                    <div className="size-6 bg-purple-50 rounded-xl flex items-center justify-center group-hover:bg-purple-100 transition-colors duration-300">
+                      <FolderOpen className="size-4 text-purple-600" />
+                    </div>
+                    <Badge className="bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:from-blue-100 hover:to-purple-100 border-blue-200 px-2 text-sm">
+                      {blog.category}
+                    </Badge>
+                  </div>
+
+                  {/* Tags */}
+                  {blog.tags.length > 0 && (
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <div className="size-6 bg-pink-50 rounded-xl flex items-center justify-center group-hover:bg-pink-100 transition-colors duration-300">
+                          <Tag className="size-4 text-pink-600" />
+                        </div>
+                        <span className="font-semibold text-gray-700">
+                          Tags
+                        </span>
+                      </div>
+                      <div className="flex flex-wrap gap-1.5">
+                        {blog.tags.map((tag, idx) => (
+                          <Badge
+                            key={idx}
+                            variant="outline"
+                            className="font-medium bg-gradient-to-r from-blue-50 to-purple-50 text-blue-600 border-blue-200 hover:from-blue-100 hover:to-purple-100 px-3 py-1.5 text-xs"
+                          >
+                            #{tag}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Actions */}
+                  <div className="flex gap-2 pt-4 border-t border-gray-100 mt-auto">
+                    <Button
+                      onClick={() => navigate(`/blog/detail/${blog.slug}`)}
+                      variant="outline"
+                      size="sm"
+                      className="flex-1 cursor-pointer text-blue-600 border-blue-200 hover:bg-blue-50 hover:border-blue-300"
+                    >
+                      <Eye className="w-4 h-4 mr-1.5" />
+                      Xem
+                    </Button>
+                    <Button
+                      onClick={() => navigate(`/blog/update-blog/${blog._id}`)}
+                      variant="outline"
+                      size="sm"
+                      className="flex-1 cursor-pointer text-green-600 border-green-200 hover:bg-green-50 hover:border-green-300"
+                    >
+                      <Edit3 className="w-4 h-4 mr-1.5" />
+                      Sửa
+                    </Button>
+                    <Button
+                      onClick={() => handleDelete(blog._id)}
+                      variant="outline"
+                      size="sm"
+                      className="cursor-pointer text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default ManagerBlogs;

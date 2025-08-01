@@ -4,6 +4,7 @@ import { User } from "../models/user.model.js";
 import cloudinary from "../utils/cloudinary.js";
 import getDataUri from "../utils/dataUri.js";
 import { Application } from "../models/application.model.js";
+import { Blog } from "../models/blog.model.js";
 
 export const getAllUsers = async (req, res, next) => {
   try {
@@ -508,6 +509,33 @@ export const approveJob = async (req, res, next) => {
       success: true,
       message:
         approval === "approved" ? "Đã duyệt công việc" : "Đã từ chối công việc",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const approveBlog = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { approval, approvalNote } = req.body;
+
+    const blog = await Blog.findById(id);
+    if (!blog) {
+      return res.status(404).json({
+        success: false,
+        message: "Không tìm thấy bài viết",
+      });
+    }
+
+    blog.approval = approval;
+    blog.approvalNote = approvalNote || "";
+    await blog.save();
+
+    res.status(200).json({
+      success: true,
+      message:
+        approval === "approved" ? "Đã duyệt bài viết" : "Đã từ chối bài viết",
     });
   } catch (error) {
     next(error);

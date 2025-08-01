@@ -1,0 +1,209 @@
+.container {
+  max-width: none;
+}
+
+/* Headings */
+.container h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin: 2rem 0 1rem 0;
+  color: #1f2937;
+}
+
+.container h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 1.5rem 0 0.75rem 0;
+  color: #1f2937;
+}
+
+.container h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 1.25rem 0 0.5rem 0;
+  color: #1f2937;
+}
+
+.container h4 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 1rem 0 0.5rem 0;
+  color: #1f2937;
+}
+
+.container h5 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 1rem 0 0.5rem 0;
+  color: #1f2937;
+}
+
+.container h6 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin: 1rem 0 0.5rem 0;
+  color: #1f2937;
+}
+
+/* Paragraphs */
+.container p {
+  margin: 1rem 0;
+  line-height: 1.7;
+}
+
+/* Lists */
+.container ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin: 1rem 0;
+}
+
+.container ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin: 1rem 0;
+}
+
+.container li {
+  margin: 0.5rem 0;
+}
+
+/* Text formatting */
+.container strong,
+.container b {
+  font-weight: 700;
+}
+
+.container em,
+.container i {
+  font-style: italic;
+}
+
+.container u {
+  text-decoration: underline;
+}
+
+.container strike,
+.container s {
+  text-decoration: line-through;
+}
+
+/* Code */
+.container code {
+  background-color: #f3f4f6;
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  font-family: "Courier New", monospace;
+}
+
+.container pre {
+  background-color: #f3f4f6;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+
+.container pre code {
+  background-color: transparent;
+  padding: 0;
+}
+
+/* Blockquotes */
+.container blockquote {
+  border-left: 4px solid #d1d5db;
+  padding-left: 1rem;
+  font-style: italic;
+  margin: 1rem 0;
+  color: #6b7280;
+}
+
+/* Links */
+.container a {
+  color: #3b82f6;
+  text-decoration: underline;
+}
+
+.container a:hover {
+  color: #1d4ed8;
+}
+
+/* Images */
+.container img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  margin: 1rem 0;
+}
+
+/* Tables */
+.container table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  border: 1px solid #d1d5db;
+}
+
+.container th,
+.container td {
+  border: 1px solid #d1d5db;
+  padding: 0.75rem;
+  text-align: left;
+}
+
+.container th {
+  background-color: #f9fafb;
+  font-weight: 600;
+}
+
+/* Horizontal rule */
+.container hr {
+  border: none;
+  border-top: 1px solid #d1d5db;
+  margin: 2rem 0;
+}
+
+/* Text alignment từ TinyMCE */
+.container .text-left {
+  text-align: left;
+}
+
+.container .text-center {
+  text-align: center;
+}
+
+.container .text-right {
+  text-align: right;
+}
+
+.container .text-justify {
+  text-align: justify;
+}
+
+/* Font sizes từ TinyMCE */
+.container .text-small {
+  font-size: 0.875rem;
+}
+
+.container .text-large {
+  font-size: 1.125rem;
+}
+
+/* Subscript và Superscript */
+.container sub {
+  vertical-align: sub;
+  font-size: 0.75rem;
+}
+
+.container sup {
+  vertical-align: super;
+  font-size: 0.75rem;
+}
+
+/* Iframe cho video embeds */
+.container iframe {
+  max-width: 100%;
+  border-radius: 0.5rem;
+  margin: 1rem 0;
+}
