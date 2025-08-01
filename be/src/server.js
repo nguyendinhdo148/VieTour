@@ -11,6 +11,7 @@ import aiRoute from "./routes/ai.route.js";
 import saveJobRoute from "./routes/saveJob.route.js";
 import resumeRoute from "./routes/resume.route.js";
 import adminRoute from "./routes/admin.route.js";
+import blogRoute from "./routes/blog.route.js";
 
 dotenv.config({});
 
@@ -38,6 +39,7 @@ app.use("/api/v1/ai", aiRoute);
 app.use("/api/v1/save-job", saveJobRoute);
 app.use("/api/v1/resume", resumeRoute);
 app.use("/api/v1/admin", adminRoute);
+app.use("/api/v1/blog", blogRoute);
 
 // error handler
 app.use((err, req, res, next) => {

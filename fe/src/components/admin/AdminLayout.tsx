@@ -6,6 +6,7 @@ import {
   LogOut,
   Menu,
   LayoutDashboard,
+  SquareChartGantt,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useDispatch, useSelector } from "react-redux";
@@ -39,6 +40,11 @@ const AdminLayout = () => {
       name: "Quản lý việc làm",
       href: "/admin/jobs",
       icon: BriefcaseIcon,
+    },
+    {
+      name: "Quản lý bài viết",
+      href: "/admin/blogs",
+      icon: SquareChartGantt,
     },
     {
       name: "Quản lý người dùng",

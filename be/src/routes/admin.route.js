@@ -14,6 +14,7 @@ import {
   updateJob,
   updateProfile,
   approveJob,
+  approveBlog,
 } from "../controllers/admin.controller.js";
 import { isAuthenticated, isAdmin } from "../middleware/auth.middleware.js";
 import { companyUpload } from "../middleware/multer.js";
@@ -49,6 +50,9 @@ router.put(
   updateCompany
 );
 router.delete("/company/:id", isAuthenticated, isAdmin, deleteCompany);
+
+// blog
+router.put("/approve-blog/:id", isAuthenticated, isAdmin, approveBlog);
 
 // overview
 router.get("/overview", isAuthenticated, isAdmin, getAdminOverview);

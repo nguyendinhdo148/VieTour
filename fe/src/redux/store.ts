@@ -4,6 +4,7 @@ import jobSlice from "./jobSlice";
 import companySlice from "./companySlice";
 import applicationSlice from "./applicationSlice";
 import saveJobSlice from "./saveJobSlice";
+import blogSlice from "./blogSlice";
 
 import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage"; // localStorage
@@ -22,6 +23,7 @@ const rootReducer = combineReducers({
   company: companySlice,
   application: applicationSlice,
   saveJob: saveJobSlice,
+  blog: blogSlice,
 });
 
 // Tạo persistedReducer từ rootReducer

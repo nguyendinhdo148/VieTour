@@ -13,6 +13,9 @@ import {
   LineChart,
   Coins,
   Brain,
+  NotebookPen,
+  Share2,
+  SquareChartGantt,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -27,11 +30,13 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@radix-ui/react-hover-card";
+import { useState } from "react";
 
 const Navbar = () => {
   const { user } = useSelector((store: RootState) => store.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [openBlogMenu, setOpenBlogMenu] = useState(false);
 
   const logoutHandler = async () => {
     try {
@@ -191,6 +196,13 @@ const Navbar = () => {
               </HoverCardContent>
             </HoverCard>
             <Link
+              to={"/blog"}
+              className="text-gray-700 hover:text-indigo-600 font-medium transition-colors relative group"
+            >
+              Góc chia sẻ
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-indigo-600 transition-all duration-300 group-hover:w-full"></span>
+            </Link>
+            <Link
               to={"/resume"}
               className="text-gray-700 hover:text-indigo-600 font-medium transition-colors relative group"
             >
@@ -316,6 +328,46 @@ const Navbar = () => {
                         <span>Việc làm đã ứng tuyển</span>
                       </Link>
                     </Button>
+
+                    <div>
+                      <Button
+                        className="w-full flex items-center justify-between text-sm text-gray-700 hover:text-indigo-600 px-3 py-2 font-medium cursor-pointer"
+                        onClick={() => setOpenBlogMenu(!openBlogMenu)}
+                      >
+                        <span className="flex items-center gap-3">
+                          <Share2 className="h-4 w-4 text-gray-500" />
+                          Góc Chia Sẻ
+                        </span>
+                        <ChevronDown
+                          className={`h-4 w-4 text-gray-500 transition-transform ${
+                            openBlogMenu ? "rotate-180" : ""
+                          }`}
+                        />
+                      </Button>
+
+                      {openBlogMenu && (
+                        <div className="pl-9 mt-1 space-y-1 text-sm">
+                          <Link
+                            to="/blog/manager-blogs"
+                            className="block text-gray-700 hover:text-indigo-600 transition"
+                          >
+                            <div className="flex items-center gap-2">
+                              <SquareChartGantt className="h-4 w-4 text-gray-500" />
+                              <span>Quản lý bài viết</span>
+                            </div>
+                          </Link>
+                          <Link
+                            to="/blog/create-blog"
+                            className="block text-gray-700 hover:text-indigo-600 transition"
+                          >
+                            <div className="flex items-center gap-2">
+                              <NotebookPen className="h-4 w-4 text-gray-500" />
+                              <span>Tạo bài viết</span>
+                            </div>
+                          </Link>
+                        </div>
+                      )}
+                    </div>
 
                     <Button
                       variant="default"

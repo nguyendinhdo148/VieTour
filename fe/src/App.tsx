@@ -28,6 +28,13 @@ import JobManagerAdmin from "./components/admin/screeens/JobManagerAdmin";
 import UserManagerAdmin from "./components/admin/screeens/UserManagerAdmin";
 import Chatbot from "./components/Chatbot";
 import ResumeReview from "./components/pages/ResumeReview";
+import LandingPageBlog from "./components/blog/LandingPageBlog";
+import BlogDetail from "./components/blog/screens/BlogDetail";
+import CreateBlog from "./components/blog/screens/CreateBlog";
+import UpdateBlog from "./components/blog/screens/UpdateBlog";
+import ManagerBlogs from "./components/blog/screens/ManagerBlogs";
+import NotFound from "./components/pages/NotFound";
+import BlogManagerAdmin from "./components/admin/screeens/BlogManagerAdmin";
 
 function App() {
   return (
@@ -49,6 +56,13 @@ function App() {
         <Route path="/company/detail/:slug" element={<CompanyDetail />} />
         <Route path="/tools/resume-review" element={<ResumeReview />} />
 
+        {/* Blog routes */}
+        <Route path="/blog" element={<LandingPageBlog />} />
+        <Route path="/blog/detail/:slug" element={<BlogDetail />} />
+        <Route path="/blog/create-blog" element={<CreateBlog />} />
+        <Route path="/blog/update-blog/:id" element={<UpdateBlog />} />
+        <Route path="/blog/manager-blogs" element={<ManagerBlogs />} />
+
         {/* Recruiter routes */}
         <Route path="/recruiter" element={<RecruiterLayout />}>
           <Route index element={<Recruiter />} />
@@ -62,6 +76,7 @@ function App() {
           <Route index element={<Admin />} />
           <Route path="/admin/company" element={<CompanyAdmin />} />
           <Route path="/admin/jobs" element={<JobManagerAdmin />} />
+          <Route path="/admin/blogs" element={<BlogManagerAdmin />} />
           <Route path="/admin/user" element={<UserManagerAdmin />} />
         </Route>
 
@@ -69,6 +84,9 @@ function App() {
         <Route path="/resume" element={<LandingPage />} />
         <Route path="/resume/dashboard-resume" element={<DashboardResume />} />
         <Route path="/resume/edit/:resumeId" element={<EditResume />} />
+
+        {/* Page not found */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
       <Toaster
         position="top-center"
