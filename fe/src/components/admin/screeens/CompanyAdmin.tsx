@@ -201,7 +201,7 @@ const CompanyAdmin = () => {
       </div>
 
       {/* Company List */}
-      <Card>
+      <Card className="shadow-sm border border-gray-200 rounded-xl">
         <div className="p-6">
           {paginatedCompanies.length > 0 ? (
             <Table>

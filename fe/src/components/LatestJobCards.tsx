@@ -59,7 +59,7 @@ const LatestJobCards = ({ job }: LatestJobCardsProps) => {
                   <img
                     src={job.company.logo || "/placeholder.svg"}
                     alt={`${job.company.name} logo`}
-                    className="h-10 w-10 object-contain rounded-xl shadow-sm group-hover:scale-110 transition-transform duration-300"
+                    className="h-10 w-10 object-contain rounded-sm shadow-sm group-hover:scale-110 transition-transform duration-300"
                   />
                   <div className="absolute inset-0 bg-white/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </div>

@@ -13,7 +13,7 @@ const CommonSkeleton = () => {
       </div>
 
       {/* Table Skeleton */}
-      <Card>
+      <Card className="shadow-sm border border-gray-200 rounded-xl">
         <div className="p-6">
           <div className="space-y-4">
             {/* Table Header Skeleton */}

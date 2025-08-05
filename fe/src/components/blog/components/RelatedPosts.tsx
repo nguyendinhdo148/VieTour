@@ -62,7 +62,7 @@ const RelatedPosts = ({ currentSlug }: { currentSlug: string }) => {
                   <img
                     src={post.image || "/placeholder.svg?height=80&width=80"}
                     alt={post.title}
-                    className="w-20 h-20 object-cover rounded-lg flex-shrink-0"
+                    className="size-24 object-cover rounded-lg flex-shrink-0"
                   />
                   <div className="flex-1 min-w-0">
                     <Badge
@@ -71,7 +71,7 @@ const RelatedPosts = ({ currentSlug }: { currentSlug: string }) => {
                     >
                       {post.category}
                     </Badge>
-                    <h3 className="font-semibold text-sm leading-tight mb-2 group-hover:text-primary transition-colors line-clamp-2">
+                    <h3 className="font-semibold text-base leading-tight mb-2 group-hover:text-primary transition-colors line-clamp-2">
                       {post.title}
                     </h3>
                     <div className="flex items-center gap-3 text-xs text-muted-foreground">

@@ -5,6 +5,24 @@ import cloudinary from "../utils/cloudinary.js";
 import getDataUri from "../utils/dataUri.js";
 import { Application } from "../models/application.model.js";
 import { Blog } from "../models/blog.model.js";
+import slugify from "slugify";
+
+function generateJobSlug(title, companyName, companyLocation, companyId) {
+  const titleSlug = slugify(title, { lower: true, strict: true });
+  const nameSlug = slugify(companyName, { lower: true, strict: true });
+  const locationSlug = slugify(companyLocation, { lower: true, strict: true });
+  const idSuffix = companyId.slice(-6);
+
+  return `${titleSlug}-${nameSlug}-${locationSlug}-${idSuffix}`;
+}
+
+function generateCompanySlug(name, location, taxCode) {
+  const nameSlug = slugify(name, { lower: true, strict: true });
+  const locationSlug = slugify(location, { lower: true, strict: true });
+  const taxCodeSuffix = taxCode.slice(-6);
+
+  return `${nameSlug}-${locationSlug}-${taxCodeSuffix}`;
+}
 
 export const getAllUsers = async (req, res, next) => {
   try {
@@ -144,10 +162,18 @@ export const createJob = async (req, res, next) => {
       });
     }
 
+    const slug = generateJobSlug(
+      title,
+      companyDoc.name,
+      companyDoc.location,
+      companyDoc._id.toString()
+    );
+
     // create job
     const job = await Job.create({
       title,
       description,
+      slug: slug,
       requirements,
       benefits,
       salary: Number(salary),
@@ -174,6 +200,18 @@ export const updateJob = async (req, res, next) => {
   try {
     const jobId = req.params.id;
     const job = await Job.findById(jobId);
+    const { title, company, ...otherJobDetails } = req.body;
+
+    const companyDoc = await Company.findById(company);
+
+    const slug = generateJobSlug(
+      title,
+      companyDoc.name,
+      companyDoc.location,
+      companyDoc._id.toString()
+    );
+
+    console.log(slug);
 
     if (!job) {
       return res.status(404).json({
@@ -182,7 +220,13 @@ export const updateJob = async (req, res, next) => {
       });
     }
 
-    const updatedJob = await Job.findByIdAndUpdate(jobId, req.body, {
+    const updateData = {
+      title,
+      slug,
+      ...otherJobDetails,
+    };
+
+    const updatedJob = await Job.findByIdAndUpdate(jobId, updateData, {
       new: true,
     });
 
@@ -298,9 +342,12 @@ export const createCompanyAdmin = async (req, res, next) => {
       businessLicense = uploadRes.secure_url;
     }
 
+    const slug = generateCompanySlug(name, location, taxCode);
+
     company = await Company.create({
       name,
       description,
+      slug: slug,
       website,
       location,
       taxCode,
@@ -322,7 +369,7 @@ export const createCompanyAdmin = async (req, res, next) => {
 
 export const updateCompany = async (req, res, next) => {
   try {
-    const { name, description, website, location, taxCode } = req.body;
+    const { name, description, website, location, address, taxCode } = req.body;
 
     const files = req.files; // req.files là một object chứa các file được upload
 
@@ -354,7 +401,17 @@ export const updateCompany = async (req, res, next) => {
       businessLicense = uploadRes.secure_url;
     }
 
-    const updateData = { name, description, website, location, taxCode };
+    const slug = generateCompanySlug(name, location, taxCode);
+
+    const updateData = {
+      name,
+      slug: slug,
+      description,
+      website,
+      location,
+      address,
+      taxCode,
+    };
 
     if (logo) {
       updateData.logo = logo;
@@ -463,6 +520,7 @@ export const getAdminOverview = async (req, res, next) => {
     const totalUsers = await User.countDocuments({ role: { $ne: "admin" } });
     const totalCompanies = await Company.countDocuments();
     const totalJobs = await Job.countDocuments();
+    const totalBlogs = await Blog.countDocuments();
 
     // 6. Placeholder (nếu sau này muốn thêm logic phỏng vấn)
     const upcomingInterviews = 0;
@@ -481,6 +539,7 @@ export const getAdminOverview = async (req, res, next) => {
         totalUsers,
         totalCompanies,
         totalJobs,
+        totalBlogs,
       },
     });
   } catch (error) {

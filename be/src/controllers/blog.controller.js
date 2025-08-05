@@ -184,27 +184,91 @@ export const getAllBlog = async (req, res, next) => {
   }
 };
 
-// get blogs by author
-export const getBlogsByAuthor = async (req, res, next) => {
+// get blogs overview by author
+export const getBlogOverview = async (req, res, next) => {
   try {
     const authorId = req.id; // middleware authentication
 
+    // Mốc thời gian hôm nay/và hôm qua
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+
+    // Lấy toàn bộ bài của author
     const blogs = await Blog.find({ created_by: authorId }).sort({
       createdAt: -1,
     });
 
+    // Nếu chưa có bài viết nào, trả về các số thống kê = 0
     if (!blogs || blogs.length === 0) {
-      return res.status(404).json({
-        message: "No blogs found for this author.",
-        success: false,
+      return res.status(200).json({
+        success: true,
+        data: {
+          blogs: [],
+          totalBlogs: 0,
+          yesterdayTotalBlogs: 0,
+          totalViews: 0,
+          yesterdayViews: 0,
+          pendingBlogs: 0,
+          yesterdayPendingBlogs: 0,
+          approvedBlogs: 0,
+          yesterdayApprovedBlogs: 0,
+        },
       });
     }
 
+    // Tổng số bài
+    const totalBlogs = blogs.length;
+
+    // Số bài tạo hôm qua
+    const yesterdayTotalBlogs = blogs.filter(
+      (blog) => blog.createdAt >= yesterday && blog.createdAt < today
+    ).length;
+
+    // Tổng lượt xem (của tất cả blog thuộc author)
+    const totalViews = blogs.reduce((sum, blog) => sum + (blog.views || 0), 0);
+
+    // Tổng lượt xem của các bài tạo hôm qua
+    const yesterdayViews = blogs
+      .filter((blog) => blog.createdAt >= yesterday && blog.createdAt < today)
+      .reduce((sum, blog) => sum + (blog.views || 0), 0);
+
+    // Số bài chờ duyệt
+    const pendingBlogs = blogs.filter(
+      (blog) => blog.approval === "pending"
+    ).length;
+    const yesterdayPendingBlogs = blogs.filter(
+      (blog) =>
+        blog.approval === "pending" &&
+        blog.createdAt >= yesterday &&
+        blog.createdAt < today
+    ).length;
+
+    // Số bài đã duyệt
+    const approvedBlogs = blogs.filter(
+      (blog) => blog.approval === "approved"
+    ).length;
+    const yesterdayApprovedBlogs = blogs.filter(
+      (blog) =>
+        blog.approval === "approved" &&
+        blog.createdAt >= yesterday &&
+        blog.createdAt < today
+    ).length;
+
     return res.status(200).json({
-      message: "Blogs retrieved successfully.",
-      blogsCount: blogs.length,
-      blogs,
       success: true,
+      data: {
+        blogs,
+        totalBlogs,
+        yesterdayTotalBlogs,
+        totalViews,
+        yesterdayViews,
+        pendingBlogs,
+        yesterdayPendingBlogs,
+        approvedBlogs,
+        yesterdayApprovedBlogs,
+      },
     });
   } catch (error) {
     next(error);

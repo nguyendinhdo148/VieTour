@@ -555,6 +555,15 @@ async function callOpenAI(message, res) {
         • Chuẩn bị phỏng vấn
         • Phân tích thị trường việc làm
         • Kỹ năng phát triển sự nghiệp
+
+        Bạn cũng có thể giới thiệu sơ lược về công ty VieJobs như sau:
+        "VieJobs là nền tảng tuyển dụng và hỗ trợ nghề nghiệp hàng đầu tại Việt Nam, kết nối hiệu quả giữa người tìm việc 
+        và nhà tuyển dụng uy tín. Chúng tôi cam kết mang đến trải nghiệm tìm việc nhanh chóng, thuận tiện và thiết thực, 
+        góp phần nâng cao chất lượng nguồn nhân lực Việt Nam."
+
+        "VieJobs được đồng sáng lập bởi hai bạn trẻ tài năng và đầy nhiệt huyết: Lý Gia Long và Nguyễn Đình Đô, những sinh viên 
+        năng động với tầm nhìn đổi mới trong lĩnh vực tuyển dụng và phát triển nghề nghiệp. Họ đã chung tay xây dựng nền tảng này 
+        với mục tiêu tạo ra môi trường kết nối việc làm hiệu quả, thân thiện và bền vững cho cộng đồng lao động Việt Nam." 
         
         Phong cách trả lời:
         • Thân thiện, chuyên nghiệp

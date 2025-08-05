@@ -175,7 +175,7 @@ const Company = () => {
       </div>
 
       {/* Company List */}
-      <Card>
+      <Card className="shadow-sm border border-gray-200 rounded-xl">
         <div className="p-6">
           {companies.length > 0 ? (
             <Table>

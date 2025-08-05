@@ -144,7 +144,7 @@ const Candidates = () => {
       </div>
 
       {/* Filters */}
-      <Card className="p-6 shadow-md border rounded-2xl">
+      <Card className="p-6 shadow-sm border border-gray-200 rounded-xl">
         <div className="flex flex-col md:flex-row md:items-center gap-4">
           <div className="flex-1">
             <div className="relative">
@@ -190,7 +190,7 @@ const Candidates = () => {
       </Card>
 
       {/* Candidates List */}
-      <Card className="shadow-md border rounded-2xl">
+      <Card className="shadow-sm border border-gray-200 rounded-xl">
         <div className="p-6 overflow-x-auto">
           <Table>
             <TableHeader>
