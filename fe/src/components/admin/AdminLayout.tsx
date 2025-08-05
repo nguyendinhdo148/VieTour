@@ -93,13 +93,13 @@ const AdminLayout = () => {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-40 w-64 bg-white border-r shadow-sm transition-transform duration-200 ease-in-out transform",
+          "fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-gray-200 shadow-sm transition-transform duration-200 ease-in-out transform",
           isSidebarOpen ? "translate-x-0" : "-translate-x-full",
           "lg:translate-x-0" // Always show on large screens
         )}
       >
         {/* Profile section */}
-        <div className="p-6 border-b">
+        <div className="p-6 border-b shadow-sm border-gray-200">
           <div className="flex items-center space-x-3">
             <Avatar className="h-10 w-10">
               <AvatarImage src={user?.profile?.profilePhoto} />
@@ -139,7 +139,7 @@ const AdminLayout = () => {
         </nav>
 
         {/* Logout button */}
-        <div className="absolute bottom-0 w-full p-4 border-t bg-gray-50">
+        <div className="absolute bottom-0 w-full p-4 border-t shadow-sm border-gray-200 bg-gray-50">
           <button
             onClick={handleLogout}
             className="flex items-center cursor-pointer w-full gap-3 px-4 py-3 text-sm font-medium text-gray-600 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors"

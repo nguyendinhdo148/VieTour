@@ -15,7 +15,7 @@ export default function DashboardSkeleton() {
       </div>
 
       {/* Stats Cards Skeleton - Enhanced with better colors and animation */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {/* First card with indigo gradient */}
         <StatsCardSkeleton gradientFrom="from-indigo-500/50" gradientTo="to-purple-600/50" />
 
@@ -24,6 +24,9 @@ export default function DashboardSkeleton() {
 
         {/* Third card with sky gradient */}
         <StatsCardSkeleton gradientFrom="from-sky-500/50" gradientTo="to-teal-600/50" />
+
+        {/* Fourth card with sky gradient */}
+        <StatsCardSkeleton gradientFrom="from-purple-500/50" gradientTo="to-pink-600/50" />
       </div>
 
       {/* Main content */}

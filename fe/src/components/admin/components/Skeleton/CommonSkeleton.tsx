@@ -9,11 +9,11 @@ const CommonSkeleton = () => {
           <div className="h-8 w-48 bg-gray-200 rounded animate-pulse"></div>
           <div className="h-4 w-96 bg-gray-200 rounded mt-2 animate-pulse"></div>
         </div>
-        <div className="h-10 w-40 bg-gray-200 rounded animate-pulse"></div>
+        {/* <div className="h-10 w-40 bg-gray-200 rounded animate-pulse"></div> */}
       </div>
 
       {/* Table Skeleton */}
-      <Card>
+      <Card className="shadow-sm border border-gray-200 rounded-xl">
         <div className="p-6">
           <div className="space-y-4">
             {/* Table Header Skeleton */}

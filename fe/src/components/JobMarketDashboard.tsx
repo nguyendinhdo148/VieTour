@@ -2,61 +2,146 @@ import { RootState } from "@/redux/store";
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import ModernTrending from "./shared/ModernTrending";
 
 const JobMarketDashboard = () => {
+  // Lấy danh sách tất cả jobs từ Redux store
   const { allJobs } = useSelector((store: RootState) => store.job);
 
+  // Job "active" và "approved" (top 3 mới nhất)
   const activeJobs = useMemo(
     () =>
       allJobs
         .filter((job) => job.status === "active" && job.approval === "approved")
-        .splice(0, 3),
+        .sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        )
+        .slice(0, 3),
     [allJobs]
   );
 
+  // Tổng số việc làm active & approved
+  const activeJobsCount = useMemo(
+    () =>
+      allJobs.filter(
+        (job) => job.status === "active" && job.approval === "approved"
+      ).length,
+    [allJobs]
+  );
+
+  // Việc làm đăng mới trong 24h gần nhất
+  const jobsInLast24h = useMemo(() => {
+    const now = new Date();
+    return allJobs.filter((job) => {
+      const createDate = new Date(job.createdAt);
+      return (now.getTime() - createDate.getTime()) / (1000 * 60 * 60) <= 24;
+    });
+  }, [allJobs]);
+
+  // Số công ty "đang tuyển"
+  const companiesHiring = useMemo(() => {
+    const set = new Set();
+    allJobs.forEach((job) => {
+      if (job.status === "active" && job.approval === "approved") {
+        set.add(job.company._id || job.company._id);
+      }
+    });
+    return set.size;
+  }, [allJobs]);
+
+  // Chart tăng trưởng số việc làm mới mỗi ngày (7 ngày gần nhất)
+  const growthChart = useMemo(() => {
+    const days = Array.from({ length: 7 }, (_, i) => {
+      const date = new Date();
+      date.setDate(date.getDate() - (6 - i));
+      date.setHours(0, 0, 0, 0);
+      return date;
+    });
+    const data = days.map((d) => {
+      const next = new Date(d);
+      next.setDate(next.getDate() + 1);
+      return allJobs.filter((job) => {
+        const c = new Date(job.createdAt);
+        return c >= d && c < next;
+      }).length;
+    });
+    // "Bình thường hóa" để hiển thị % cao-thấp cho trực quan, vì UI chart là tỷ lệ height
+    const max = Math.max(...data, 1);
+    return data.map((v) => Math.round((v / max) * 60 + 35)); // từ 35%-95%
+  }, [allJobs]);
+
+  // Gắn ngày cho trục chart (7 ngày gần nhất)
+  const chartLabels = useMemo(() => {
+    return Array.from({ length: 7 }, (_, i) => {
+      const date = new Date();
+      date.setDate(date.getDate() - (6 - i));
+      return date.toLocaleDateString("vi-VN", {
+        day: "2-digit",
+        month: "2-digit",
+      });
+    });
+  }, []);
+
+  // Ngày hôm nay
   const currentDate = new Date().toLocaleDateString("vi-VN", {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
   });
 
+  // Phân bổ nhu cầu theo mức lương (giả định field job.salaryMin và job.salaryMax, triệu VND)
+  const salaryStats = useMemo(() => {
+    const ranges = [
+      { label: "Dưới 3 triệu", min: 0, max: 3 },
+      { label: "Từ 3-10 triệu", min: 3, max: 10 },
+      { label: "Từ 10-20 triệu", min: 10, max: 20 },
+      { label: "Từ 20-30 triệu", min: 20, max: 30 },
+      { label: "Trên 30 triệu", min: 30, max: Number.MAX_SAFE_INTEGER },
+    ];
+    const stats = Array(ranges.length).fill(0);
+    allJobs.forEach((job) => {
+      if (
+        job.status === "active" &&
+        job.approval === "approved" &&
+        typeof job.salary === "number"
+      ) {
+        // Nếu salary ĐÃ là triệu: KHÔNG chia nữa!
+        const salary = job.salary;
+        ranges.forEach((r, idx) => {
+          if (salary >= r.min && salary < r.max) {
+            stats[idx]++;
+          }
+        });
+      }
+    });
+    const total = stats.reduce((a, b) => a + b, 0) || 1;
+    return stats.map((count, idx) => ({
+      label: ranges[idx].label,
+      value: Math.round((count / total) * 100),
+      color: [
+        "from-green-500 to-green-400",
+        "from-blue-500 to-blue-400",
+        "from-yellow-500 to-yellow-400",
+        "from-orange-500 to-orange-400",
+        "from-red-500 to-red-400",
+      ][idx],
+    }));
+  }, [allJobs]);
+
   return (
     <>
       <style>{`
         @keyframes marquee {
-          0% {
-            transform: translateX(0%);
-          }
-          100% {
-            transform: translateX(-50%);
-          }
+          0% {transform: translateX(0%);}
+          100% {transform: translateX(-50%);}
         }
-        
-        .animate-marquee {
-          animation: marquee 30s linear infinite;
-        }
-        
-        .pause-marquee:hover {
-          animation-play-state: paused;
-        }
-
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-10px); }
-        }
-
-        .float-animation {
-          animation: float 3s ease-in-out infinite;
-        }
-
-        @keyframes pulse-glow {
-          0%, 100% { box-shadow: 0 0 20px rgba(34, 197, 94, 0.3); }
-          50% { box-shadow: 0 0 30px rgba(34, 197, 94, 0.6); }
-        }
-
-        .pulse-glow {
-          animation: pulse-glow 2s ease-in-out infinite;
-        }
+        .animate-marquee { animation: marquee 30s linear infinite; }
+        .pause-marquee:hover { animation-play-state: paused; }
+        @keyframes float { 0%,100% {transform: translateY(0px);} 50% {transform: translateY(-10px);} }
+        .float-animation { animation: float 3s ease-in-out infinite; }
+        @keyframes pulse-glow { 0%,100% { box-shadow: 0 0 20px rgba(34,197,94,0.3); } 50% { box-shadow: 0 0 30px rgba(34,197,94,0.6); } }
+        .pulse-glow {animation: pulse-glow 2s ease-in-out infinite;}
       `}</style>
 
       <div className="py-16 bg-gradient-to-br from-slate-900 via-slate-800 to-green-600 text-white relative overflow-hidden">
@@ -92,23 +177,10 @@ const JobMarketDashboard = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            {/* Left Column - Robot & Latest Jobs */}
+            {/* Left Column - Trending & Latest Jobs */}
             <div className="lg:col-span-4 space-y-8">
-              {/* Robot Illustration */}
-              <div className="flex justify-center">
-                <div className="relative float-animation">
-                  <div className="w-36 h-36 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center shadow-2xl pulse-glow">
-                    <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-inner">
-                      <span className="text-3xl font-bold bg-gradient-to-r from-green-600 to-green-800 bg-clip-text text-transparent">
-                        AI
-                      </span>
-                    </div>
-                  </div>
-                  <div className="absolute -top-3 -left-6 w-10 h-10 bg-green-400 rounded-full shadow-lg"></div>
-                  <div className="absolute -top-3 -right-6 w-10 h-10 bg-green-400 rounded-full shadow-lg"></div>
-                  <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-16 h-8 bg-green-500/30 rounded-full blur-md"></div>
-                </div>
-              </div>
+              {/* Modern Trending Illustration  */}
+              <ModernTrending />
 
               {/* Latest Jobs */}
               <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50">
@@ -116,26 +188,26 @@ const JobMarketDashboard = () => {
                   Việc làm mới nhất
                 </h3>
                 <div className="space-y-4">
+                  {activeJobs.length === 0 && (
+                    <p className="text-slate-400 text-sm">
+                      Chưa có việc làm mới cập nhật.
+                    </p>
+                  )}
                   {activeJobs.map((job, index) => (
                     <Link
                       to={`/job/detail/${job.slug}`}
                       key={index}
                       className="block"
                     >
-                      <div
-                        key={index}
-                        className="bg-slate-700/30 backdrop-blur-sm rounded-xl p-4 hover:bg-slate-700/50 transition-all duration-300 cursor-pointer border border-slate-600/30"
-                      >
+                      <div className="bg-slate-700/30 backdrop-blur-sm rounded-xl p-4 hover:bg-slate-700/50 transition-all duration-300 cursor-pointer border border-slate-600/30">
                         <div className="flex items-start space-x-4">
-                          <div
-                            className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg`}
-                          >
+                          <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
                             <span className="text-white font-bold text-sm">
                               {job.company.logo ? (
                                 <img
                                   src={job.company.logo}
                                   alt={job.company.name}
-                                  className="w-6 h-6"
+                                  className="size-12"
                                 />
                               ) : (
                                 job.company.name.charAt(0).toUpperCase()
@@ -167,7 +239,7 @@ const JobMarketDashboard = () => {
               <div className="space-y-4">
                 <div className="bg-gradient-to-r from-green-600/20 to-green-500/20 backdrop-blur-sm rounded-2xl p-6 border border-green-500/30 hover:border-green-400/50 transition-all duration-300">
                   <div className="text-4xl font-bold text-white mb-2">
-                    4.790
+                    {jobsInLast24h.length.toLocaleString("vi-VN")}
                   </div>
                   <div className="text-green-300 font-medium">
                     Việc làm mới 24h gần nhất
@@ -175,7 +247,7 @@ const JobMarketDashboard = () => {
                 </div>
                 <div className="bg-gradient-to-r from-blue-600/20 to-blue-500/20 backdrop-blur-sm rounded-2xl p-6 border border-blue-500/30 hover:border-blue-400/50 transition-all duration-300">
                   <div className="text-4xl font-bold text-white mb-2">
-                    50.641
+                    {activeJobsCount.toLocaleString("vi-VN")}
                   </div>
                   <div className="text-blue-300 font-medium">
                     Việc làm đang tuyển
@@ -183,7 +255,7 @@ const JobMarketDashboard = () => {
                 </div>
                 <div className="bg-gradient-to-r from-purple-600/20 to-purple-500/20 backdrop-blur-sm rounded-2xl p-6 border border-purple-500/30 hover:border-purple-400/50 transition-all duration-300">
                   <div className="text-4xl font-bold text-white mb-2">
-                    18.091
+                    {companiesHiring.toLocaleString("vi-VN")}
                   </div>
                   <div className="text-purple-300 font-medium">
                     Công ty đang tuyển
@@ -200,7 +272,7 @@ const JobMarketDashboard = () => {
                   </h3>
                 </div>
                 <div className="h-40 flex items-end justify-between space-x-2">
-                  {[45, 52, 48, 55, 51, 49, 53].map((height, index) => (
+                  {growthChart.map((height, index) => (
                     <div
                       key={index}
                       className="flex-1 bg-gradient-to-t from-green-600 to-green-400 rounded-t-lg shadow-lg hover:from-green-500 hover:to-green-300 transition-all duration-300"
@@ -209,13 +281,9 @@ const JobMarketDashboard = () => {
                   ))}
                 </div>
                 <div className="flex justify-between text-xs text-slate-400 mt-4">
-                  <span>22/06</span>
-                  <span>23/06</span>
-                  <span>24/06</span>
-                  <span>25/06</span>
-                  <span>26/06</span>
-                  <span>27/06</span>
-                  <span>28/06</span>
+                  {chartLabels.map((label, idx) => (
+                    <span key={idx}>{label}</span>
+                  ))}
                 </div>
               </div>
             </div>
@@ -236,33 +304,7 @@ const JobMarketDashboard = () => {
                 </div>
 
                 <div className="space-y-5">
-                  {[
-                    {
-                      label: "Dưới 3 triệu",
-                      value: 15,
-                      color: "from-green-500 to-green-400",
-                    },
-                    {
-                      label: "Từ 3-10 triệu",
-                      value: 45,
-                      color: "from-blue-500 to-blue-400",
-                    },
-                    {
-                      label: "Từ 10-20 triệu",
-                      value: 25,
-                      color: "from-yellow-500 to-yellow-400",
-                    },
-                    {
-                      label: "Từ 20-30 triệu",
-                      value: 10,
-                      color: "from-orange-500 to-orange-400",
-                    },
-                    {
-                      label: "Trên 30 triệu",
-                      value: 5,
-                      color: "from-red-500 to-red-400",
-                    },
-                  ].map((item, index) => (
+                  {salaryStats.map((item, index) => (
                     <div key={index} className="space-y-2">
                       <div className="flex justify-between text-sm">
                         <span className="text-slate-300 font-medium">

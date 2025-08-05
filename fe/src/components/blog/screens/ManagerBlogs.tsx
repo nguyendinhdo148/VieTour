@@ -6,9 +6,8 @@ import { API } from "@/utils/constant";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import type { RootState } from "@/redux/store";
-import { setBlogsForAuthor } from "@/redux/blogSlice";
 import {
   Plus,
   Eye,
@@ -20,30 +19,41 @@ import {
   AlertCircle,
   BookOpen,
   Clock,
-  TrendingUp,
   Shield,
 } from "lucide-react";
 import Navbar from "@/components/shared/Navbar";
 import { stripHtmlTags } from "@/components/helpers/stripHTML";
 import { SkeletonManagerBlogs } from "../components/skeletons/SkeletonManagerBlogs";
 import Swal from "sweetalert2";
-
-interface StatsCardProps {
-  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-  label: string;
-  value: string | number;
-  color: string;
-  trend?: string;
-  description?: string;
-}
+import { StatsCard } from "../components/StatsCard";
+import { Blog } from "@/types/blog";
 
 const ManagerBlogs = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
-  const { blogsForAuthor } = useSelector((store: RootState) => store.blog);
+  const [dashboardData, setDashboardData] = useState<{
+    blogs: Blog[];
+    totalBlogs: number;
+    yesterdayTotalBlogs: number;
+    totalViews: number;
+    yesterdayViews: number;
+    pendingBlogs: number;
+    yesterdayPendingBlogs: number;
+    approvedBlogs: number;
+    yesterdayApprovedBlogs: number;
+  }>({
+    blogs: [],
+    totalBlogs: 0,
+    yesterdayTotalBlogs: 0,
+    totalViews: 0,
+    yesterdayViews: 0,
+    pendingBlogs: 0,
+    yesterdayPendingBlogs: 0,
+    yesterdayApprovedBlogs: 0,
+    approvedBlogs: 0,
+  });
 
   const { user } = useSelector((store: RootState) => store.auth);
 
@@ -53,15 +63,15 @@ const ManagerBlogs = () => {
     }
   }, [user, navigate]);
 
-  const fetchBlogs = async () => {
+  const fetchOverview = async () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await axios.get(`${API}/blog/author-blogs`, {
+      const res = await axios.get(`${API}/blog/blogs-overview`, {
         withCredentials: true,
       });
       if (res.data.success) {
-        dispatch(setBlogsForAuthor(res.data.blogs));
+        setDashboardData(res.data.data);
       } else {
         setError("Không lấy được danh sách bài viết");
       }
@@ -73,8 +83,14 @@ const ManagerBlogs = () => {
     }
   };
 
+  const getPercentChange = (today: number, yesterday: number) => {
+    if (yesterday === 0) return today === 0 ? "0%" : "+100%";
+    const change = ((today - yesterday) / yesterday) * 100;
+    return `${change >= 0 ? "+" : ""}${change.toFixed(1)}%`;
+  };
+
   useEffect(() => {
-    fetchBlogs();
+    fetchOverview();
   }, []);
 
   const handleDelete = async (id: string) => {
@@ -96,7 +112,7 @@ const ManagerBlogs = () => {
       });
       if (res.data.success) {
         toast.success("Xóa bài viết thành công");
-        fetchBlogs();
+        fetchOverview();
       } else {
         toast.error(res.data.message || "Xóa bài viết thất bại");
       }
@@ -153,7 +169,7 @@ const ManagerBlogs = () => {
             <p className="text-red-700 leading-relaxed">{error}</p>
           </div>
           <Button
-            onClick={fetchBlogs}
+            onClick={fetchOverview}
             variant="outline"
             size="lg"
             className="border-red-200 text-red-700 hover:bg-red-50 bg-transparent"
@@ -163,45 +179,6 @@ const ManagerBlogs = () => {
         </CardContent>
       </Card>
     </div>
-  );
-
-  const StatsCard = ({
-    icon: Icon,
-    label,
-    value,
-    color,
-    trend,
-    description,
-  }: StatsCardProps) => (
-    <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-500 group overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-white/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-      <CardContent className="p-8 relative">
-        <div className="flex items-center gap-6">
-          <div
-            className={`w-16 h-16 rounded-2xl flex items-center justify-center ${color} shadow-xl group-hover:scale-110 transition-transform duration-500`}
-          >
-            <Icon className="w-8 h-8 text-white" />
-          </div>
-          <div className="flex-1">
-            <p className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-2">
-              {label}
-            </p>
-            <div className="flex items-center gap-4 mb-2">
-              <p className="text-3xl font-bold text-gray-900">{value}</p>
-              {trend && (
-                <div className="flex items-center gap-1 text-green-600 bg-green-50 px-3 py-1 rounded-full">
-                  <TrendingUp className="w-4 h-4" />
-                  <span className="text-sm font-bold">{trend}</span>
-                </div>
-              )}
-            </div>
-            {description && (
-              <p className="text-sm text-gray-600">{description}</p>
-            )}
-          </div>
-        </div>
-      </CardContent>
-    </Card>
   );
 
   return (
@@ -233,39 +210,53 @@ const ManagerBlogs = () => {
         </div>
 
         {/* Stats Section */}
-        {!loading && !error && blogsForAuthor.length > 0 && (
+        {!loading && !error && dashboardData.blogs.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
             <StatsCard
               icon={BookOpen}
               label="Tổng bài viết"
-              value={blogsForAuthor.length}
-              color="bg-gradient-to-br from-blue-500 to-blue-600"
-              trend="+12%"
+              value={dashboardData.totalBlogs}
+              bgClass="bg-gradient-to-br from-blue-500 to-blue-600"
+              trend={getPercentChange(
+                dashboardData.totalBlogs,
+                dashboardData.yesterdayTotalBlogs
+              )}
               description="Tất cả bài viết"
             />
+
             <StatsCard
               icon={Eye}
               label="Tổng lượt xem"
-              value={blogsForAuthor
-                .reduce((total, blog) => total + (blog.views || 0), 0)
-                .toLocaleString("vi-VN")}
-              color="bg-gradient-to-br from-green-500 to-emerald-600"
-              trend="+24%"
+              value={dashboardData.totalViews.toLocaleString("vi-VN")}
+              bgClass="bg-gradient-to-br from-green-500 to-emerald-600"
+              trend={getPercentChange(
+                dashboardData.totalViews,
+                dashboardData.yesterdayViews
+              )}
               description="Tất cả lượt xem"
             />
+
             <StatsCard
               icon={Clock}
               label="Chờ duyệt"
-              value={0}
-              color="bg-gradient-to-br from-yellow-500 to-orange-600"
+              value={dashboardData.pendingBlogs}
+              bgClass="bg-gradient-to-br from-yellow-500 to-orange-600"
+              trend={getPercentChange(
+                dashboardData.pendingBlogs,
+                dashboardData.yesterdayPendingBlogs
+              )}
               description="Cần phê duyệt"
             />
+
             <StatsCard
               icon={Shield}
               label="Đã phê duyệt"
-              value={0}
-              color="bg-gradient-to-br from-purple-500 to-pink-600"
-              trend="+15%"
+              value={dashboardData.approvedBlogs}
+              bgClass="bg-gradient-to-br from-purple-500 to-pink-600"
+              trend={getPercentChange(
+                dashboardData.approvedBlogs,
+                dashboardData.yesterdayApprovedBlogs
+              )}
               description="Bài viết hợp lệ"
             />
           </div>
@@ -274,13 +265,13 @@ const ManagerBlogs = () => {
         {/* Content Section */}
         {loading ? (
           <SkeletonManagerBlogs />
-        ) : blogsForAuthor.length === 0 ? (
+        ) : dashboardData.blogs.length === 0 ? (
           <EmptyState />
         ) : error ? (
           <ErrorState />
         ) : (
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3 auto-rows-fr">
-            {blogsForAuthor.map((blog, index) => (
+            {dashboardData.blogs.map((blog, index) => (
               <Card
                 key={index}
                 className="group overflow-hidden bg-white border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 flex flex-col h-full"

@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { setSingleBlog } from "@/redux/blogSlice";
-import BlogDetailSkeleton from "../components/BlogDetailSkeleton";
+import BlogDetailSkeleton from "../components/skeletons/BlogDetailSkeleton";
 import NotFound from "@/components/pages/NotFound";
 
 const BlogDetail = () => {

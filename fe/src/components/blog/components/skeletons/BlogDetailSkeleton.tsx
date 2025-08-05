@@ -35,8 +35,6 @@ const BlogDetailSkeleton = () => {
                     <div className="space-y-2">
                       {/* Author name */}
                       <div className="h-5 w-32 bg-gray-200 rounded animate-pulse"></div>
-                      {/* Bio */}
-                      <div className="h-4 w-48 bg-gray-200 rounded animate-pulse"></div>
                       {/* Email */}
                       <div className="h-4 w-40 bg-gray-200 rounded animate-pulse"></div>
                     </div>
