@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { fadeIn, fadeInUp, staggerContainer } from "./../framer-motion-config";
 import { Mail, Phone, MapPin, ArrowRight, Heart } from "lucide-react";
+import logo from "/viejob.png";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -123,7 +124,7 @@ const Footer = () => {
             {/* Simple Professional Logo */}
             <div className="mb-8">
               <img
-                src="viejob.png"
+                src={logo}
                 alt="VieJobs - Nền tảng tuyển dụng hàng đầu Việt Nam"
                 className="h-10 w-auto object-contain"
               />

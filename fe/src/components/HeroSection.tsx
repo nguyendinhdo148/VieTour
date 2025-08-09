@@ -84,7 +84,7 @@ const HeroSection = () => {
   }, []);
 
   return (
-    <section className="relative min-h-[70vh] flex items-center justify-center">
+    <section className="relative min-h-[85vh] flex items-center justify-center">
       {isSearching && <FullScreenLoader />}
 
       {/* Background Elements */}
