@@ -433,18 +433,27 @@ const SalaryCalculator = () => {
                       >
                         <SelectTrigger
                           id="insurance-select"
-                          className="px-4 py-3 text-lg"
+                          className="px-4 py-3 text-lg border-gray-400 hover:bg-gray-50 transition-colors duration-200"
                         >
                           <SelectValue placeholder="Chọn mức đóng bảo hiểm" />
                         </SelectTrigger>
                         <SelectContent className="bg-white rounded-xl border border-gray-300 shadow-sm">
-                          <SelectItem value="official">
+                          <SelectItem
+                            value="official"
+                            className="hover:bg-gray-100 transition-colors duration-200"
+                          >
                             Trên lương chính thức
                           </SelectItem>
-                          <SelectItem value="region">
+                          <SelectItem
+                            value="region"
+                            className="hover:bg-gray-100 transition-colors duration-200"
+                          >
                             Theo lương tối thiểu vùng
                           </SelectItem>
-                          <SelectItem value="cap">
+                          <SelectItem
+                            value="cap"
+                            className="hover:bg-gray-100 transition-colors duration-200"
+                          >
                             Mức trần (20 lương cơ sở)
                           </SelectItem>
                         </SelectContent>
@@ -494,21 +503,33 @@ const SalaryCalculator = () => {
                       >
                         <SelectTrigger
                           id="region-select"
-                          className="px-4 py-3 text-lg"
+                          className="px-4 py-3 text-lg border-gray-400 hover:bg-gray-50 transition-colors duration-200"
                         >
                           <SelectValue placeholder="Chọn vùng" />
                         </SelectTrigger>
                         <SelectContent className="bg-white rounded-xl border border-gray-300 shadow-sm">
-                          <SelectItem value="I">
+                          <SelectItem
+                            value="I"
+                            className="hover:bg-gray-100 transition-colors duration-200"
+                          >
                             Vùng I: {formatCurrency(config.minSalaries.I)}
                           </SelectItem>
-                          <SelectItem value="II">
+                          <SelectItem
+                            value="II"
+                            className="hover:bg-gray-100 transition-colors duration-200"
+                          >
                             Vùng II: {formatCurrency(config.minSalaries.II)}
                           </SelectItem>
-                          <SelectItem value="III">
+                          <SelectItem
+                            value="III"
+                            className="hover:bg-gray-100 transition-colors duration-200"
+                          >
                             Vùng III: {formatCurrency(config.minSalaries.III)}
                           </SelectItem>
-                          <SelectItem value="IV">
+                          <SelectItem
+                            value="IV"
+                            className="hover:bg-gray-100 transition-colors duration-200"
+                          >
                             Vùng IV: {formatCurrency(config.minSalaries.IV)}
                           </SelectItem>
                         </SelectContent>
@@ -530,15 +551,21 @@ const SalaryCalculator = () => {
                       >
                         <SelectTrigger
                           id="effective-date-select"
-                          className="px-4 py-3 text-lg"
+                          className="px-4 py-3 text-lg border-gray-400 hover:bg-gray-50 transition-colors duration-200"
                         >
                           <SelectValue placeholder="Chọn thời điểm" />
                         </SelectTrigger>
                         <SelectContent className="bg-white rounded-xl border border-gray-300 shadow-sm">
-                          <SelectItem value="2024">
+                          <SelectItem
+                            value="2024"
+                            className="hover:bg-gray-100 transition-colors duration-200"
+                          >
                             Từ 01/07/2024 - 30/06/2025
                           </SelectItem>
-                          <SelectItem value="2025">
+                          <SelectItem
+                            value="2025"
+                            className="hover:bg-gray-100 transition-colors duration-200"
+                          >
                             Từ 01/07/2025 (Mới nhất)
                           </SelectItem>
                         </SelectContent>
@@ -556,7 +583,7 @@ const SalaryCalculator = () => {
               <CardFooter className="pt-4">
                 <Button
                   onClick={handleCalculate}
-                  className="w-full py-4 text-lg font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-400 hover:shadow-indigo-600 transition-all duration-200 rounded-xl"
+                  className="w-full py-4 text-lg font-semibold cursor-pointer bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-400 hover:shadow-indigo-600 transition-all duration-200 rounded-xl"
                 >
                   Tính lương {activeTab === "grossToNet" ? "Net" : "Gross"}
                 </Button>

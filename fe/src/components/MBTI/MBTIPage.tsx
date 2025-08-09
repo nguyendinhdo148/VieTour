@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import Navbar from "@/components/shared/Navbar";
 import { Link } from "react-router-dom";
-import AIicon from "./images/AIicon.png";
 import AIINTEL from "./images/AIINTEL.png";
 import Footer from "../Footer";
 import { mbtiTypes } from "@/lib/mbtiTypes";
@@ -9,7 +8,7 @@ import { ArrowRight } from "lucide-react";
 
 const MBTIPage = () => {
   const [isBannerHovered, setIsBannerHovered] = useState(false);
-  const [translateX, setTranslateX] = useState(0);
+  const translateX = 0;
   const bannerRef = useRef<HTMLDivElement | null>(null);
   const animationDuration = 40000; // 40s
   const bannerWidthRef = useRef(0);
@@ -52,6 +51,7 @@ const MBTIPage = () => {
       });
     };
   }, [visibleSections]);
+
   useEffect(() => {
     if (!bannerRef.current) return;
 

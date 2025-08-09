@@ -103,11 +103,19 @@ const CompanyJobs = ({ jobs, isJobsLoading }: CompanyJobsProps) => {
           Cơ hội nghề nghiệp ({jobs.length})
         </h3>
         <div className="flex items-center gap-3">
-          <Button variant="outline" size="sm">
+          <Button
+            variant="outline"
+            size="sm"
+            className="border border-gray-300"
+          >
             <Filter className="h-4 w-4 mr-2" />
             Lọc
           </Button>
-          <Button variant="outline" size="sm">
+          <Button
+            variant="outline"
+            size="sm"
+            className="border border-gray-300"
+          >
             <SortDesc className="h-4 w-4 mr-2" />
             Sắp xếp
           </Button>
@@ -122,13 +130,13 @@ const CompanyJobs = ({ jobs, isJobsLoading }: CompanyJobsProps) => {
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-2xl flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+                <div className="w-16 h-16 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-2xl flex items-center justify-center">
                   <img
                     src={
                       job.company?.logo || "/placeholder.svg?height=32&width=32"
                     }
                     alt="logo"
-                    className="w-8 h-8 object-contain"
+                    className="size-14 object-contain"
                   />
                 </div>
                 <div>
