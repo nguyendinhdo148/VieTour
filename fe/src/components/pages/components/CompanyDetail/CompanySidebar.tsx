@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,15 +12,14 @@ import {
   Calendar,
   Building,
   Share2,
-  Copy,
-  Check,
   Briefcase,
   ExternalLink,
+  Link2,
 } from "lucide-react";
 import { GrInstagram, GrLinkedin, GrTwitter } from "react-icons/gr";
 import { FaFacebookF } from "react-icons/fa";
-import toast from "react-hot-toast";
 import type { Company } from "@/types/company";
+import handleCopyLink from "@/components/helpers/HandleCopyLink";
 
 interface CompanySidebarProps {
   company: Company;
@@ -29,19 +27,6 @@ interface CompanySidebarProps {
 }
 
 const CompanySidebar = ({ company, viewCount }: CompanySidebarProps) => {
-  const [copied, setCopied] = useState(false);
-
-  const handleCopyLink = async () => {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      setCopied(true);
-      toast.success("Đã sao chép link!");
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      toast.error("Không thể sao chép link");
-    }
-  };
-
   return (
     <div className="space-y-6">
       {/* Quick Stats */}
@@ -215,18 +200,12 @@ const CompanySidebar = ({ company, viewCount }: CompanySidebarProps) => {
               className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-500"
             />
             <Button
-              size="sm"
+              size="default"
               variant="outline"
-              onClick={handleCopyLink}
-              className={`transition-all duration-300 ${
-                copied ? "bg-green-50 border-green-200 text-green-700" : ""
-              }`}
+              onClick={() => handleCopyLink(window.location.href)}
+              className="cursor-pointer aspect-square bg-emerald-50 hover:bg-emerald-100 border-emerald-200"
             >
-              {copied ? (
-                <Check className="h-4 w-4" />
-              ) : (
-                <Copy className="h-4 w-4" />
-              )}
+              <Link2 className="size-5 text-emerald-600" />
             </Button>
           </div>
         </CardContent>

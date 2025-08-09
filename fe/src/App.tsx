@@ -35,6 +35,26 @@ import UpdateBlog from "./components/blog/screens/UpdateBlog";
 import ManagerBlogs from "./components/blog/screens/ManagerBlogs";
 import NotFound from "./components/pages/NotFound";
 import BlogManagerAdmin from "./components/admin/screeens/BlogManagerAdmin";
+import MBTIPage from "./components/MBTI/MBTIPage";
+import MBTITest from "./components/MBTI/MBTITest";
+import INFPPage from "./components/MBTI/infp";
+import MBTIResult from "./components/MBTI/MBTIResult";
+import INFJPage from "./components/MBTI/infj";
+import INTJPage from "./components/MBTI/intj";
+import INTPPage from "./components/MBTI/intp";
+import ISTJPage from "./components/MBTI/istj";
+import ISFJPage from "./components/MBTI/isfj";
+import ISTPPage from "./components/MBTI/istp";
+import ISFPPage from "./components/MBTI/isfp";
+import ESTPPage from "./components/MBTI/estp";
+import ENFPPage from "./components/MBTI/enfp";
+import ESFPPage from "./components/MBTI/esfp";
+import ENTPPage from "./components/MBTI/entp";
+import ESTJPage from "./components/MBTI/estj";
+import ESFJPage from "./components/MBTI/esfj";
+import ENFJPage from "./components/MBTI/enfj";
+import ENTJPage from "./components/MBTI/entj";
+import SalaryCalculator from "./components/pages/SalaryCalculator";
 
 function App() {
   return (
@@ -62,6 +82,28 @@ function App() {
         <Route path="/blog/create-blog" element={<CreateBlog />} />
         <Route path="/blog/update-blog/:id" element={<UpdateBlog />} />
         <Route path="/blog/manager-blogs" element={<ManagerBlogs />} />
+
+        <Route path="/tools/mbti" element={<MBTIPage />} />
+        <Route path="/tools/mbti/test" element={<MBTITest />} />
+        <Route path="/tools/mbti/result" element={<MBTIResult />} />
+        <Route path="/tools/mbti/tinh-cach/infp" element={<INFPPage />} />
+        <Route path="/tools/mbti/tinh-cach/infj" element={<INFJPage />} />
+        <Route path="/tools/mbti/tinh-cach/intj" element={<INTJPage />} />
+        <Route path="/tools/mbti/tinh-cach/intp" element={<INTPPage />} />
+        <Route path="/tools/mbti/tinh-cach/istj" element={<ISTJPage />} />
+        <Route path="/tools/mbti/tinh-cach/isfj" element={<ISFJPage />} />
+        <Route path="/tools/mbti/tinh-cach/istp" element={<ISTPPage />} />
+        <Route path="/tools/mbti/tinh-cach/isfp" element={<ISFPPage />} />
+        <Route path="/tools/mbti/tinh-cach/estp" element={<ESTPPage />} />
+        <Route path="/tools/mbti/tinh-cach/esfp" element={<ESFPPage />} />
+        <Route path="/tools/mbti/tinh-cach/enfp" element={<ENFPPage />} />
+        <Route path="/tools/mbti/tinh-cach/entp" element={<ENTPPage />} />
+        <Route path="/tools/mbti/tinh-cach/estj" element={<ESTJPage />} />
+        <Route path="/tools/mbti/tinh-cach/esfj" element={<ESFJPage />} />
+        <Route path="/tools/mbti/tinh-cach/enfj" element={<ENFJPage />} />
+        <Route path="/tools/mbti/tinh-cach/entj" element={<ENTJPage />} />
+
+        <Route path="/tools/gross-net" element={<SalaryCalculator />} />
 
         {/* Recruiter routes */}
         <Route path="/recruiter" element={<RecruiterLayout />}>
