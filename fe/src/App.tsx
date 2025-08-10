@@ -55,6 +55,9 @@ import ESFJPage from "./components/MBTI/esfj";
 import ENFJPage from "./components/MBTI/enfj";
 import ENTJPage from "./components/MBTI/entj";
 import SalaryCalculator from "./components/pages/SalaryCalculator";
+import MIPage from "./components/MI/MIPage";
+import MITest from "./components/MI/MITest";
+import MIResult from "./components/MI/MIResult";
 
 function App() {
   return (
@@ -83,6 +86,8 @@ function App() {
         <Route path="/blog/update-blog/:id" element={<UpdateBlog />} />
         <Route path="/blog/manager-blogs" element={<ManagerBlogs />} />
 
+        {/* Tools */}
+        {/* MBTI */}
         <Route path="/tools/mbti" element={<MBTIPage />} />
         <Route path="/tools/mbti/test" element={<MBTITest />} />
         <Route path="/tools/mbti/result" element={<MBTIResult />} />
@@ -102,6 +107,11 @@ function App() {
         <Route path="/tools/mbti/tinh-cach/esfj" element={<ESFJPage />} />
         <Route path="/tools/mbti/tinh-cach/enfj" element={<ENFJPage />} />
         <Route path="/tools/mbti/tinh-cach/entj" element={<ENTJPage />} />
+
+        {/* MI */}
+        <Route path="/tools/mi" element={<MIPage />} />
+        <Route path="/tools/mi/test" element={<MITest />} />
+        <Route path="/tools/mi/result" element={<MIResult />} />
 
         <Route path="/tools/gross-net" element={<SalaryCalculator />} />
 

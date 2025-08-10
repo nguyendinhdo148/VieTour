@@ -430,28 +430,33 @@ const MBTIResult = () => {
             </div>
             <ul className="space-y-4">
               {result.strengths
-                .filter((s) => s && s.trim() !== "") // lọc bỏ chuỗi rỗng hoặc chỉ toàn khoảng trắng
-                .map((strength, i) => (
-                  <li key={i} className="flex items-start">
-                    <span className="text-green-500 mr-3 mt-1">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </span>
-                    <span className="text-gray-700 leading-relaxed">
-                      {strength}
-                    </span>
-                  </li>
-                ))}
+                .filter((s) => s && s.trim() !== "")
+                .map((strength, i) => {
+                  const cleanText = strength
+                    .replace(/\*\*/g, "") // bỏ dấu ** trong câu
+                    .replace(/^\*\s*/, ""); // bỏ dấu * và khoảng trắng ở đầu
+                  return (
+                    <li key={i} className="flex items-start">
+                      <span className="text-green-500 mr-3 mt-1">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      </span>
+                      <span className="text-gray-700 leading-relaxed">
+                        {cleanText}
+                      </span>
+                    </li>
+                  );
+                })}
             </ul>
           </section>
 
@@ -464,12 +469,17 @@ const MBTIResult = () => {
               </h2>
             </div>
             <ul className="space-y-4">
-              {result.weaknesses.map((weakness, i) => (
-                <li key={i} className="flex items-start">
-                  <span className="text-red-500 mr-2 mt-1">⚠️</span>
-                  <span className="text-gray-700">{weakness}</span>
-                </li>
-              ))}
+              {result.weaknesses.map((weakness, i) => {
+                const cleanText = weakness
+                  .replace(/\*\*/g, "") // bỏ dấu ** trong câu
+                  .replace(/^\*\s*/, ""); // bỏ dấu * và khoảng trắng ở đầu
+                return (
+                  <li key={i} className="flex items-start">
+                    <span className="text-red-500 mr-2 mt-[-1px]">⚠️</span>
+                    <span className="text-gray-700">{cleanText}</span>
+                  </li>
+                );
+              })}
             </ul>
           </section>
         </div>
@@ -638,22 +648,22 @@ const MBTIResult = () => {
         <div className="flex flex-col sm:flex-row justify-center gap-6 mt-12">
           <Link
             to={mbtiDetailPath}
-            className="px-8 py-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-medium rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center"
+            className="px-8 py-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:from-indigo-600 hover:to-purple-700 font-medium rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center"
           >
             <div className="flex items-center gap-2">
               <Pointer className="size-6" />
               Chi tiết tính cách
             </div>
           </Link>
-          <button
+          <Link
+            to={"/tools/mbti/test"}
             className="px-8 py-4 bg-white border-2 border-indigo-500 text-indigo-600 font-medium rounded-xl shadow-md hover:bg-indigo-50 transition-all flex items-center justify-center cursor-pointer"
-            onClick={() => (window.location.href = "/tools/mbti/test")}
           >
             <div className="flex items-center gap-2">
               <RefreshCcw className="size-6" />
               Làm Lại Trắc Nghiệm
             </div>
-          </button>
+          </Link>
         </div>
 
         {/* Footer Note */}

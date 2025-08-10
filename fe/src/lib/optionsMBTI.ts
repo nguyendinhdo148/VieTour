@@ -1,0 +1,156 @@
+export const optionsMBTI = [
+  [
+    "Thoải mái trò chuyện với tất cả mọi người, kể cả người lạ",
+    "Chỉ tương tác với những người bạn quen",
+  ],
+  ["Thực tế hơn là suy đoán", "Suy đoán hơn là thực tế"],
+  ["Đầu óc trên mây, viển vông và phi thực tế", "Nhàm chán, đơn điệu"],
+  ["Nguyên lý, nguyên tắc", "Cảm xúc, tình cảm"],
+  [
+    "Logic, dựa trên bằng chứng và lý lẽ",
+    "Cảm động, thiên về cảm xúc và tình người",
+  ],
+  ["Với thời hạn (deadline) rõ ràng", "Tùy hứng, linh hoạt"],
+  [
+    "Xem xét kỹ lưỡng từ nhiều khía cạnh",
+    "Tin vào suy đoán và linh cảm của mình",
+  ],
+  [
+    "Muốn tận hưởng bữa tiệc và ở lại đến cuối cùng",
+    "Nhanh chóng thấy mệt mỏi và muốn ra về sớm",
+  ],
+  ["Người logic và thực tế", "Người có khả năng tưởng tượng phong phú"],
+  ["Đã và đang xảy ra", "Có khả năng xảy ra"],
+  ["Quy định, nguyên tắc", "Hoàn cảnh cụ thể"],
+  ["Khách quan", "Chủ quan"],
+  ["Luôn đúng giờ", "Thong thả, linh hoạt về thời gian"],
+  [
+    "Cảm thấy nhẹ nhõm và bắt đầu lên lịch đi chơi",
+    "Lo lắng về kết quả sẽ đạt được",
+  ],
+  ["Luôn nắm bắt thông tin kịp thời", "Biết thông tin muộn hơn"],
+  ["Làm theo cách thông thường", "Làm theo cách của riêng mình"],
+  [
+    "Viết chính xác những gì họ nghĩ, diễn đạt một cách rõ ràng, nghĩa trên mặt chữ",
+    "Diễn đạt bằng biện pháp so sánh, liên tưởng, ví von thâm sâu",
+  ],
+  ["Tính nhất quán trong tư tưởng", "Mối quan hệ hài hòa giữa người với người"],
+  ["Dựa trên logic", "Dựa trên quan điểm, giá trị cá nhân"],
+  ["Theo kế hoạch và ổn định", "Linh hoạt và có thể thay đổi"],
+  ["Nghiêm túc, quyết đoán", "Dễ tính, thoải mái"],
+  [
+    "Hiếm khi băn khoăn đến những điều mình sẽ nói",
+    "Thường chuẩn bị trước những điều mình sẽ nói",
+  ],
+  [
+    "Tự nói lên bản chất của chính nó",
+    "Tồn tại để minh họa cho các quy luật, quy tắc khác",
+  ],
+  [
+    "Ở mức độ nào đó, họ thường gây khó chịu cho người khác",
+    "Khá thú vị, lôi cuốn",
+  ],
+  ["Có cái đầu lạnh", "Có trái tim ấm"],
+  ["Sự bất công", "Sự tàn nhẫn"],
+  [
+    "Dựa trên việc cân nhắc và lựa chọn kỹ lưỡng",
+    "Thuận theo tự nhiên, nước chảy mây trôi",
+  ],
+  ["Đã mua được thứ mình muốn", "Đang trong quá trình lựa chọn"],
+  ["Khởi xướng các câu chuyện", "Đợi người khác khởi xướng rồi tham gia vào"],
+  ["Tin tưởng không nghi ngờ", "Không ngừng đặt nghi vấn về tính chính xác"],
+  [
+    "Tự mình phát huy hết năng lực",
+    "Khai thác tối đa trí tưởng tượng của mình",
+  ],
+  ["Nhu cầu sử dụng", "Sở thích cá nhân"],
+  ["Cứng rắn", "Mềm mỏng"],
+  [
+    "Tổ chức và làm việc bài bản, có phương pháp, hệ thống",
+    "Dễ dàng thích ứng và linh hoạt trong mọi tình huống",
+  ],
+  ["Chuyên môn xuất sắc", "Tư duy cởi mở"],
+  ["Hào hứng, tràn đầy năng lượng", "Mệt mỏi, nhanh chóng bị hút cạn sức lực"],
+  ["Thực tế", "Mơ mộng"],
+  [
+    "Giá trị thực tế mà một người mang lại",
+    "Cảm nhận, suy nghĩ của đối phương",
+  ],
+  [
+    "Thảo luận kỹ lưỡng về một vấn đề (quá trình)",
+    "Thống nhất được hướng giải quyết cho một vấn đề (kết quả)",
+  ],
+  [
+    "Công việc bạn không thực sự thích nhưng đem lại thu nhập cao",
+    "Công việc mà bạn hằng mơ ước nhưng thu nhập trung bình",
+  ],
+  [
+    "Giao việc trọn gói, bàn giao 100% sau khi hoàn thành",
+    "Giao việc hàng ngày, từng bước hoàn thành công việc",
+  ],
+  ["Được sắp xếp theo thứ tự rõ ràng", "Ngẫu nhiên, tùy hứng"],
+  [
+    "Với nhiều bạn nhưng không quá thân",
+    "Với ít bạn nhưng tình cảm khăng khít",
+  ],
+  ["Tình hình thực tế", "Nguyên tắc, luật lệ"],
+  ["Sản xuất và phân phối", "Thiết kế và nghiên cứu"],
+  ["Là người có tư duy logic", "Là người tinh tế, tình cảm"],
+  ["Tinh thần kiên định, vững vàng", "Sự toàn tâm, cống hiến"],
+  [
+    "Tuyên bố cuối cùng, không thay đổi",
+    "Tuyên bố mang tính dự kiến, có thể thay đổi",
+  ],
+  ["Trước khi đưa ra quyết định", "Sau khi đưa ra quyết định"],
+  [
+    "Tôi có thể dễ dàng bắt chuyện với người lạ",
+    "Tôi không có hứng thú trò chuyện với người lạ",
+  ],
+  ["Kinh nghiệm của mình", "Linh cảm của mình"],
+  [
+    "Giải quyết vấn đề một cách thực tế và hiệu quả (có thể áp dụng được ngay)",
+    "Nghĩ ra những giải pháp sáng tạo và độc đáo (có thể không thực hiện ngay được)",
+  ],
+  ["Giàu lý trí", "Giàu cảm xúc"],
+  ["Sự công bằng", "Sự đồng cảm"],
+  ["Được chuẩn bị trước", "Diễn ra tự nhiên"],
+  [
+    "Điều gì cũng có thể thương lượng và điều chỉnh lại để đạt được sự đồng thuận chung",
+    "Nên để mọi chuyện diễn ra tự nhiên, thuận theo hoàn cảnh đưa đẩy",
+  ],
+  ["Nhấc máy ngay để xem ai đang gọi", "Chần chừ không nghe máy"],
+  [
+    "Đưa ra quyết định dựa trên số liệu thực tế",
+    "Đưa ra quyết định dựa trên trực giác và linh cảm",
+  ],
+  ["Những nguyên tắc cơ bản", "Những ẩn ý sâu xa"],
+  [
+    "Quá cảm xúc (dễ bị tình cảm chi phối)",
+    "Quá lý trí (không dễ bị ảnh hưởng bởi yếu tố cảm xúc)",
+  ],
+  [
+    "Mạnh mẽ, quyết đoán, không dễ bị thuyết phục",
+    "Mềm mỏng, dễ bị thuyết phục, dễ thay đổi quan điểm dưới ảnh hưởng của người khác",
+  ],
+  ["Lên lịch trình chi tiết, rõ ràng", "Tới đâu hay tới đó"],
+  ["Làm việc theo thói quen", "Hay thay đổi, thích thử nghiệm những điều mới"],
+  ["Cởi mở, dễ gần", "Kín tiếng, khó đoán"],
+  [
+    "Viết những áng văn bay bổng (thiên về nghĩa bóng)",
+    "Viết về những điều thực tế (thiên về nghĩa đen)",
+  ],
+  [
+    "Hiểu và chia sẻ với cấp dưới",
+    "Bỏ qua yếu tố cảm xúc, công việc là quan trọng nhất",
+  ],
+  ["Lý trí hơn", "Tình cảm hơn"],
+  [
+    "Hành động thiếu suy nghĩ, gây ra sai phạm lớn",
+    "Sự chỉ trích, phê phán nghiêm khắc quá mức",
+  ],
+  [
+    "Sự kiện đã được lên kế hoạch trước",
+    "Sự kiện chưa được lên kế hoạch trước",
+  ],
+  ["Cân nhắc thận trọng", "Tự nhiên, tự phát"],
+];

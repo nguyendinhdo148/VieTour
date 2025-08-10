@@ -5,6 +5,7 @@ import AIINTEL from "./images/AIINTEL.png";
 import Footer from "../Footer";
 import { mbtiTypes } from "@/lib/mbtiTypes";
 import { ArrowRight } from "lucide-react";
+import bgMBTI from "/mbti_icons/bgMBTI.png";
 
 const MBTIPage = () => {
   const [isBannerHovered, setIsBannerHovered] = useState(false);
@@ -24,6 +25,7 @@ const MBTIPage = () => {
   const toggleFAQ = (index: number) => {
     setActiveFAQ(activeFAQ === index ? null : index);
   };
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -100,7 +102,7 @@ const MBTIPage = () => {
         }`}
         style={{
           minHeight: "530px",
-          backgroundImage: `url('/mbti_icons/bg.jpg')`,
+          backgroundImage: `url(${bgMBTI})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
