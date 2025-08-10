@@ -4,38 +4,43 @@ import Navbar from "@/components/shared/Navbar";
 import axios from "axios";
 import { API } from "@/utils/constant";
 import toast from "react-hot-toast";
-import { questionsMBTI } from "@/lib/questionsMBTI";
-import { optionsMBTI } from "@/lib/optionsMBTI";
+import { questionsMI } from "@/lib/questionsMI";
 
-const MBTITest = () => {
+const intelligenceCategories = [
+  { name: "Vận động", start: 1, end: 6 },
+  { name: "Âm nhạc", start: 7, end: 12 },
+  { name: "Thiên nhiên", start: 13, end: 18 },
+  { name: "Không gian", start: 19, end: 24 },
+  { name: "Triết học", start: 25, end: 30 },
+  { name: "Ngôn ngữ", start: 31, end: 36 },
+  { name: "Xã hội", start: 37, end: 42 },
+  { name: "Nội tâm", start: 43, end: 48 },
+  { name: "Logic", start: 49, end: 56 },
+];
+
+const MITest = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [answers, setAnswers] = useState<number[]>(Array(70).fill(-1));
+  const [answers, setAnswers] = useState<number[]>(
+    Array(questionsMI.length).fill(-1)
+  );
   const [gender, setGender] = useState<"male" | "female" | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
   const navigate = useNavigate();
 
-  // Hàm tính MBTI type từ đáp án
-  const calculateMBTIType = (answers: number[]): string => {
-    const dimensions = [
-      ["E", "I"],
-      ["S", "N"],
-      ["T", "F"],
-      ["J", "P"],
-    ];
+  // Hàm tính điểm cho từng loại trí thông minh
+  const calculateMIScores = (answers: number[]): Record<string, number> => {
+    const scores: Record<string, number> = {};
 
-    let mbtiType = "";
+    intelligenceCategories.forEach((category) => {
+      let sum = 0;
+      for (let i = category.start - 1; i < category.end; i++) {
+        sum += answers[i] !== -1 ? answers[i] + 1 : 0; // Chuyển từ 0-4 thành 1-5
+      }
+      scores[category.name] = sum;
+    });
 
-    for (let i = 0; i < 4; i++) {
-      const startIdx = i * 10;
-      const endIdx = startIdx + 10;
-      const dimensionAnswers = answers.slice(startIdx, endIdx);
-      const typeACount = dimensionAnswers.filter((a) => a === 0).length;
-      const typeBCount = dimensionAnswers.filter((a) => a === 1).length;
-      mbtiType += typeACount > typeBCount ? dimensions[i][0] : dimensions[i][1];
-    }
-
-    return mbtiType;
+    return scores;
   };
 
   const handleAnswer = (optionIndex: number) => {
@@ -43,10 +48,10 @@ const MBTITest = () => {
     newAnswers[currentQuestion] = optionIndex;
     setAnswers(newAnswers);
 
-    // Nếu chưa phải câu cuối thì tăng câu lên; nếu câu cuối thì tăng để sang bước tiếp theo
-    if (currentQuestion < questionsMBTI.length - 1 && !showSummary) {
+    // Tự động chuyển câu tiếp theo nếu không phải là câu cuối
+    if (currentQuestion < questionsMI.length - 1 && !showSummary) {
       setCurrentQuestion(currentQuestion + 1);
-    } else if (currentQuestion === questionsMBTI.length - 1 && !showSummary) {
+    } else if (currentQuestion === questionsMI.length - 1 && !showSummary) {
       setCurrentQuestion(currentQuestion + 1);
     }
   };
@@ -58,19 +63,31 @@ const MBTITest = () => {
     }
 
     if (!gender) {
-      toast("Vui lòng chọn giới tính của bạn!");
+      toast.error("Vui lòng chọn giới tính của bạn!");
       return;
     }
 
     setIsSubmitting(true);
     try {
-      const mbtiType = calculateMBTIType(answers);
+      const miScores = calculateMIScores(answers);
+
+      // Tìm loại hình thông minh nổi trội nhất
+      let dominantIntelligence = "";
+      let maxScore = 0;
+      for (const [intelligence, score] of Object.entries(miScores)) {
+        if (score > maxScore) {
+          maxScore = score;
+          dominantIntelligence = intelligence;
+        }
+      }
+
       const response = await axios.post(
-        `${API}/mbti/advanced-analysis`,
+        `${API}/mi/advanced-analysis`,
         {
           answers,
           gender,
-          mbtiType,
+          miScores,
+          dominantIntelligence,
         },
         {
           headers: { "Content-Type": "application/json" },
@@ -78,8 +95,12 @@ const MBTITest = () => {
         }
       );
 
-      const result = response.data;
-      navigate("/tools/mbti/result", { state: { result } });
+      if (!response) {
+        throw new Error(`HTTP error! status: ${response}`);
+      }
+
+      const result = await response.data;
+      navigate("/tools/mi/result", { state: { result } });
     } catch (error) {
       console.error("Error submitting test:", error);
       toast.error("Có lỗi xảy ra khi xử lý kết quả. Vui lòng thử lại!");
@@ -98,18 +119,34 @@ const MBTITest = () => {
 
   const answeredCount = answers.filter((answer) => answer !== -1).length;
 
+  // Lấy màu sắc cho từng loại trí thông minh
+  const getCategoryColor = (categoryName: string): string => {
+    const colors: Record<string, string> = {
+      "Vận động": "bg-red-100 text-red-800",
+      "Âm nhạc": "bg-yellow-100 text-yellow-800",
+      "Thiên nhiên": "bg-green-100 text-green-800",
+      "Không gian": "bg-purple-100 text-purple-800",
+      "Triết học": "bg-gray-100 text-gray-800",
+      "Ngôn ngữ": "bg-blue-100 text-blue-800",
+      "Xã hội": "bg-pink-100 text-pink-800",
+      "Nội tâm": "bg-indigo-100 text-indigo-800",
+      Logic: "bg-teal-100 text-teal-800",
+    };
+    return colors[categoryName] || "bg-gray-100 text-gray-800";
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 pb-6">
       <Navbar />
 
       <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden my-8">
         {/* Header */}
-        <div className="bg-gradient-to-r from-violet-600 via-blue-500 to-purple-600 text-white py-8 px-6 text-center">
+        <div className="bg-gradient-to-r from-indigo-600 via-blue-500 to-purple-600 text-white py-8 px-6 text-center">
           <h1 className="text-3xl md:text-4xl font-bold mb-2">
-            Làm bài trắc nghiệm MBTI miễn phí
+            Làm bài trắc nghiệm Đa trí thông minh MI
           </h1>
           <p className="text-lg">
-            Khám phá tiềm năng bản thân, tỏa sáng năng lực nghề nghiệp
+            Khám phá loại hình thông minh nổi trội của bạn
           </p>
         </div>
 
@@ -117,17 +154,17 @@ const MBTITest = () => {
         <div className="px-6 pt-6">
           <div className="flex justify-between items-center mb-2">
             <span className="text-sm font-medium">
-              Tiến độ: {answeredCount}/{questionsMBTI.length}
+              Tiến độ: {answeredCount}/{questionsMI.length}
             </span>
             <span className="text-sm font-medium">
-              {Math.round((answeredCount / questionsMBTI.length) * 100)}%
+              {Math.round((answeredCount / questionsMI.length) * 100)}%
             </span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2.5">
             <div
               className="bg-blue-600 h-2.5 rounded-full"
               style={{
-                width: `${(answeredCount / questionsMBTI.length) * 100}%`,
+                width: `${(answeredCount / questionsMI.length) * 100}%`,
               }}
             ></div>
           </div>
@@ -135,14 +172,14 @@ const MBTITest = () => {
 
         {/* Main content */}
         <div className="p-6 md:p-8">
-          {currentQuestion < questionsMBTI.length ? (
+          {currentQuestion < questionsMI.length ? (
             <>
               {/* Summary toggle button */}
               <button
                 onClick={toggleSummary}
                 className="mb-4 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition"
               >
-                {showSummary ? "Ẩn bảng đáp án" : "Hiển thị bảng đáp án"}
+                {showSummary ? "Ẩn bảng trả lời" : "Hiển thị bảng trả lời"}
               </button>
 
               {/* Answers summary */}
@@ -150,7 +187,7 @@ const MBTITest = () => {
                 <div className="mb-6 p-4 border border-gray-200 rounded-lg">
                   <h3 className="font-bold mb-2">Tổng hợp câu trả lời:</h3>
                   <div className="grid grid-cols-5 gap-2">
-                    {questionsMBTI.map((_, index) => (
+                    {questionsMI.map((_, index) => (
                       <button
                         key={index}
                         onClick={() => {
@@ -167,32 +204,66 @@ const MBTITest = () => {
                       </button>
                     ))}
                   </div>
+                  <div className="mt-4">
+                    <h4 className="font-semibold mb-2">Phân loại câu hỏi:</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {intelligenceCategories.map((category) => (
+                        <span
+                          key={category.name}
+                          className={`px-3 py-1 rounded-full text-xs ${getCategoryColor(
+                            category.name
+                          )}`}
+                        >
+                          {category.name} ({category.start}-{category.end})
+                        </span>
+                      ))}
+                    </div>
+                  </div>
                   <div className="mt-2 text-sm text-gray-600">
                     <span className="text-green-600">●</span> Đã trả lời:{" "}
                     {answeredCount} |<span className="text-red-600"> ●</span>{" "}
-                    Chưa trả lời: {questionsMBTI.length - answeredCount}
+                    Chưa trả lời: {questionsMI.length - answeredCount}
                   </div>
                 </div>
               )}
 
               {/* Current question */}
-              <h2 className="text-xl md:text-2xl font-bold mb-6 text-gray-800">
-                {questionsMBTI[currentQuestion]}
-              </h2>
+              <div className="min-h-[120px] flex items-center mb-6">
+                <h2 className="text-xl md:text-2xl font-bold text-gray-800">
+                  {questionsMI[currentQuestion]}
+                </h2>
+              </div>
 
               {/* Options */}
               <div className="space-y-4">
-                {optionsMBTI[currentQuestion].map((option, index) => (
+                {[0, 1, 2, 3, 4].map((optionIndex) => (
                   <button
-                    key={index}
+                    key={optionIndex}
                     className={`w-full text-left p-4 rounded-lg border-2 transition-all ${
-                      answers[currentQuestion] === index
+                      answers[currentQuestion] === optionIndex
                         ? "border-blue-500 bg-blue-50"
                         : "border-gray-200 hover:border-blue-300"
                     }`}
-                    onClick={() => handleAnswer(index)}
+                    onClick={() => handleAnswer(optionIndex)}
                   >
-                    {option}
+                    <div className="flex items-center">
+                      <span
+                        className={`inline-flex items-center justify-center w-6 h-6 rounded-full mr-3 text-sm font-medium ${
+                          answers[currentQuestion] === optionIndex
+                            ? "bg-blue-500 text-white"
+                            : "bg-gray-200 text-gray-600"
+                        }`}
+                      >
+                        {optionIndex + 1}
+                      </span>
+                      <span>
+                        {optionIndex === 0 && "Hoàn toàn sai"}
+                        {optionIndex === 1 && "Thường là sai"}
+                        {optionIndex === 2 && "Không rõ ràng"}
+                        {optionIndex === 3 && "Đôi lúc đúng"}
+                        {optionIndex === 4 && "Hoàn toàn đúng"}
+                      </span>
+                    </div>
                   </button>
                 ))}
               </div>
@@ -207,14 +278,14 @@ const MBTITest = () => {
                   Quay lại
                 </button>
                 <span className="text-gray-500 self-center">
-                  Câu {currentQuestion + 1}/{questionsMBTI.length}
+                  Câu {currentQuestion + 1}/{questionsMI.length}
                 </span>
                 <button
                   className="px-4 py-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition"
                   onClick={() => {
-                    if (currentQuestion < questionsMBTI.length - 1) {
+                    if (currentQuestion < questionsMI.length - 1) {
                       setCurrentQuestion(currentQuestion + 1);
-                    } else if (currentQuestion === questionsMBTI.length - 1) {
+                    } else if (currentQuestion === questionsMI.length - 1) {
                       setCurrentQuestion(currentQuestion + 1);
                     }
                   }}
@@ -258,7 +329,7 @@ const MBTITest = () => {
               </div>
 
               <button
-                className="px-6 py-3 cursor-pointer bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-purple-700 transition disabled:opacity-50"
+                className="px-6 py-3 cursor-pointer bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg font-medium hover:from-indigo-600 hover:to-purple-700 transition disabled:opacity-50"
                 onClick={handleSubmit}
                 disabled={isSubmitting || !gender}
               >
@@ -272,4 +343,4 @@ const MBTITest = () => {
   );
 };
 
-export default MBTITest;
+export default MITest;

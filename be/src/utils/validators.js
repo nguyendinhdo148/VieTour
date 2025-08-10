@@ -36,3 +36,82 @@ export function getMimeType(filePath) {
 export function readImageAsUint8Array(filePath) {
   return new Uint8Array(fs.readFileSync(filePath));
 }
+
+/**
+ * Kiểm tra điểm số MI có hợp lệ không
+ */
+export function validateMIScores(scores) {
+  const requiredTypes = [
+    "Vận động",
+    "Âm nhạc",
+    "Thiên nhiên",
+    "Không gian",
+    "Triết học",
+    "Ngôn ngữ",
+    "Xã hội",
+    "Nội tâm",
+    "Logic",
+  ];
+
+  // Kiểm tra có đủ 9 loại trí thông minh
+  if (!scores || Object.keys(scores).length !== requiredTypes.length) {
+    return false;
+  }
+
+  // Kiểm tra tất cả các loại đều có mặt và là số
+  return requiredTypes.every(
+    (type) =>
+      scores.hasOwnProperty(type) &&
+      typeof scores[type] === "number" &&
+      scores[type] >= 0
+  );
+}
+
+/**
+ * Kiểm tra loại trí thông minh chủ đạo hợp lệ
+ */
+export function validateDominantIntelligence(type) {
+  const validTypes = [
+    "Vận động",
+    "Âm nhạc",
+    "Thiên nhiên",
+    "Không gian",
+    "Triết học",
+    "Ngôn ngữ",
+    "Xã hội",
+    "Nội tâm",
+    "Logic",
+  ];
+  return validTypes.includes(type);
+}
+
+/**
+ * Kiểm tra mảng answers cho bài test MI (86 câu, điểm 1-5)
+ */
+export function validateMIAnswers(answers) {
+  if (!Array.isArray(answers) || answers.length !== 86) {
+    return false;
+  }
+
+  return answers.every((a) => Number.isInteger(a) && a >= 1 && a <= 5);
+}
+
+/**
+ * Kiểm tra giới tính hợp lệ
+ */
+export function validateGender(gender) {
+  return ["male", "female"].includes(gender);
+}
+
+/**
+ * Kiểm tra dữ liệu gửi lên từ bài test MI
+ */
+export function validateMISubmission(data) {
+  return (
+    data &&
+    validateMIAnswers(data.answers) &&
+    validateGender(data.gender) &&
+    validateMIScores(data.miScores) &&
+    validateDominantIntelligence(data.dominantIntelligence)
+  );
+}

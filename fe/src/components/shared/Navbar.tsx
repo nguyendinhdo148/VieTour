@@ -16,6 +16,7 @@ import {
   NotebookPen,
   Share2,
   SquareChartGantt,
+  BrainCog,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -144,6 +145,15 @@ const Navbar = () => {
                       >
                         <Brain className="w-4 h-4 text-indigo-500" />
                         Trắc nghiệm MBTI
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/tools/mi"
+                        className="flex items-center gap-3 text-gray-700 hover:text-indigo-600 transition"
+                      >
+                        <BrainCog className="w-4 h-4 text-indigo-500" />
+                        Trắc nghiệm MI
                       </Link>
                     </li>
                     <li>
