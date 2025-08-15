@@ -11,7 +11,9 @@ import Swal from "sweetalert2";
 interface BlogFormData {
   title: string;
   content: string;
-  image: string | File;
+  image: {
+    url: string | File;
+  };
   tags: string[];
   category: string;
 }
@@ -24,7 +26,9 @@ const UpdateBlog = () => {
   const [formData, setFormData] = useState<BlogFormData>({
     title: "",
     content: "",
-    image: "",
+    image: {
+      url: "",
+    },
     tags: [],
     category: "",
   });
@@ -44,18 +48,18 @@ const UpdateBlog = () => {
         setFormData({
           title: blog.title,
           content: blog.content,
-          image: blog.image,
+          image: { url: blog.image.url },
           tags: blog.tags,
           category: blog.category,
         });
         setOriginalData({
           title: blog.title,
           content: blog.content,
-          image: blog.image,
+          image: blog.image.url,
           tags: blog.tags,
           category: blog.category,
         });
-        setImagePreview(blog.image);
+        setImagePreview(blog.image.url);
       } else {
         throw new Error("Không thể tải dữ liệu bài viết");
       }
@@ -109,7 +113,7 @@ const UpdateBlog = () => {
     if (!file) return;
     setFormData((prev) => ({
       ...prev,
-      image: file,
+      image: { url: file },
     }));
     setImagePreview(URL.createObjectURL(file));
   };
@@ -149,8 +153,8 @@ const UpdateBlog = () => {
     blogFormData.append("category", formData.category);
     blogFormData.append("tags", formData.tags.join(", "));
 
-    if (formData.image) {
-      blogFormData.append("file", formData.image);
+    if (formData.image.url) {
+      blogFormData.append("file", formData.image.url);
     }
 
     try {

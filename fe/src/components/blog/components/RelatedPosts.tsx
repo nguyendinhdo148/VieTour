@@ -60,7 +60,7 @@ const RelatedPosts = ({ currentSlug }: { currentSlug: string }) => {
               <CardContent className="p-4">
                 <div className="flex gap-3">
                   <img
-                    src={post.image || "/placeholder.svg?height=80&width=80"}
+                    src={post.image.url || "/placeholder.svg?height=80&width=80"}
                     alt={post.title}
                     className="size-24 object-cover rounded-lg flex-shrink-0"
                   />

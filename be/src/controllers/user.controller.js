@@ -217,7 +217,10 @@ export const updateProfile = async (req, res, next) => {
       try {
         const fileUri = getDataUri(req.file);
         const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
-        profileResume = cloudResponse.secure_url;
+        profileResume = {
+          url: cloudResponse.secure_url,
+          public_id: cloudResponse.public_id,
+        };
         profileResumeOriginalName = req.file.originalname;
       } catch (uploadError) {
         console.error("File upload error:", uploadError);
@@ -253,7 +256,11 @@ export const updateProfile = async (req, res, next) => {
     user.profile.bio = bio;
     user.profile.skills = skillsArray;
 
+    // delete old resume
     if (profileResume) {
+      if (user.profile?.resume?.public_id) {
+        await cloudinary.uploader.destroy(user.profile.resume.public_id);
+      }
       user.profile.resume = profileResume;
       user.profile.resumeOriginalName = profileResumeOriginalName;
     }
@@ -298,7 +305,10 @@ export const updateAvatar = async (req, res, next) => {
       try {
         const fileUri = getDataUri(req.file);
         const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
-        profilePhotoUrl = cloudResponse.secure_url;
+        profilePhotoUrl = {
+          url: cloudResponse.secure_url,
+          public_id: cloudResponse.public_id,
+        };
       } catch (uploadError) {
         console.error("File upload error:", uploadError);
         return res.status(500).json({
@@ -306,6 +316,11 @@ export const updateAvatar = async (req, res, next) => {
           success: false,
         });
       }
+    }
+
+    // delete old avatar
+    if (user.profile?.profilePhoto?.public_id) {
+      await cloudinary.uploader.destroy(user.profile.profilePhoto.public_id);
     }
 
     // update profile

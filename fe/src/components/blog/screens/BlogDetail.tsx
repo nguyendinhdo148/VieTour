@@ -73,7 +73,7 @@ const BlogDetail = () => {
                     <Avatar className="size-18 ring-3 ring-gray-200 shadow-lg">
                       <AvatarImage
                         src={
-                          singleBlog?.created_by?.profile?.profilePhoto ||
+                          singleBlog?.created_by?.profile?.profilePhoto?.url ||
                           "/placeholder.svg"
                         }
                         alt={singleBlog?.created_by?.fullname}
@@ -144,7 +144,7 @@ const BlogDetail = () => {
               {/* Featured Image */}
               <div className="relative overflow-hidden rounded-2xl shadow-2xl">
                 <img
-                  src={singleBlog?.image || "/placeholder.svg"}
+                  src={singleBlog?.image.url || "/placeholder.svg"}
                   alt={singleBlog?.title}
                   className="w-full h-[400px] md:h-[500px] object-cover transition-transform duration-700 hover:scale-105"
                 />

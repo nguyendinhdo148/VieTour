@@ -438,7 +438,7 @@ const BlogManagerAdmin = () => {
                       <div className="flex items-start gap-3">
                         {blog.image && (
                           <img
-                            src={blog.image}
+                            src={blog.image.url}
                             alt={blog.title}
                             className="w-12 h-12 object-cover rounded-md"
                           />

@@ -41,7 +41,10 @@ export const createBlog = async (req, res, next) => {
       try {
         const fileUri = getDataUri(req.file);
         const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
-        image = cloudResponse.secure_url;
+        image = {
+          url: cloudResponse.secure_url,
+          public_id: cloudResponse.public_id,
+        };
       } catch (uploadError) {
         console.error("File upload error:", uploadError);
         return res.status(500).json({
@@ -347,7 +350,10 @@ export const updateBlog = async (req, res, next) => {
       try {
         const fileUri = getDataUri(req.file);
         const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
-        image = cloudResponse.secure_url;
+        image = {
+          url: cloudResponse.secure_url,
+          public_id: cloudResponse.public_id,
+        };
       } catch (uploadError) {
         console.error("File upload error:", uploadError);
         return res.status(500).json({
@@ -357,11 +363,17 @@ export const updateBlog = async (req, res, next) => {
       }
     }
 
+    if (image) {
+      if (blog.image.public_id) {
+        await cloudinary.uploader.destroy(blog.image.public_id);
+      }
+    }
+
     let updateData = {
       title: title || blog.title,
       content: content || blog.content,
       category: category || blog.category,
-      image: image || blog.image,
+      image: image || { url: blog.image.url, public_id: blog.image.public_id },
     };
 
     const slug = generateBlogSlug(

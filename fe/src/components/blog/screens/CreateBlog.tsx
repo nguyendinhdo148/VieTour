@@ -11,7 +11,9 @@ import { RootState } from "@/redux/store";
 interface BlogFormData {
   title: string;
   content: string;
-  image: string | File;
+  image: {
+    url: string | File;
+  };
   tags: string[];
   category: string;
 }
@@ -22,7 +24,9 @@ const CreateBlog = () => {
   const [formData, setFormData] = useState<BlogFormData>({
     title: "",
     content: "",
-    image: "",
+    image: {
+      url: "",
+    },
     tags: [],
     category: "",
   });
@@ -58,7 +62,7 @@ const CreateBlog = () => {
     if (!file) return;
     setFormData((prev) => ({
       ...prev,
-      image: file,
+      image: { url: file },
     }));
     setImagePreview(URL.createObjectURL(file));
   };
@@ -108,7 +112,7 @@ const CreateBlog = () => {
       blogFormData.append("tags", JSON.stringify(formData.tags));
 
       if (formData.image) {
-        blogFormData.append("file", formData.image);
+        blogFormData.append("file", formData.image.url);
       }
 
       const response = await axios.post(

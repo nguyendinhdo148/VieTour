@@ -33,7 +33,7 @@ const DialogDetailBlog = ({
           <div className="space-y-6">
             <div className="aspect-video w-full overflow-hidden rounded-lg">
               <img
-                src={selectedBlog.image || "/placeholder.svg"}
+                src={selectedBlog.image.url || "/placeholder.svg"}
                 alt={selectedBlog.title}
                 className="w-full h-full object-cover"
               />
