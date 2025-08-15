@@ -404,13 +404,13 @@ const MBTIPage = () => {
                     <h3 className="font-bold text-xl text-gray-800 mb-2">
                       {type.code} - {type.label}
                     </h3>
-                    <p className="text-gray-800 text-sm leading-relaxed">
+                    <p className="text-gray-800 text-base leading-relaxed">
                       {type.description}
                     </p>
                     <div className="mt-4 flex justify-center">
                       <Link
                         to={type.path}
-                        className="text-sm font-semibold text-white px-4 py-2 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-300"
+                        className="text-base font-semibold text-white px-4 py-2 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-300"
                       >
                         Xem chi tiết
                       </Link>

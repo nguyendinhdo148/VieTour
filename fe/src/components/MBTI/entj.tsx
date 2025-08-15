@@ -1938,9 +1938,9 @@ const ENTJPage = () => {
 
                     <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
                       <div className="flex items-start mb-3">
-                        <div className="bg-gray-100 p-2 rounded-lg mr-4">
+                        <div className="bg-blue-100 p-2 rounded-lg mr-4">
                           <svg
-                            className="w-6 h-6 text-gray-600"
+                            className="w-6 h-6 text-blue-600"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -1967,9 +1967,9 @@ const ENTJPage = () => {
 
                     <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
                       <div className="flex items-start mb-3">
-                        <div className="bg-gray-100 p-2 rounded-lg mr-4">
+                        <div className="bg-blue-100 p-2 rounded-lg mr-4">
                           <svg
-                            className="w-6 h-6 text-gray-600"
+                            className="w-6 h-6 text-blue-600"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -2048,9 +2048,9 @@ const ENTJPage = () => {
                     {/* Column 2 */}
                     <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
                       <div className="flex items-center mb-4">
-                        <div className="bg-gray-100 p-3 rounded-lg mr-4">
+                        <div className="bg-blue-100 p-3 rounded-lg mr-4">
                           <svg
-                            className="w-6 h-6 text-gray-600"
+                            className="w-6 h-6 text-blue-600"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -2063,24 +2063,24 @@ const ENTJPage = () => {
                             />
                           </svg>
                         </div>
-                        <h4 className="font-bold text-gray-700">
+                        <h4 className="font-bold text-blue-700">
                           Tài chính & Luật
                         </h4>
                       </div>
                       <ul className="space-y-3 text-gray-700">
                         <li className="flex items-start">
-                          <span className="text-gray-500 mr-2">•</span> Luật sư
+                          <span className="text-blue-500 mr-2">•</span> Luật sư
                         </li>
                         <li className="flex items-start">
-                          <span className="text-gray-500 mr-2">•</span> Thẩm
+                          <span className="text-blue-500 mr-2">•</span> Thẩm
                           phán
                         </li>
                         <li className="flex items-start">
-                          <span className="text-gray-500 mr-2">•</span> Quản lý
+                          <span className="text-blue-500 mr-2">•</span> Quản lý
                           quỹ đầu tư
                         </li>
                         <li className="flex items-start">
-                          <span className="text-gray-500 mr-2">•</span> Chuyên
+                          <span className="text-blue-500 mr-2">•</span> Chuyên
                           gia phân tích tài chính
                         </li>
                       </ul>
@@ -2847,9 +2847,9 @@ const ENTJPage = () => {
                     {/* INTJ Column */}
                     <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
                       <div className="flex items-center mb-4">
-                        <div className="bg-gray-100 p-3 rounded-lg mr-4">
+                        <div className="bg-blue-100 p-3 rounded-lg mr-4">
                           <svg
-                            className="w-6 h-6 text-gray-600"
+                            className="w-6 h-6 text-blue-600"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -2862,23 +2862,23 @@ const ENTJPage = () => {
                             />
                           </svg>
                         </div>
-                        <h4 className="font-bold text-gray-700">INTJ</h4>
+                        <h4 className="font-bold text-blue-700">INTJ</h4>
                       </div>
                       <ul className="space-y-3 text-gray-700">
                         <li className="flex items-start">
-                          <span className="text-gray-500 mr-2">•</span> Nhà khoa
+                          <span className="text-blue-500 mr-2">•</span> Nhà khoa
                           học/Nghiên cứu
                         </li>
                         <li className="flex items-start">
-                          <span className="text-gray-500 mr-2">•</span> Kỹ sư
+                          <span className="text-blue-500 mr-2">•</span> Kỹ sư
                           phần mềm
                         </li>
                         <li className="flex items-start">
-                          <span className="text-gray-500 mr-2">•</span> Chiến
+                          <span className="text-blue-500 mr-2">•</span> Chiến
                           lược gia
                         </li>
                         <li className="flex items-start">
-                          <span className="text-gray-500 mr-2">•</span> Kiến
+                          <span className="text-blue-500 mr-2">•</span> Kiến
                           trúc sư hệ thống
                         </li>
                         <li className="flex items-start">
@@ -2936,7 +2936,7 @@ const ENTJPage = () => {
                       <div className="flex items-center mb-4">
                         <div className="bg-blue-100 p-3 rounded-lg mr-4">
                           <svg
-                            className="w-6 h-6 text-blue-400"
+                            className="w-6 h-6 text-blue-600"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -2949,26 +2949,26 @@ const ENTJPage = () => {
                             />
                           </svg>
                         </div>
-                        <h4 className="font-bold text-blue-400">ENTP</h4>
+                        <h4 className="font-bold text-blue-600">ENTP</h4>
                       </div>
                       <ul className="space-y-3 text-gray-700">
                         <li className="flex items-start">
-                          <span className="text-blue-400 mr-2">•</span> Doanh
+                          <span className="text-blue-600 mr-2">•</span> Doanh
                           nhân
                         </li>
                         <li className="flex items-start">
-                          <span className="text-blue-400 mr-2">•</span> Nhà sáng
+                          <span className="text-blue-600 mr-2">•</span> Nhà sáng
                           tạo nội dung
                         </li>
                         <li className="flex items-start">
-                          <span className="text-blue-400 mr-2">•</span> Nhà
+                          <span className="text-blue-600 mr-2">•</span> Nhà
                           marketing
                         </li>
                         <li className="flex items-start">
-                          <span className="text-blue-400 mr-2">•</span> Nhà báo
+                          <span className="text-blue-600 mr-2">•</span> Nhà báo
                         </li>
                         <li className="flex items-start">
-                          <span className="text-blue-400 mr-2">•</span> Luật sư
+                          <span className="text-blue-600 mr-2">•</span> Luật sư
                           tranh tụng
                         </li>
                       </ul>

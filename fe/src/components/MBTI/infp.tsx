@@ -1927,7 +1927,7 @@ const INFPPage = () => {
                       <div className="flex items-start mb-3">
                         <div className="bg-gray-100 p-2 rounded-lg mr-4">
                           <svg
-                            className="w-6 h-6 text-gray-600"
+                            className="w-6 h-6 text-purple-600"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -1956,7 +1956,7 @@ const INFPPage = () => {
                       <div className="flex items-start mb-3">
                         <div className="bg-gray-100 p-2 rounded-lg mr-4">
                           <svg
-                            className="w-6 h-6 text-gray-600"
+                            className="w-6 h-6 text-purple-600"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -2037,7 +2037,7 @@ const INFPPage = () => {
                       <div className="flex items-center mb-4">
                         <div className="bg-gray-100 p-3 rounded-lg mr-4">
                           <svg
-                            className="w-6 h-6 text-gray-600"
+                            className="w-6 h-6 text-purple-700"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -2050,25 +2050,25 @@ const INFPPage = () => {
                             />
                           </svg>
                         </div>
-                        <h4 className="font-bold text-gray-700">
+                        <h4 className="font-bold text-purple-700">
                           Tâm lý & Hỗ trợ
                         </h4>
                       </div>
                       <ul className="space-y-3 text-gray-700">
                         <li className="flex items-start">
-                          <span className="text-gray-500 mr-2">•</span> Nhà tâm
+                          <span className="text-purple-500 mr-2">•</span> Nhà tâm
                           lý học
                         </li>
                         <li className="flex items-start">
-                          <span className="text-gray-500 mr-2">•</span> Tư vấn
+                          <span className="text-purple-500 mr-2">•</span> Tư vấn
                           viên
                         </li>
                         <li className="flex items-start">
-                          <span className="text-gray-500 mr-2">•</span> Nhân
+                          <span className="text-purple-500 mr-2">•</span> Nhân
                           viên công tác xã hội
                         </li>
                         <li className="flex items-start">
-                          <span className="text-gray-500 mr-2">•</span> Huấn
+                          <span className="text-purple-500 mr-2">•</span> Huấn
                           luyện viên cá nhân
                         </li>
                       </ul>
@@ -2899,7 +2899,7 @@ const INFPPage = () => {
                     <div className="flex items-center mb-4">
                       <div className="bg-gray-100 w-10 h-10 rounded-full flex items-center justify-center mr-3">
                         <svg
-                          className="w-6 h-6 text-gray-600"
+                          className="w-6 h-6 text-blue-600"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"

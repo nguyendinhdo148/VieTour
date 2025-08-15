@@ -154,8 +154,8 @@ const ESFJPage = () => {
                       },
                       {
                         title: "● F - Cảm xúc (Feeling)",
-                        color: "bg-brown-100",
-                        textColor: "text-brown-800",
+                        color: "bg-amber-100",
+                        textColor: "text-amber-900",
                         content:
                           "ESFJ đưa ra quyết định dựa trên giá trị cá nhân và sự hòa hợp. Họ nhạy cảm với cảm xúc của người khác và luôn mong muốn giúp đỡ.",
                       },
@@ -651,7 +651,7 @@ const ESFJPage = () => {
 
                   <div className="grid md:grid-cols-2 gap-6">
                     {/* Weakness 1 */}
-                    <div className="bg-white p-6 rounded-xl border border-brown-100 shadow-sm hover:shadow-md transition-shadow">
+                    <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
                       <div className="flex items-start mb-3">
                         <div className="bg-brown-100 p-2 rounded-lg mr-4">
                           <svg
@@ -689,7 +689,7 @@ const ESFJPage = () => {
                     </div>
 
                     {/* Weakness 2 */}
-                    <div className="bg-white p-6 rounded-xl border border-brown-100 shadow-sm hover:shadow-md transition-shadow">
+                    <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
                       <div className="flex items-start mb-3">
                         <div className="bg-brown-100 p-2 rounded-lg mr-4">
                           <svg
@@ -727,7 +727,7 @@ const ESFJPage = () => {
                     </div>
 
                     {/* Weakness 3 */}
-                    <div className="bg-white p-6 rounded-xl border border-brown-100 shadow-sm hover:shadow-md transition-shadow">
+                    <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
                       <div className="flex items-start mb-3">
                         <div className="bg-brown-100 p-2 rounded-lg mr-4">
                           <svg
@@ -765,7 +765,7 @@ const ESFJPage = () => {
                     </div>
 
                     {/* Weakness 4 */}
-                    <div className="bg-white p-6 rounded-xl border border-brown-100 shadow-sm hover:shadow-md transition-shadow">
+                    <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
                       <div className="flex items-start mb-3">
                         <div className="bg-brown-100 p-2 rounded-lg mr-4">
                           <svg
@@ -951,7 +951,7 @@ const ESFJPage = () => {
                     <div className="md:w-1/3 mb-6 md:mb-0 flex justify-center">
                       <div className="bg-white p-4 rounded-full shadow-lg">
                         <svg
-                          className="w-16 h-16 text-brown-500"
+                          className="w-16 h-16 text-pink-700"
                           fill="currentColor"
                           viewBox="0 0 20 20"
                         >
@@ -1562,7 +1562,7 @@ const ESFJPage = () => {
                 </div>
 
                 {/* Final Advice */}
-                <div className="bg-brown-50 p-6 rounded-lg border border-brown-100">
+                <div className="bg-brown-50 p-6 rounded-lg border border-gray-200">
                   <h3 className="text-xl font-semibold text-brown-800 mb-3">
                     Lời khuyên từ chuyên gia
                   </h3>
@@ -1781,9 +1781,9 @@ const ESFJPage = () => {
 
                     <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
                       <div className="flex items-start mb-3">
-                        <div className="bg-brown-100 p-2 rounded-lg mr-4">
+                        <div className="bg-orange-100 p-2 rounded-lg mr-4">
                           <svg
-                            className="w-6 h-6 text-brown-600"
+                            className="w-6 h-6 text-orange-600"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -1810,9 +1810,9 @@ const ESFJPage = () => {
 
                     <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
                       <div className="flex items-start mb-3">
-                        <div className="bg-brown-100 p-2 rounded-lg mr-4">
+                        <div className="bg-orange-100 p-2 rounded-lg mr-4">
                           <svg
-                            className="w-6 h-6 text-brown-600"
+                            className="w-6 h-6 text-orange-600"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -1849,9 +1849,9 @@ const ESFJPage = () => {
                     {/* Column 1 */}
                     <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
                       <div className="flex items-center mb-4">
-                        <div className="bg-orange-100 p-3 rounded-lg mr-4">
+                        <div className="bg-amber-100 p-3 rounded-lg mr-4">
                           <svg
-                            className="w-6 h-6 text-orange-600"
+                            className="w-6 h-6 text-amber-600"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -1890,9 +1890,9 @@ const ESFJPage = () => {
                     {/* Column 2 */}
                     <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
                       <div className="flex items-center mb-4">
-                        <div className="bg-brown-100 p-3 rounded-lg mr-4">
+                        <div className="bg-amber-100 p-3 rounded-lg mr-4">
                           <svg
-                            className="w-6 h-6 text-brown-600"
+                            className="w-6 h-6 text-amber-600"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -1905,25 +1905,25 @@ const ESFJPage = () => {
                             />
                           </svg>
                         </div>
-                        <h4 className="font-bold text-brown-700">
+                        <h4 className="font-bold text-orange-700">
                           Giáo dục & Đào tạo
                         </h4>
                       </div>
                       <ul className="space-y-3 text-gray-700">
                         <li className="flex items-start">
-                          <span className="text-brown-500 mr-2">•</span> Giáo
+                          <span className="text-orange-500 mr-2">•</span> Giáo
                           viên
                         </li>
                         <li className="flex items-start">
-                          <span className="text-brown-500 mr-2">•</span> Quản lý
+                          <span className="text-orange-500 mr-2">•</span> Quản lý
                           trường học
                         </li>
                         <li className="flex items-start">
-                          <span className="text-brown-500 mr-2">•</span> Huấn
+                          <span className="text-orange-500 mr-2">•</span> Huấn
                           luyện viên
                         </li>
                         <li className="flex items-start">
-                          <span className="text-brown-500 mr-2">•</span> Thủ thư
+                          <span className="text-orange-500 mr-2">•</span> Thủ thư
                         </li>
                       </ul>
                     </div>
@@ -2689,7 +2689,7 @@ const ESFJPage = () => {
 
                 {/* Career Comparison */}
                 <div className="mb-10">
-                  <h3 className="text-2xl font-semibold text-gray-800 mb-6 border-b pb-2">
+                  <h3 className="text-2xl font-semibold text-gray-800 mb-6 border-b border-b-gray-300 pb-2">
                     So sánh nghề nghiệp phù hợp
                   </h3>
 
@@ -2783,11 +2783,11 @@ const ESFJPage = () => {
                     </div>
 
                     {/* ISFJ Column */}
-                    <div className="bg-white p-6 rounded-xl border border-brown-200 shadow-sm hover:shadow-md transition-shadow">
+                    <div className="bg-white p-6 rounded-xl border border-orange-300 shadow-sm hover:shadow-md transition-shadow">
                       <div className="flex items-center mb-4">
-                        <div className="bg-brown-100 p-3 rounded-lg mr-4">
+                        <div className="bg-orange-200 p-3 rounded-lg mr-4">
                           <svg
-                            className="w-6 h-6 text-brown-600"
+                            className="w-6 h-6 text-orange-800"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -2800,23 +2800,23 @@ const ESFJPage = () => {
                             />
                           </svg>
                         </div>
-                        <h4 className="font-bold text-brown-700">ISFJ</h4>
+                        <h4 className="font-bold text-orange-700">ISFJ</h4>
                       </div>
                       <ul className="space-y-3 text-gray-700">
                         <li className="flex items-start">
-                          <span className="text-brown-500 mr-2">•</span> Thủ thư
+                          <span className="text-orange-700 mr-2">•</span> Thủ thư
                         </li>
                         <li className="flex items-start">
-                          <span className="text-brown-500 mr-2">•</span> Kế toán
+                          <span className="text-orange-700 mr-2">•</span> Kế toán
                         </li>
                         <li className="flex items-start">
-                          <span className="text-brown-500 mr-2">•</span> Dược sĩ
+                          <span className="text-orange-700 mr-2">•</span> Dược sĩ
                         </li>
                         <li className="flex items-start">
-                          <span className="text-brown-500 mr-2">•</span> Nha sĩ
+                          <span className="text-orange-700 mr-2">•</span> Nha sĩ
                         </li>
                         <li className="flex items-start">
-                          <span className="text-brown-500 mr-2">•</span> Hành
+                          <span className="text-orange-700 mr-2">•</span> Hành
                           chính
                         </li>
                       </ul>
@@ -2933,9 +2933,9 @@ const ESFJPage = () => {
                   {/* Improve Weaknesses */}
                   <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
                     <div className="flex items-center mb-4">
-                      <div className="bg-brown-100 w-10 h-10 rounded-full flex items-center justify-center mr-3">
+                      <div className="bg-blue-100 w-10 h-10 rounded-full flex items-center justify-center mr-3">
                         <svg
-                          className="w-6 h-6 text-brown-600"
+                          className="w-6 h-6 text-blue-600"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -3146,7 +3146,7 @@ const ESFJPage = () => {
                 </div>
 
                 {/* Final Encouragement */}
-                <div className="bg-gradient-to-r from-orange-800 to-brown-700 p-8 rounded-lg text-white">
+                <div className="bg-gradient-to-r from-orange-800 to-purple-800 p-8 rounded-lg text-white">
                   <div className="max-w-3xl mx-auto text-center">
                     <svg
                       className="w-12 h-12 mx-auto mb-4"

@@ -2213,19 +2213,19 @@ const ISFJPage = () => {
                     Con đường sự nghiệp lý tưởng
                   </h3>
                   <div className="grid md:grid-cols-3 gap-4">
-                    <div className="bg-white bg-opacity-20 p-3 rounded-lg">
+                    <div className="text-gray-700 bg-white bg-opacity-20 p-3 rounded-lg">
                       <h4 className="font-semibold mb-2">Chăm sóc & Y tế</h4>
                       <p className="text-sm">
                         Y tá, Bác sĩ, Vật lý trị liệu, Tư vấn tâm lý
                       </p>
                     </div>
-                    <div className="bg-white bg-opacity-20 p-3 rounded-lg">
+                    <div className="text-gray-700 bg-white bg-opacity-20 p-3 rounded-lg">
                       <h4 className="font-semibold mb-2">Giáo dục & Cố vấn</h4>
                       <p className="text-sm">
                         Giáo viên, Cố vấn học đường, Quản lý giáo dục
                       </p>
                     </div>
-                    <div className="bg-white bg-opacity-20 p-3 rounded-lg">
+                    <div className="text-gray-700 bg-white bg-opacity-20 p-3 rounded-lg">
                       <h4 className="font-semibold mb-2">
                         Hỗ trợ & Hành chính
                       </h4>
