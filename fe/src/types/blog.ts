@@ -5,7 +5,10 @@ export interface Blog {
   title: string;
   content: string;
   slug: string;
-  image: string; // URL to the blog image
+  image: {
+    url: string;
+    public_id: string;
+  }; // URL to the blog image
   tags: string[];
   category: string;
   views: number;

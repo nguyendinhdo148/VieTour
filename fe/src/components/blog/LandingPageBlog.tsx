@@ -143,7 +143,7 @@ const LandingPageBlog = () => {
                   {/* Image - Fixed Height */}
                   <div className="relative h-48 overflow-hidden">
                     <img
-                      src={post.image || "/placeholder.svg"}
+                      src={post.image.url || "/placeholder.svg"}
                       alt={post.title}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                     />
@@ -175,7 +175,7 @@ const LandingPageBlog = () => {
                           <Avatar className="size-8 ring-2 ring-gray-200 shadow-lg">
                             <AvatarImage
                               src={
-                                post.created_by.profile.profilePhoto ||
+                                post.created_by.profile.profilePhoto.url ||
                                 "/placeholder.svg"
                               }
                               alt={post.created_by.fullname}

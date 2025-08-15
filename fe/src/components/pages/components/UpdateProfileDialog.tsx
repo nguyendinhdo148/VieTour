@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { RootState } from "@/redux/store";
 import { useSelector, useDispatch } from "react-redux";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { API } from "@/utils/constant";
 import toast from "react-hot-toast";
@@ -30,7 +30,18 @@ const UpdateProfileDialog = ({ open, setOpen }: UpdateProfileDialogProps) => {
 
   const dispatch = useDispatch();
 
-  // useEffect(() => {}, [user]);
+  useEffect(() => {
+    if (user) {
+      setInput({
+        fullname: user?.fullname || "",
+        email: user?.email || "",
+        phoneNumber: user?.phoneNumber || "",
+        bio: user?.profile?.bio || "",
+        skills: user?.profile?.skills?.join(", ") || "",
+        file: user?.profile?.resume?.url || ("" as string | File),
+      });
+    }
+  }, [user]);
 
   const [input, setInput] = useState({
     fullname: user?.fullname || "",
@@ -38,7 +49,7 @@ const UpdateProfileDialog = ({ open, setOpen }: UpdateProfileDialogProps) => {
     phoneNumber: user?.phoneNumber || "",
     bio: user?.profile?.bio || "",
     skills: user?.profile?.skills?.join(", ") || "",
-    file: user?.profile?.resume || ("" as string | File),
+    file: user?.profile?.resume?.url || ("" as string | File),
   });
 
   // Handle change events for file input

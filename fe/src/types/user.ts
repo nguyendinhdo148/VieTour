@@ -7,10 +7,16 @@ export interface User {
   profile: {
     bio?: string;
     skills?: string[];
-    resume?: string;
+    resume?: {
+      url: string;
+      public_id: string;
+    };
     resumeOriginalName?: string;
     company?: string;
-    profilePhoto: string;
+    profilePhoto: {
+      url: string;
+      public_id: string;
+    };
   };
   createdAt: string;
   updatedAt: string;

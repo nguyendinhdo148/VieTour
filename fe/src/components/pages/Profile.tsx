@@ -69,7 +69,7 @@ const Profile = () => {
                 <div className="relative">
                   <Avatar className="size-20 ring-4 ring-white shadow-2xl shadow-black/10">
                     <AvatarImage
-                      src={user?.profile?.profilePhoto || "/placeholder.svg"}
+                      src={user?.profile?.profilePhoto?.url || "/placeholder.svg"}
                       alt={user?.fullname}
                       className="object-cover"
                     />
@@ -162,9 +162,9 @@ const Profile = () => {
             <Label className="text-lg font-semibold text-gray-800 mb-1 block">
               Resume
             </Label>
-            {user?.profile?.resume ? (
+            {user?.profile?.resume?.url ? (
               <a
-                href={user.profile.resume}
+                href={user.profile.resume.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-600 hover:underline text-sm break-all"

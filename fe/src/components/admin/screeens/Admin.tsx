@@ -42,7 +42,10 @@ const Admin = () => {
       fullname: string;
       email: string;
       profile?: {
-        profilePhoto?: string;
+        profilePhoto?: {
+          url: string;
+          public_id: string;
+        }
       };
       createdAt: string;
     }[];
@@ -208,10 +211,10 @@ const Admin = () => {
                     >
                       <TableCell className="pl-6">
                         <div className="flex items-center gap-3">
-                          <Avatar className="h-10 w-10 border shadow-sm">
+                          <Avatar className="h-10 w-10 border border-gray-200 shadow-sm">
                             <AvatarImage
                               src={
-                                user.profile?.profilePhoto || "/placeholder.svg"
+                                user.profile?.profilePhoto?.url|| "/placeholder.svg"
                               }
                             />
                             <AvatarFallback className="bg-gradient-to-br from-indigo-100 to-blue-100 text-indigo-600 font-medium">

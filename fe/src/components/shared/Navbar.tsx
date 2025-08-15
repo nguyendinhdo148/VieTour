@@ -251,7 +251,7 @@ const Navbar = () => {
                   <div className="relative cursor-pointer size-10">
                     <Avatar className="w-full h-full">
                       <AvatarImage
-                        src={user.profile?.profilePhoto}
+                        src={user.profile?.profilePhoto?.url}
                         alt={user.fullname}
                         className="object-cover hover:scale-105 transition-transform duration-200"
                       />
@@ -272,7 +272,7 @@ const Navbar = () => {
                   <div className="flex items-center gap-4 pb-4 border-b border-gray-100">
                     <Avatar className="size-12">
                       <AvatarImage
-                        src={user.profile?.profilePhoto}
+                        src={user.profile?.profilePhoto?.url}
                         alt={user.fullname}
                         className="object-cover"
                       />

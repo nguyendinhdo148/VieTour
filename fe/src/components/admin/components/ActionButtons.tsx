@@ -75,7 +75,7 @@ const ActionButtons = ({
                 <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 border-b pb-4">
                   <Avatar className="h-24 w-24 rounded-full shadow">
                     <AvatarImage
-                      src={applicant.profile.profilePhoto}
+                      src={applicant.profile.profilePhoto.url}
                       alt={applicant.fullname}
                     />
                     <AvatarFallback className="bg-gray-100 text-gray-700">
@@ -123,7 +123,7 @@ const ActionButtons = ({
                   {applicant.profile.resumeOriginalName &&
                   applicant.profile.resume ? (
                     <a
-                      href={applicant.profile.resume}
+                      href={applicant.profile.resume.url}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-blue-600 hover:underline text-sm"

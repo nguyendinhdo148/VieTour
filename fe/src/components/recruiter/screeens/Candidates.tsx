@@ -226,7 +226,7 @@ const Candidates = () => {
                       <div className="flex items-center gap-3">
                         <Avatar className="h-10 w-10 rounded-full shadow">
                           <AvatarImage
-                            src={app.applicant?.profile?.profilePhoto || ""}
+                            src={app.applicant?.profile?.profilePhoto?.url || ""}
                           />
                           <AvatarFallback className="bg-blue-100 text-blue-600">
                             {app.applicant?.fullname.charAt(0)}
