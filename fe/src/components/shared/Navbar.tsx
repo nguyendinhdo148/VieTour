@@ -17,6 +17,7 @@ import {
   Share2,
   SquareChartGantt,
   BrainCog,
+  SquareRadical,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -176,6 +177,15 @@ const Navbar = () => {
                   <ul className="space-y-3">
                     <li>
                       <Link
+                        to="/tools/personal-tax"
+                        className="flex items-center gap-3 text-gray-700 hover:text-indigo-600 transition"
+                      >
+                        <SquareRadical className="w-4 h-4 text-indigo-500" />
+                        Tính thuế cá nhân
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
                         to="/tools/compound-interest"
                         className="flex items-center gap-3 text-gray-700 hover:text-indigo-600 transition"
                       >
@@ -194,7 +204,7 @@ const Navbar = () => {
                     </li>
                     <li>
                       <Link
-                        to="/mobile-app"
+                        to="/tools/mobile-app"
                         className="flex items-center gap-3 text-gray-700 hover:text-indigo-600 transition"
                       >
                         <Smartphone className="w-4 h-4 text-indigo-500" />

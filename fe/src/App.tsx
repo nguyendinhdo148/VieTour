@@ -27,7 +27,7 @@ import CompanyAdmin from "./components/admin/screeens/CompanyAdmin";
 import JobManagerAdmin from "./components/admin/screeens/JobManagerAdmin";
 import UserManagerAdmin from "./components/admin/screeens/UserManagerAdmin";
 import Chatbot from "./components/Chatbot";
-import ResumeReview from "./components/pages/ResumeReview";
+import ResumeReview from "./components/tools/ResumeReview";
 import LandingPageBlog from "./components/blog/LandingPageBlog";
 import BlogDetail from "./components/blog/screens/BlogDetail";
 import CreateBlog from "./components/blog/screens/CreateBlog";
@@ -54,10 +54,11 @@ import ESTJPage from "./components/MBTI/estj";
 import ESFJPage from "./components/MBTI/esfj";
 import ENFJPage from "./components/MBTI/enfj";
 import ENTJPage from "./components/MBTI/entj";
-import SalaryCalculator from "./components/pages/SalaryCalculator";
+import SalaryCalculator from "./components/tools/SalaryCalculator";
 import MIPage from "./components/MI/MIPage";
 import MITest from "./components/MI/MITest";
 import MIResult from "./components/MI/MIResult";
+import PersonalTaxCalc from "./components/tools/PersonalTaxCalc";
 
 function App() {
   return (
@@ -114,6 +115,7 @@ function App() {
         <Route path="/tools/mi/result" element={<MIResult />} />
 
         <Route path="/tools/gross-net" element={<SalaryCalculator />} />
+        <Route path="/tools/personal-tax" element={<PersonalTaxCalc />} />
 
         {/* Recruiter routes */}
         <Route path="/recruiter" element={<RecruiterLayout />}>

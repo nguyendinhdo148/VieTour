@@ -315,7 +315,7 @@ const SalaryCalculator = () => {
           </div>
           <Badge
             variant="outline"
-            className="border-indigo-600 text-indigo-600 text-base py-1 px-3 mt-4 sm:mt-0"
+            className="border-2 border-indigo-600 text-indigo-600 text-base py-1 px-3 mt-4 sm:mt-0"
           >
             {effectiveDate === "2025" ? "Chuẩn 2025" : "Chuẩn 2024"}
           </Badge>
@@ -433,26 +433,26 @@ const SalaryCalculator = () => {
                       >
                         <SelectTrigger
                           id="insurance-select"
-                          className="px-4 py-3 text-lg border-gray-400 hover:bg-gray-50 transition-colors duration-200"
+                          className="px-4 py-3 text-lg border-2 border-slate-300 hover:border-slate-400 focus:ring-2 focus:ring-blue-400 focus:border-blue-500 transition-all duration-200 rounded-xl"
                         >
                           <SelectValue placeholder="Chọn mức đóng bảo hiểm" />
                         </SelectTrigger>
                         <SelectContent className="bg-white rounded-xl border border-gray-300 shadow-sm">
                           <SelectItem
                             value="official"
-                            className="hover:bg-gray-100 transition-colors duration-200"
+                            className="hover:bg-blue-50 focus:bg-blue-50 transition-colors duration-200 rounded-lg"
                           >
                             Trên lương chính thức
                           </SelectItem>
                           <SelectItem
                             value="region"
-                            className="hover:bg-gray-100 transition-colors duration-200"
+                            className="hover:bg-blue-50 focus:bg-blue-50 transition-colors duration-200 rounded-lg"
                           >
                             Theo lương tối thiểu vùng
                           </SelectItem>
                           <SelectItem
                             value="cap"
-                            className="hover:bg-gray-100 transition-colors duration-200"
+                            className="hover:bg-blue-50 focus:bg-blue-50 transition-colors duration-200 rounded-lg"
                           >
                             Mức trần (20 lương cơ sở)
                           </SelectItem>
@@ -503,32 +503,32 @@ const SalaryCalculator = () => {
                       >
                         <SelectTrigger
                           id="region-select"
-                          className="px-4 py-3 text-lg border-gray-400 hover:bg-gray-50 transition-colors duration-200"
+                          className="px-4 py-3 text-lg border-2 border-slate-300 hover:border-slate-400 focus:ring-2 focus:ring-blue-400 focus:border-blue-500 transition-all duration-200 rounded-xl"
                         >
                           <SelectValue placeholder="Chọn vùng" />
                         </SelectTrigger>
                         <SelectContent className="bg-white rounded-xl border border-gray-300 shadow-sm">
                           <SelectItem
                             value="I"
-                            className="hover:bg-gray-100 transition-colors duration-200"
+                            className="hover:bg-blue-50 focus:bg-blue-50 transition-colors duration-200 rounded-lg"
                           >
                             Vùng I: {formatCurrency(config.minSalaries.I)}
                           </SelectItem>
                           <SelectItem
                             value="II"
-                            className="hover:bg-gray-100 transition-colors duration-200"
+                            className="hover:bg-blue-50 focus:bg-blue-50 transition-colors duration-200 rounded-lg"
                           >
                             Vùng II: {formatCurrency(config.minSalaries.II)}
                           </SelectItem>
                           <SelectItem
                             value="III"
-                            className="hover:bg-gray-100 transition-colors duration-200"
+                            className="hover:bg-blue-50 focus:bg-blue-50 transition-colors duration-200 rounded-lg"
                           >
                             Vùng III: {formatCurrency(config.minSalaries.III)}
                           </SelectItem>
                           <SelectItem
                             value="IV"
-                            className="hover:bg-gray-100 transition-colors duration-200"
+                            className="hover:bg-blue-50 focus:bg-blue-50 transition-colors duration-200 rounded-lg"
                           >
                             Vùng IV: {formatCurrency(config.minSalaries.IV)}
                           </SelectItem>
@@ -551,20 +551,20 @@ const SalaryCalculator = () => {
                       >
                         <SelectTrigger
                           id="effective-date-select"
-                          className="px-4 py-3 text-lg border-gray-400 hover:bg-gray-50 transition-colors duration-200"
+                          className="px-4 py-3 text-lg border-2 border-slate-300 hover:border-slate-400 focus:ring-2 focus:ring-blue-400 focus:border-blue-500 transition-all duration-200 rounded-xl"
                         >
                           <SelectValue placeholder="Chọn thời điểm" />
                         </SelectTrigger>
                         <SelectContent className="bg-white rounded-xl border border-gray-300 shadow-sm">
                           <SelectItem
                             value="2024"
-                            className="hover:bg-gray-100 transition-colors duration-200"
+                            className="hover:bg-blue-50 focus:bg-blue-50 transition-colors duration-200 rounded-lg"
                           >
                             Từ 01/07/2024 - 30/06/2025
                           </SelectItem>
                           <SelectItem
                             value="2025"
-                            className="hover:bg-gray-100 transition-colors duration-200"
+                            className="hover:bg-blue-50 focus:bg-blue-50 transition-colors duration-200 rounded-lg"
                           >
                             Từ 01/07/2025 (Mới nhất)
                           </SelectItem>
