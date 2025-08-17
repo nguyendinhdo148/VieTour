@@ -22,7 +22,6 @@ type FormData = {
   password: string;
   confirmPassword: string;
   role: "student" | "recruiter";
-  file: File | null;
 };
 
 type FormErrors = {
@@ -44,7 +43,6 @@ const Signup = () => {
     password: "",
     confirmPassword: "",
     role: "student",
-    file: null,
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -61,11 +59,11 @@ const Signup = () => {
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    const { name, value, files } = e.target as HTMLInputElement;
+    const { name, value } = e.target as HTMLInputElement;
 
     setFormData((prev) => ({
       ...prev,
-      [name]: files ? files[0] : value,
+      [name]: value,
     }));
 
     // Clear error when user types
@@ -130,9 +128,6 @@ const Signup = () => {
       formDataToSend.append("phoneNumber", formData.phoneNumber);
       formDataToSend.append("password", formData.password);
       formDataToSend.append("role", formData.role);
-      if (formData.file) {
-        formDataToSend.append("file", formData.file);
-      }
 
       const res = await axios.post(`${API}/user/register`, formDataToSend, {
         headers: {
@@ -152,7 +147,6 @@ const Signup = () => {
           password: "",
           confirmPassword: "",
           role: "student",
-          file: null,
         });
       } else {
         toast.error(res.data.message || "Đăng ký thất bại.");
@@ -349,18 +343,6 @@ const Signup = () => {
                 <Label htmlFor="recruiter">Recruiter</Label>
               </div>
             </RadioGroup>
-
-            <div className="flex items-center gap-2">
-              <Label htmlFor="file">Profile</Label>
-              <Input
-                id="file"
-                name="file"
-                accept="image/*"
-                type="file"
-                onChange={handleChange}
-                className="cursor-pointer"
-              />
-            </div>
           </div>
 
           {/* button sign up */}

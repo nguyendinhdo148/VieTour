@@ -180,7 +180,7 @@ const Admin = () => {
               </div>
               <Badge
                 variant="outline"
-                className="cursor-pointer hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 transition-colors"
+                className="cursor-pointer border-gray-300 hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 transition-colors"
                 onClick={() => navigate("/admin/user")}
               >
                 Xem tất cả <ChevronRight className="ml-1 h-4 w-4" />
@@ -211,7 +211,7 @@ const Admin = () => {
                     >
                       <TableCell className="pl-6">
                         <div className="flex items-center gap-3">
-                          <Avatar className="h-10 w-10 border border-gray-200 shadow-sm">
+                          <Avatar className="h-10 w-10 border border-gray-300">
                             <AvatarImage
                               src={
                                 user.profile?.profilePhoto?.url|| "/placeholder.svg"
@@ -258,7 +258,7 @@ const Admin = () => {
               </h2>
               <Badge
                 variant="outline"
-                className="cursor-pointer hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 transition-colors"
+                className="cursor-pointer border-gray-300 hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 transition-colors"
                 onClick={() => navigate("/admin/jobs")}
               >
                 Quản lý

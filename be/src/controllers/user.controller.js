@@ -29,22 +29,6 @@ export const register = async (req, res, next) => {
       });
     }
 
-    // Handle file upload
-    let profilePhotoUrl = null;
-    if (req.file) {
-      try {
-        const fileUri = getDataUri(req.file);
-        const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
-        profilePhotoUrl = cloudResponse.secure_url;
-      } catch (uploadError) {
-        console.error("File upload error:", uploadError);
-        return res.status(500).json({
-          message: "Error uploading profile photo",
-          success: false,
-        });
-      }
-    }
-
     const user = await User.findOne({ email });
     if (user) {
       return res.status(400).json({
@@ -60,9 +44,6 @@ export const register = async (req, res, next) => {
       phoneNumber,
       password: hashedPassword,
       role,
-      profile: {
-        profilePhoto: profilePhotoUrl,
-      },
     });
 
     return res.status(201).json({

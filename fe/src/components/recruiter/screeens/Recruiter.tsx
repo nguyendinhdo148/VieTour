@@ -167,7 +167,7 @@ const Recruiter = () => {
               </div>
               <Badge
                 variant="outline"
-                className="cursor-pointer hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 transition-colors"
+                className="cursor-pointer border-gray-300 hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 transition-colors"
                 onClick={() => navigate("/recruiter/candidates")}
               >
                 Xem tất cả <ChevronRight className="ml-1 h-4 w-4" />
@@ -200,7 +200,7 @@ const Recruiter = () => {
                   >
                     <TableCell className="pl-6">
                       <div className="flex items-center gap-3">
-                        <Avatar className="h-10 w-10 border">
+                        <Avatar className="h-10 w-10 border border-gray-300">
                           <AvatarImage
                             src={app.applicant?.profile?.profilePhoto?.url}
                           />
@@ -249,7 +249,7 @@ const Recruiter = () => {
               </h2>
               <Badge
                 variant="outline"
-                className="cursor-pointer hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 transition-colors"
+                className="cursor-pointer border-gray-300 hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 transition-colors"
                 onClick={() => navigate("/recruiter/jobs")}
               >
                 Quản lý

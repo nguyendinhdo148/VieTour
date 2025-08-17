@@ -179,14 +179,14 @@ const UserManagerAdmin = () => {
                 placeholder="Tìm kiếm người dùng..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 rounded-xl focus:outline-none focus:ring-0 focus:border-transparent"
+                className="pl-10 border border-gray-300 rounded-xl focus:outline-none focus:ring-0 focus:border-transparent"
               />
             </div>
           </div>
           <div className="flex flex-wrap gap-2">
             <Badge
               variant="outline"
-              className="cursor-pointer rounded-full px-4 py-1 text-sm hover:bg-gray-100"
+              className="cursor-pointer border border-gray-300 rounded-full px-4 py-1 text-sm hover:bg-gray-100"
             >
               Tất cả ({usersForAdmin?.length})
             </Badge>

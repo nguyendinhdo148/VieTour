@@ -75,7 +75,7 @@ const ActionButtons = ({
                 <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 border-b pb-4">
                   <Avatar className="h-24 w-24 rounded-full shadow">
                     <AvatarImage
-                      src={applicant.profile.profilePhoto.url}
+                      src={applicant?.profile?.profilePhoto?.url}
                       alt={applicant.fullname}
                     />
                     <AvatarFallback className="bg-gray-100 text-gray-700">

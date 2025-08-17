@@ -153,14 +153,14 @@ const Candidates = () => {
                 placeholder="Tìm kiếm ứng viên..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 rounded-xl focus:outline-none focus:ring-0 focus:border-transparent"
+                className="pl-10 rounded-xl border-gray-300 focus:outline-none focus:ring-0 focus:border-transparent"
               />
             </div>
           </div>
           <div className="flex flex-wrap gap-2">
             <Badge
               variant="outline"
-              className="cursor-pointer rounded-full px-4 py-1 text-sm hover:bg-gray-100"
+              className="cursor-pointer rounded-full border-gray-300 px-4 py-1 text-sm hover:bg-gray-100"
             >
               Tất cả ({applications.length})
             </Badge>
