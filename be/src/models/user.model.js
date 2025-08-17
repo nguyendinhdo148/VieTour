@@ -28,14 +28,14 @@ const userSchema = new mongoose.Schema(
       bio: { type: String },
       skills: [{ type: String }],
       resume: {
-        url: { type: String, required: true },
-        public_id: { type: String, required: true },
+        url: { type: String },
+        public_id: { type: String },
       }, // URL to resume file
       resumeOriginalName: { type: String },
       company: { type: mongoose.Schema.Types.ObjectId, ref: "Company" },
       profilePhoto: {
-        url: { type: String, required: true },
-        public_id: { type: String, required: true },
+        url: { type: String },
+        public_id: { type: String },
       },
     },
     refreshToken: {

@@ -96,7 +96,7 @@ const RecruiterLayout = () => {
         <div className="p-6 border-b shadow-sm border-gray-200">
           <div className="flex items-center space-x-3">
             <Avatar className="h-10 w-10">
-              <AvatarImage src={user?.profile?.profilePhoto} />
+              <AvatarImage src={user?.profile?.profilePhoto?.url} />
               <AvatarFallback className="bg-blue-100 text-blue-600">
                 {user?.fullname?.charAt(0)}
               </AvatarFallback>
