@@ -93,6 +93,11 @@ const LandingPage = () => {
     navigate("/resume/dashboard-resume");
   };
 
+  // Handle CTA
+  const handleLearnMore = () => {
+    navigate("/resume/learn-more");
+  };
+
   return (
     <div className="w-full min-h-screen bg-gradient-to-b from-white to-indigo-50/20">
       {/* Hero Section */}
@@ -735,6 +740,7 @@ const LandingPage = () => {
                   </Button>
                   <Button
                     variant="outline"
+                    onClick={handleLearnMore}
                     className="bg-transparent cursor-pointer border-white text-white hover:bg-white/10 px-8 py-6 rounded-xl font-medium text-base"
                   >
                     Tìm Hiểu Thêm

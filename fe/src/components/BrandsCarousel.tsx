@@ -1,5 +1,3 @@
-"use client";
-
 import { Badge } from "@/components/ui/badge";
 import { Star, Award, TrendingUp, Building2 } from "lucide-react";
 
@@ -219,7 +217,7 @@ const BrandCarousel = () => {
                       <img
                         src={company.logo || "/placeholder.svg"}
                         alt={`${company.name} logo`}
-                        className="object-contain max-w-full max-h-full filter grayscale group-hover:grayscale-0 transition-all duration-300 group-hover:scale-105"
+                        className="object-contain max-w-full max-h-full transition-all duration-300 group-hover:scale-105"
                       />
                     </div>
                   </div>
@@ -234,7 +232,7 @@ const BrandCarousel = () => {
                       <img
                         src={company.logo || "/placeholder.svg"}
                         alt={`${company.name} logo`}
-                        className="object-contain max-w-full max-h-full filter grayscale group-hover:grayscale-0 transition-all duration-300 group-hover:scale-105"
+                        className="object-contain max-w-full max-h-full transition-all duration-300 group-hover:scale-105"
                       />
                     </div>
                   </div>

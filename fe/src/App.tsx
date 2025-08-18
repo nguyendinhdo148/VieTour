@@ -59,6 +59,8 @@ import MIPage from "./components/MI/MIPage";
 import MITest from "./components/MI/MITest";
 import MIResult from "./components/MI/MIResult";
 import PersonalTaxCalc from "./components/tools/PersonalTaxCalc";
+import CompoundInterest from "./components/tools/CompoundInterest";
+import LearnMore from "./components/resume/layout/LearnMore";
 
 function App() {
   return (
@@ -116,6 +118,7 @@ function App() {
 
         <Route path="/tools/gross-net" element={<SalaryCalculator />} />
         <Route path="/tools/personal-tax" element={<PersonalTaxCalc />} />
+        <Route path="/tools/compound-interest" element={<CompoundInterest />} />
 
         {/* Recruiter routes */}
         <Route path="/recruiter" element={<RecruiterLayout />}>
@@ -136,6 +139,7 @@ function App() {
 
         {/* Resume routes */}
         <Route path="/resume" element={<LandingPage />} />
+        <Route path="/resume/learn-more" element={<LearnMore />} />
         <Route path="/resume/dashboard-resume" element={<DashboardResume />} />
         <Route path="/resume/edit/:resumeId" element={<EditResume />} />
 
