@@ -280,7 +280,7 @@ const JobMarketDashboard = () => {
                     ></div>
                   ))}
                 </div>
-                <div className="flex justify-between text-xs text-slate-400 mt-4">
+                <div className="flex justify-around gap-2 text-xs text-slate-400 mt-4">
                   {chartLabels.map((label, idx) => (
                     <span key={idx}>{label}</span>
                   ))}

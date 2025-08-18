@@ -10,7 +10,8 @@ services:
       - .env
     volumes:
       - ./be:/app
-    command: npm start
+      - /app/node_modules # Thêm dòng này để không ghi đè node_modules từ host
+    command: sh -c "npm install && npm start" # Cập nhật command để cài đặt lại package
 
   frontend:
     build: ./fe
