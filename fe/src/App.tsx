@@ -61,6 +61,9 @@ import MIResult from "./components/MI/MIResult";
 import PersonalTaxCalc from "./components/tools/PersonalTaxCalc";
 import CompoundInterest from "./components/tools/CompoundInterest";
 import LearnMore from "./components/resume/layout/LearnMore";
+import SocialInsurance from "./components/tools/SocialInsurance";
+import UnemploymentInsurance from "./components/tools/UnemploymentInsurance";
+import SavingPlan from "./components/tools/SavingPlan";
 
 function App() {
   return (
@@ -119,6 +122,12 @@ function App() {
         <Route path="/tools/gross-net" element={<SalaryCalculator />} />
         <Route path="/tools/personal-tax" element={<PersonalTaxCalc />} />
         <Route path="/tools/compound-interest" element={<CompoundInterest />} />
+        <Route path="/tools/social-insurance" element={<SocialInsurance />} />
+        <Route
+          path="/tools/unemployment-insurance"
+          element={<UnemploymentInsurance />}
+        />
+        <Route path="/tools/saving-plan" element={<SavingPlan />} />
 
         {/* Recruiter routes */}
         <Route path="/recruiter" element={<RecruiterLayout />}>
