@@ -18,6 +18,8 @@ import {
   SquareChartGantt,
   BrainCog,
   SquareRadical,
+  ChartSpline,
+  ChartScatter,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -191,6 +193,24 @@ const Navbar = () => {
                       >
                         <LineChart className="w-4 h-4 text-indigo-500" />
                         Tính lãi suất kép
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/tools/unemployment-insurance"
+                        className="flex items-center gap-3 text-gray-700 hover:text-indigo-600 transition"
+                      >
+                        <ChartSpline className="w-4 h-4 text-indigo-500" />
+                        Tính BHTN
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/tools/social-insurance"
+                        className="flex items-center gap-3 text-gray-700 hover:text-indigo-600 transition"
+                      >
+                        <ChartScatter className="w-4 h-4 text-indigo-500" />
+                        Tính BHXH
                       </Link>
                     </li>
                     <li>
