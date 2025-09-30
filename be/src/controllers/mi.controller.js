@@ -4,7 +4,7 @@ import { validateMIScores, validateAnswers } from "../utils/validators.js";
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY_MI);
 
 const model = genAI.getGenerativeModel({
-  model: "gemini-1.5-flash",
+  model: "gemini-2.0-flash",
   generationConfig: {
     maxOutputTokens: 2000,
     temperature: 0.9,
@@ -12,6 +12,15 @@ const model = genAI.getGenerativeModel({
 });
 
 const analysisCache = new Map();
+
+function withTimeout(promise, ms = 20000) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("Gemini timeout")), ms)
+    ),
+  ]);
+}
 
 // Danh sách 9 loại trí thông minh
 const intelligenceTypes = [
@@ -125,7 +134,7 @@ export const analyzeMIGemini = async (req, res) => {
 
                     Format each section with **bold headers**. Keep it practical and under 2000 characters.`;
 
-    const result = await model.generateContent(prompt);
+    const result = await withTimeout(model.generateContent(prompt));
     const text = result.response.text();
 
     const analysis = {
@@ -218,7 +227,7 @@ export const advancedMIAnalysis = async (req, res) => {
                     Format: Markdown with bullet points
                     Prioritize practical recommendations`;
 
-    const result = await model.generateContent(prompt);
+    const result = await withTimeout(model.generateContent(prompt));
     const text = result.response.text();
 
     const analysis = {
