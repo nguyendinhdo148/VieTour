@@ -178,6 +178,7 @@ const LandingPageBlog = () => {
                                 post.created_by.profile.profilePhoto.url ||
                                 "/placeholder.svg"
                               }
+                              className="object-cover"
                               alt={post.created_by.fullname}
                             />
                             <AvatarFallback className="text-lg font-semibold bg-primary/10">

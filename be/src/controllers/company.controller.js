@@ -2,7 +2,7 @@ import { Company } from "../models/company.model.js";
 import { Job } from "../models/job.model.js";
 import { Application } from "../models/application.model.js";
 import cloudinary from "../utils/cloudinary.js";
-import getDataUri from "../utils/dataUri.js";
+import getDataUri from "../utils/datauri.js";
 import slugify from "slugify";
 
 function generateCompanySlug(name, location, taxCode) {
