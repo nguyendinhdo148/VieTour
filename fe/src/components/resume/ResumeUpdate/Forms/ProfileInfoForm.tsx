@@ -21,7 +21,7 @@ interface ProfileInfoFormProps {
 const ProfileInfoForm = ({
   profileData,
   updateSection,
-  onNext,
+  // onNext,
 }: ProfileInfoFormProps) => {
   return (
     <div className="px-6 pt-6 space-y-6 max-w-4xl mx-auto">

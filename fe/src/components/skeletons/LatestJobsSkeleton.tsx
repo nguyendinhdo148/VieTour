@@ -12,7 +12,7 @@ const LatestJobsSkeleton = () => {
 
       {/* Bộ lọc ngành Skeleton */}
       <div className="flex gap-3 flex-wrap">
-        {["Tất cả", "IT", "MARKETING", "DESIGN", "SALES"].map((cat, i) => (
+        {["Tất cả", "IT", "MARKETING", "DESIGN", "SALES"].map((_cat, i) => (
           <div
             key={i}
             className="w-24 h-8 bg-gray-100 animate-pulse rounded-full shadow-sm"

@@ -14,7 +14,7 @@ const BlogEditor: React.FC<BlogEditorProps> = ({
 }) => {
   const editorRef = useRef<TinyMCEEditor>(null);
 
-  const handleContentChange = (content: string, editor: TinyMCEEditor) => {
+  const handleContentChange = (content: string) => {
     onContentChange(content);
   };
 
@@ -27,7 +27,7 @@ const BlogEditor: React.FC<BlogEditorProps> = ({
       </label>
       <Editor
         apiKey={import.meta.env.VITE_TINYMCE_API_KEY}
-        onInit={(evt, editor) => (editorRef.current = editor)}
+        onInit={(_evt, editor) => (editorRef.current = editor)}
         value={content}
         onEditorChange={handleContentChange}
         initialValue="<p>Viết nội dung bài viết tại đây...</p>"
@@ -62,7 +62,7 @@ const BlogEditor: React.FC<BlogEditorProps> = ({
           automatic_uploads: true,
           image_title: true,
           file_picker_types: "image",
-          file_picker_callback: (cb, value, meta) => {
+          file_picker_callback: (cb) => {
             const input = document.createElement("input");
             input.setAttribute("type", "file");
             input.setAttribute("accept", "image/*");
