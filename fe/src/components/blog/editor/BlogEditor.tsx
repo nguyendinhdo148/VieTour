@@ -2,6 +2,7 @@ import React, { useRef } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import type { Editor as TinyMCEEditor } from "tinymce";
 import { BlogContent } from "../components/BlogContent";
+import { TINY_MCE_API_KEY } from "@/utils/constant";
 
 interface BlogEditorProps {
   content: string;
@@ -26,7 +27,7 @@ const BlogEditor: React.FC<BlogEditorProps> = ({
         Nội dung *
       </label>
       <Editor
-        apiKey={import.meta.env.VITE_TINYMCE_API_KEY}
+        apiKey={TINY_MCE_API_KEY}
         onInit={(_evt, editor) => (editorRef.current = editor)}
         value={content}
         onEditorChange={handleContentChange}
