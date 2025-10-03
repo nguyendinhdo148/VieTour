@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import toast from "react-hot-toast";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -37,40 +37,43 @@ const UpdateBlog = () => {
   const [originalData, setOriginalData] = useState<BlogFormData | null>(null);
   const { user } = useSelector((store: RootState) => store.auth);
 
-  const loadBlogData = async (id: string) => {
-    setIsLoadingBlog(true);
-    try {
-      const res = await axios.get(`${API}/blog/detail/update/${id}`, {
-        withCredentials: true,
-      });
-      if (res.data.success && res.data.blog) {
-        const blog = res.data.blog;
-        setFormData({
-          title: blog.title,
-          content: blog.content,
-          image: { url: blog.image.url },
-          tags: blog.tags,
-          category: blog.category,
+  const loadBlogData = useCallback(
+    async (id: string) => {
+      setIsLoadingBlog(true);
+      try {
+        const res = await axios.get(`${API}/blog/detail/update/${id}`, {
+          withCredentials: true,
         });
-        setOriginalData({
-          title: blog.title,
-          content: blog.content,
-          image: blog.image.url,
-          tags: blog.tags,
-          category: blog.category,
-        });
-        setImagePreview(blog.image.url);
-      } else {
-        throw new Error("Không thể tải dữ liệu bài viết");
+        if (res.data.success && res.data.blog) {
+          const blog = res.data.blog;
+          setFormData({
+            title: blog.title,
+            content: blog.content,
+            image: { url: blog.image.url },
+            tags: blog.tags,
+            category: blog.category,
+          });
+          setOriginalData({
+            title: blog.title,
+            content: blog.content,
+            image: blog.image.url,
+            tags: blog.tags,
+            category: blog.category,
+          });
+          setImagePreview(blog.image.url);
+        } else {
+          throw new Error("Không thể tải dữ liệu bài viết");
+        }
+      } catch (error) {
+        console.error("Error loading blog:", error);
+        toast.error("Có lỗi xảy ra khi tải bài viết");
+        navigate("/blog/manager-blogs");
+      } finally {
+        setIsLoadingBlog(false);
       }
-    } catch (error) {
-      console.error("Error loading blog:", error);
-      toast.error("Có lỗi xảy ra khi tải bài viết");
-      navigate("/blog/manager-blogs");
-    } finally {
-      setIsLoadingBlog(false);
-    }
-  };
+    },
+    [navigate, id]
+  );
 
   useEffect(() => {
     if (!user) {
@@ -80,7 +83,7 @@ const UpdateBlog = () => {
     if (id) {
       loadBlogData(id);
     }
-  }, [id, user, navigate]);
+  }, [id, user, loadBlogData, navigate]);
 
   const handleTitleChange = (title: string) => {
     setFormData((prev) => ({

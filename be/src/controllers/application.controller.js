@@ -243,7 +243,7 @@ export const updateApplicationStatus = async (req, res, next) => {
     const companyLogo = application.job?.company?.logo;
     const emailRecruiter = application.job?.created_by?.email;
 
-    const jobDetailUrl = `http://localhost:5173/job/detail/${job.slug}`;
+    const jobDetailUrl = `${process.env.URL_CLIENT}/job/detail/${job.slug}`;
 
     const { subject, html } = buildEmailTemplate({
       type: status.toLowerCase(), // "accepted" hoặc "rejected"
