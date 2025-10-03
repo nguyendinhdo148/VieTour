@@ -40,8 +40,8 @@ export const isAuthenticated = async (req, res, next) => {
       // Lưu vào cookie
       res.cookie("accessToken", accessToken, {
         httpOnly: true,
-        sameSite: "strict",
-        secure: process.env.NODE_ENV === "production",
+        sameSite: "none",
+        secure: true,
         maxAge: 15 * 60 * 1000,
       });
     }
