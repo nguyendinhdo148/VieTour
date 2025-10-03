@@ -108,7 +108,7 @@ export const buildJobSuggestionsEmail = (user, suggestedJobs) => {
             <p style="margin: 4px 0; color: #10b981;">⭐ Độ phù hợp: <strong>${Math.round(
               job.matchScore
             )}%</strong></p>
-            <a href="${process.env.FRONTEND_URL}/job/detail/${job.slug}" 
+            <a href="${process.env.URL_CLIENT}/job/detail/${job.slug}" 
               style="display: inline-block; margin-top: 10px; background-color: #2563eb; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;">
               Xem chi tiết →
             </a>
