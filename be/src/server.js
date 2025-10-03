@@ -14,7 +14,6 @@ import adminRoute from "./routes/admin.route.js";
 import blogRoute from "./routes/blog.route.js";
 import mbtiRoute from "./routes/mbti.route.js";
 import miRoute from "./routes/mi.route.js";
-import { METHODS } from "http";
 
 dotenv.config({});
 
@@ -26,7 +25,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 const corsOptions = {
   origin: process.env.URL_CLIENT,
-  METHODS: ["GET", "POST", "PUT", "DELETE"],
+  methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
 };
 
