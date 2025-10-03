@@ -124,13 +124,15 @@ export const login = async (req, res, next) => {
       .cookie("accessToken", accessToken, {
         httpOnly: true,
         secure: true,
-        sameSite: "strict",
+        sameSite: "none",
+        path: "/",
         maxAge: 15 * 60 * 1000, // 15 phút
       })
       .cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: true,
-        sameSite: "strict",
+        sameSite: "none",
+        path: "/",
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 ngày
       })
       .json({
