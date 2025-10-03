@@ -30,9 +30,10 @@ const JobDetail = () => {
   const { singleJob } = useSelector((store: RootState) => store.job);
   const { user } = useSelector((store: RootState) => store.auth);
 
-  const isApplied =
-    singleJob?.applications?.some((app) => app?.applicant?._id === user?._id) ||
-    false;
+  const isApplied = !!(
+    user &&
+    singleJob?.applications?.some((app) => app?.applicant?._id === user._id)
+  );
 
   const navigate = useNavigate();
   const params = useParams();
