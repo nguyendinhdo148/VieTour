@@ -31,9 +31,7 @@ export const isAuthenticated = async (req, res, next) => {
       // Set lại cookie accessToken cho client nếu muốn
       res.cookie("accessToken", accessToken, {
         httpOnly: true,
-        // sameSite: "strict",
-        secure: process.env.NODE_ENV === "production", // true khi production
-        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        sameSite: "strict",
         maxAge: 15 * 60 * 1000,
       });
     }
