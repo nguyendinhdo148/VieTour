@@ -14,10 +14,8 @@ import adminRoute from "./routes/admin.route.js";
 import blogRoute from "./routes/blog.route.js";
 import mbtiRoute from "./routes/mbti.route.js";
 import miRoute from "./routes/mi.route.js";
-import path from "path";
 
 dotenv.config({});
-const __dirname = path.resolve();
 
 const app = express();
 
@@ -48,21 +46,14 @@ app.use("/api/v1/mbti", mbtiRoute);
 app.use("/api/v1/mi", miRoute);
 
 // error handler
-app.use((err, req, res, next) => {
-  res.status(500).json({
-    message:
-      process.env.NODE_ENV === "production"
-        ? "Internal server error"
-        : err.message,
-  });
-});
-
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../fe/dist")));
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../fe", "dist", "index.html"));
-  });
-}
+// app.use((err, req, res, next) => {
+//   res.status(500).json({
+//     message:
+//       process.env.NODE_ENV === "production"
+//         ? "Internal server error"
+//         : err.message,
+//   });
+// });
 
 app.listen(PORT, () => {
   connectDB();
