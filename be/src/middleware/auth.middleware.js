@@ -3,41 +3,32 @@ import { User } from "../models/user.model.js";
 
 export const isAuthenticated = async (req, res, next) => {
   try {
-    let accessToken = req.cookies?.accessToken;
+    // const token = req.cookies.token;
+    let accessToken = req.cookies.accessToken;
+    /* if (!token) {
+      return res.status(401).json({
+        message: "You are not authenticated",
+        success: false,
+      });
+    }
+    */
 
-    // Nếu không có accessToken thì thử refresh token
+    // Nếu access token hết hạn, thử dùng refresh token
     if (!accessToken) {
-      const refreshToken = req.cookies?.refreshToken;
+      const refreshToken = req.cookies.refreshToken;
+      if (!refreshToken) throw new Error("No tokens provided");
 
-      if (!refreshToken) {
-        return res.status(401).json({
-          success: false,
-          message: "No tokens provided",
-        });
-      }
-
-      // Kiểm tra refreshToken trong DB
+      // Tự verify và tạo accessToken mới
       const user = await User.findOne({ refreshToken });
-      if (!user) {
-        return res.status(401).json({
-          success: false,
-          message: "Refresh token not found",
-        });
+      if (!user || user.refreshTokenExpiry < Date.now()) {
+        return res.status(401).json({ message: "Invalid refresh token" });
       }
 
-      if (user.refreshTokenExpiry < Date.now()) {
-        return res.status(401).json({
-          success: false,
-          message: "Refresh token expired",
-        });
-      }
-
-      // Cấp accessToken mới
       accessToken = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, {
         expiresIn: "15m",
       });
 
-      // Lưu vào cookie
+      // Set lại cookie accessToken cho client nếu muốn
       res.cookie("accessToken", accessToken, {
         httpOnly: true,
         sameSite: "none",
@@ -45,28 +36,21 @@ export const isAuthenticated = async (req, res, next) => {
         maxAge: 15 * 60 * 1000,
       });
     }
+    // const decoded = await jwt.verify(token, process.env.SECRET_KEY);
+    // if (!decoded) {
+    //   return res.status(401).json({
+    //     message: "Invalid token",
+    //     success: false,
+    //   });
+    // }
+    // req.id = decoded.userId;
 
-    // Verify accessToken
+    // Verify access token
     const decoded = jwt.verify(accessToken, process.env.SECRET_KEY);
     req.id = decoded.userId;
-
     next();
   } catch (error) {
-    console.error("Auth error:", error);
-
-    if (error.name === "JsonWebTokenError") {
-      return res.status(401).json({ success: false, message: "Invalid token" });
-    }
-
-    if (error.name === "TokenExpiredError") {
-      return res
-        .status(401)
-        .json({ success: false, message: "Access token expired" });
-    }
-
-    return res
-      .status(500)
-      .json({ success: false, message: "Authentication failed" });
+    next(error);
   }
 };
 
