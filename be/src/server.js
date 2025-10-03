@@ -14,8 +14,10 @@ import adminRoute from "./routes/admin.route.js";
 import blogRoute from "./routes/blog.route.js";
 import mbtiRoute from "./routes/mbti.route.js";
 import miRoute from "./routes/mi.route.js";
+import path from "path";
 
 dotenv.config({});
+const __dirname = path.resolve();
 
 const app = express();
 
@@ -54,6 +56,13 @@ app.use((err, req, res, next) => {
         : err.message,
   });
 });
+
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "../fe/dist")));
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../fe", "dist", "index.html"));
+  });
+}
 
 app.listen(PORT, () => {
   connectDB();
