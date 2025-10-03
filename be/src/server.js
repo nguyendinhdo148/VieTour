@@ -46,14 +46,14 @@ app.use("/api/v1/mbti", mbtiRoute);
 app.use("/api/v1/mi", miRoute);
 
 // error handler
-// app.use((err, req, res, next) => {
-//   res.status(500).json({
-//     message:
-//       process.env.NODE_ENV === "production"
-//         ? "Internal server error"
-//         : err.message,
-//   });
-// });
+app.use((err, req, res, next) => {
+  res.status(500).json({
+    message:
+      process.env.NODE_ENV === "production"
+        ? "Internal server error"
+        : err.message,
+  });
+});
 
 app.listen(PORT, () => {
   connectDB();
