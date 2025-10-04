@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { fadeIn, fadeInUp, staggerContainer } from "./../framer-motion-config";
 import { Mail, Phone, MapPin, ArrowRight, Heart } from "lucide-react";
-import logo from "/viejob.png";
+import logo from "/public/vj1.png";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();

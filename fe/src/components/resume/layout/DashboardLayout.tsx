@@ -1,4 +1,4 @@
-import NavbarResume from "./NavbarResume";
+import Navbar from "@/components/shared/Navbar";
 
 type DashboardLayoutProps = {
   children: React.ReactNode;
@@ -7,7 +7,7 @@ type DashboardLayoutProps = {
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   return (
     <div>
-      <div className="pt-16"><NavbarResume /></div>
+      <div className=""><Navbar /></div>
       <div className="container mx-auto pt-4 pb-4">{children}</div>
     </div>
   );

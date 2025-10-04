@@ -30,6 +30,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import logo from "/public/vj1.png";
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -105,8 +106,8 @@ const LandingPage = () => {
         <header
           className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
             scrolled
-              ? "bg-white/95 backdrop-blur-sm shadow-sm py-3"
-              : "bg-transparent py-6"
+              ? "bg-white/95 backdrop-blur-sm shadow-sm py-2"
+              : "bg-transparent py-2"
           }`}
         >
           <div className="w-full px-8">
@@ -117,9 +118,18 @@ const LandingPage = () => {
                 transition={{ duration: 0.5 }}
                 className="flex items-center"
               >
-                <div className="text-2xl md:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-600 to-purple-500 bg-clip-text text-transparent">
-                  VieJobs CV
-                </div>
+                <Link to="/" className="block">
+                  <div className="flex flex-col items-start">
+                    <img
+                      src={logo}
+                      alt="viejobs-logo"
+                      className="h-10 w-auto max-w-[160px] object-contain"
+                    />
+                    <p className="text-sm text-gray-600 italic font-medium leading-tight">
+                      Kết nối nhanh – Phát triển bền
+                    </p>
+                  </div>
+                </Link>
               </motion.div>
 
               {/* Desktop Navigation */}
