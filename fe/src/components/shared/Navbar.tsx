@@ -35,6 +35,7 @@ import {
   HoverCardTrigger,
 } from "@radix-ui/react-hover-card";
 import { useState } from "react";
+import logo from "/public/vj1.png";
 
 const Navbar = () => {
   const { user } = useSelector((store: RootState) => store.auth);
@@ -75,7 +76,7 @@ const Navbar = () => {
             >
               <div className="flex flex-col items-start">
                 <img
-                  src="/viejob.png"
+                  src={logo}
                   alt="VieJobs Logo"
                   className="h-12 w-auto max-w-[160px] object-contain"
                 />

@@ -8,6 +8,7 @@ import axios from "axios";
 import { API } from "@/utils/constant";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import logo from "/public/vj1.png";
 
 const ForgotPassword = () => {
   const { user } = useSelector((state: RootState) => state.auth);
@@ -58,19 +59,21 @@ const ForgotPassword = () => {
       <div className="flex-1 flex flex-col justify-center items-center px-6 py-12">
         <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-sm border border-gray-100">
           {/* Logo */}
-          <div className="flex justify-center mb-6">
-            <h1 className="text-3xl font-bold text-black drop-shadow-lg tracking-wide">
-              Vie<span className="text-[#f83002] drop-shadow-lg">Jobs</span>
-            </h1>
+          <div className="mb-3">
+            <img
+              src={logo}
+              alt="VieJobs Logo"
+              className="h-12 w-auto mx-auto max-w-[160px] object-contain"
+            />
           </div>
 
           {/* Title */}
-          <h2 className="text-2xl font-semibold text-green-500 mb-6 text-center">
+          <h2 className="text-2xl font-semibold text-green-500 mb-4 text-center">
             Quên mật khẩu
           </h2>
 
           {/* Description */}
-          <p className="text-[14px] text-gray-600 mb-6 text-center">
+          <p className="text-[14px] text-gray-700 mb-6 text-center">
             Nhập email đã đăng ký để nhận liên kết đặt lại mật khẩu
           </p>
 
@@ -156,10 +159,10 @@ const ForgotPassword = () => {
           <p>
             Bạn gặp khó khăn? Liên hệ{" "}
             <a
-              href="tel:02466805588"
+              href="tel:0988514528"
               className="text-green-600 font-medium hover:underline"
             >
-              (024) 6680 5588
+              (+84) 8851 4528
             </a>{" "}
             (giờ hành chính)
           </p>
@@ -176,14 +179,12 @@ const ForgotPassword = () => {
 
         <div className="max-w-md relative z-10">
           {/* Logo */}
-          <div className="flex justify-center mb-8">
-            <h1 className="relative text-4xl font-extrabold tracking-wide">
-              <span className="absolute left-1 top-1 text-gray-800 opacity-40 select-none">
-                Vie<span className="text-red-600">Jobs</span>
-              </span>
-              <span className="text-black">Vie</span>
-              <span className="text-[#f83002]">Jobs</span>
-            </h1>
+          <div className="flex justify-center mb-4">
+            <img
+              src={logo}
+              alt="VieJobs Logo"
+              className="h-full w-auto max-w-[240px] object-contain drop-shadow-[2px_2px_1px_rgba(0,0,0,0.25)]"
+            />
           </div>
 
           {/* Slogan */}

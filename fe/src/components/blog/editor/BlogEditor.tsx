@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import type { Editor as TinyMCEEditor } from "tinymce";
 import { BlogContent } from "../components/BlogContent";
@@ -14,6 +14,14 @@ const BlogEditor: React.FC<BlogEditorProps> = ({
   onContentChange,
 }) => {
   const editorRef = useRef<TinyMCEEditor>(null);
+  const isFirstLoad = useRef(true);
+
+  useEffect(() => {
+    if (editorRef.current && content && isFirstLoad.current) {
+      editorRef.current.setContent(content);
+      isFirstLoad.current = false;
+    }
+  }, [content]);
 
   const handleContentChange = (content: string) => {
     onContentChange(content);

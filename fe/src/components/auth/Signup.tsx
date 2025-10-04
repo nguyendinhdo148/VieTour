@@ -14,6 +14,7 @@ import { toast } from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { setLoading } from "@/redux/authSlice";
+import logo from "/public/vj1.png";
 
 type FormData = {
   fullname: string;
@@ -183,11 +184,12 @@ const Signup = () => {
         >
           {/* Header section */}
           <div className="text-center mb-6">
-            <h1 className="text-2xl font-bold">
-              Chào mừng bạn đến với Vie
-              <span className="text-[#f83002]">Jobs</span>
-            </h1>
-            <h1 className="font-bold text-2xl mb-1 bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+            <img
+              src={logo}
+              alt="VieJobs Logo"
+              className="h-full w-auto max-w-[170px] mx-auto object-contain"
+            />
+            <h1 className="font-bold text-2xl my-1 bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
               Đăng ký để tìm việc thích hợp
             </h1>
 
