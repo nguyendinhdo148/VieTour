@@ -25,7 +25,7 @@ const Jobs = () => {
 
     const fetchSavedJobs = async () => {
       try {
-        const response = await axios.get(`${API}/save-job/`, {
+        const response = await axios.get(`${API}/save-job`, {
           withCredentials: true,
         });
         // Map để lấy chỉ job._id từ mảng savedJobs trả về
