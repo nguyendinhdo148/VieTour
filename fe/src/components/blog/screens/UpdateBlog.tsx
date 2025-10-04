@@ -44,23 +44,27 @@ const UpdateBlog = () => {
         const res = await axios.get(`${API}/blog/detail/update/${id}`, {
           withCredentials: true,
         });
+
         if (res.data.success && res.data.blog) {
           const blog = res.data.blog;
+
           setFormData({
-            title: blog.title,
-            content: blog.content,
-            image: { url: blog.image.url },
-            tags: blog.tags,
-            category: blog.category,
+            title: blog.title || "",
+            content: blog.content || "",
+            image: { url: blog.image?.url || "" },
+            tags: blog.tags || [],
+            category: blog.category || "",
           });
+
           setOriginalData({
-            title: blog.title,
-            content: blog.content,
-            image: blog.image.url,
-            tags: blog.tags,
-            category: blog.category,
+            title: blog.title || "",
+            content: blog.content || "",
+            image: { url: blog.image?.url || "" },
+            tags: blog.tags || [],
+            category: blog.category || "",
           });
-          setImagePreview(blog.image.url);
+
+          setImagePreview(blog.image?.url || "");
         } else {
           throw new Error("Không thể tải dữ liệu bài viết");
         }
@@ -72,7 +76,7 @@ const UpdateBlog = () => {
         setIsLoadingBlog(false);
       }
     },
-    [navigate, id]
+    [navigate]
   );
 
   useEffect(() => {
