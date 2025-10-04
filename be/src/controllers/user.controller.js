@@ -182,7 +182,20 @@ export const logout = async (req, res, next) => {
     });
 
     // Xóa cookies
-    res.clearCookie("accessToken").clearCookie("refreshToken");
+    res.clearCookie("accessToken", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      path: "/", // rất quan trọng
+    });
+
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      path: "/",
+    });
+
     return res.json({ success: true });
   } catch (error) {
     next(error);
