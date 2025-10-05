@@ -21,7 +21,6 @@ const SavedJobsTable = () => {
   );
 
   const dispatch = useDispatch();
-
   const handleUnsaveJob = async (jobId: string) => {
     try {
       await axios.delete(`${API}/save-job/unsave/${jobId}`, {

@@ -3,12 +3,13 @@ import axios from "axios";
 import { Send } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { URL } from "@/utils/constant";
 
 const Chatbot = () => {
   const [messages, setMessages] = useState([
     {
       from: "bot",
-      text: "👋 Xin chào! Tôi là VieJobs Assistant.\n\nTôi có thể giúp bạn:\n• Gợi ý việc làm phù hợp\n• Tạo CV chuyên nghiệp\n• Tư vấn kỹ năng phỏng vấn\n• Tra cứu lương ngành nghề\n• Giải đáp thắc mắc về tuyển dụng\n\n🔗 Xem danh sách việc làm tại VieJobs: http://localhost:5173/jobs\n🔗 Tạo CV tại VieJobs: http://localhost:5173/resume\n\nBạn muốn bắt đầu với điều gì ?",
+      text: `👋 Xin chào! Tôi là VieJobs Assistant.\n\nTôi có thể giúp bạn:\n• Gợi ý việc làm phù hợp\n• Tạo CV chuyên nghiệp\n• Tư vấn kỹ năng phỏng vấn\n• Tra cứu lương ngành nghề\n• Giải đáp thắc mắc về tuyển dụng\n\n🔗 Xem danh sách việc làm tại VieJobs: ${URL}/jobs\n🔗 Tạo CV tại VieJobs: ${URL}/resume\n\nBạn muốn bắt đầu với điều gì ?`,
       timestamp: new Date(),
     },
   ]);
