@@ -9,6 +9,7 @@ import useGetAllJobs from "@/hooks/useGetAllJobs";
 import NoJobFound from "../helpers/NoJobFound";
 import axios from "axios";
 import { API } from "@/utils/constant";
+import toast from "react-hot-toast";
 
 const Jobs = () => {
   const { user } = useSelector((store: RootState) => store.auth);
@@ -51,11 +52,13 @@ const Jobs = () => {
           }
         );
         setSavedJobs((prev) => [...prev, jobId]);
+        toast.success("Lưu thành công!");
       } else {
         await axios.delete(`${API}/save-job/unsave/${jobId}`, {
           withCredentials: true,
         });
         setSavedJobs((prev) => prev.filter((id) => id !== jobId));
+        toast.success("Bỏ lưu thành công!");
       }
     } catch (error) {
       console.error("Lỗi khi thao tác với công việc đã lưu:", error);

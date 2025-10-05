@@ -76,7 +76,7 @@ const UpdateBlog = () => {
       dispatch(
         setSingleBlog({
           ...singleBlog,
-          tags: [...[singleBlog?.tags], tagInput.trim()],
+          tags: [...(singleBlog?.tags || []), tagInput.trim()],
         })
       );
       setTagInput("");

@@ -27,6 +27,7 @@ const SavedJobsTable = () => {
       await axios.delete(`${API}/save-job/unsave/${jobId}`, {
         withCredentials: true,
       });
+      toast.success("Bỏ lưu thành công!");
       fetchSavedJobs();
     } catch (error) {
       console.error("Error unsaving job:", error);

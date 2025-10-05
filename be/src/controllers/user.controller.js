@@ -187,9 +187,7 @@ export const logout = async (req, res, next) => {
       secure: true,
       sameSite: "none",
       path: "/", // rất quan trọng
-    });
-
-    res.clearCookie("refreshToken", {
+    }).clearCookie("refreshToken", {
       httpOnly: true,
       secure: true,
       sameSite: "none",

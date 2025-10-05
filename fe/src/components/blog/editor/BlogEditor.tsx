@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import type { Editor as TinyMCEEditor } from "tinymce";
 import { BlogContent } from "../components/BlogContent";
@@ -14,17 +14,22 @@ const BlogEditor: React.FC<BlogEditorProps> = ({
   onContentChange,
 }) => {
   const editorRef = useRef<TinyMCEEditor>(null);
-  const isFirstLoad = useRef(true);
+  const [isEditorReady, setIsEditorReady] = useState(false);
+  const [initialContent, setInitialContent] = useState("");
 
   useEffect(() => {
-    if (editorRef.current && content && isFirstLoad.current) {
-      editorRef.current.setContent(content);
-      isFirstLoad.current = false;
+    if (isEditorReady && editorRef.current) {
+      const currentContent = editorRef.current.getContent();
+      if (content && content !== currentContent) {
+        editorRef.current.setContent(content);
+      }
+    } else {
+      setInitialContent(content);
     }
-  }, [content]);
+  }, [content, isEditorReady]);
 
-  const handleContentChange = (content: string) => {
-    onContentChange(content);
+  const handleEditorChange = (newContent: string) => {
+    onContentChange(newContent);
   };
 
   // console.log(content)
@@ -36,10 +41,13 @@ const BlogEditor: React.FC<BlogEditorProps> = ({
       </label>
       <Editor
         apiKey={TINY_MCE_API_KEY}
-        onInit={(_evt, editor) => (editorRef.current = editor)}
-        value={content}
-        onEditorChange={handleContentChange}
-        initialValue="<p>Viết nội dung bài viết tại đây...</p>"
+        onInit={(_evt, editor) => {
+          editorRef.current = editor;
+          setIsEditorReady(true);
+          if (initialContent) {
+            editor.setContent(initialContent);
+          }
+        }}
         init={{
           height: 600,
           menubar: true,
@@ -93,6 +101,8 @@ const BlogEditor: React.FC<BlogEditorProps> = ({
           content_style:
             "body { font-family:Helvetica,Arial,sans-serif; font-size:16px; }",
         }}
+        value={isEditorReady ? content : initialContent}
+        onEditorChange={handleEditorChange}
       />
 
       {/* Optional: Hiển thị preview bài viết */}
