@@ -27,10 +27,13 @@ import { SkeletonManagerBlogs } from "../components/skeletons/SkeletonManagerBlo
 import Swal from "sweetalert2";
 import { StatsCard } from "../components/StatsCard";
 import { Blog } from "@/types/blog";
+import DialogDetailBlog from "@/components/admin/components/DialogDetailBlog";
 
 const ManagerBlogs = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedBlog, setSelectedBlog] = useState<Blog | null>(null);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
   const navigate = useNavigate();
 
   const [dashboardData, setDashboardData] = useState<{
@@ -85,7 +88,7 @@ const ManagerBlogs = () => {
 
   const getPercentChange = (today: number, yesterday: number) => {
     if (yesterday === 0) return today === 0 ? "0%" : "+100%";
-    const change = ((today - yesterday) / yesterday) * 100;
+    const change = ((today - yesterday) / yesterday) * 10;
     return `${change >= 0 ? "+" : ""}${change.toFixed(1)}%`;
   };
 
@@ -338,7 +341,9 @@ const ManagerBlogs = () => {
                   {/* Actions */}
                   <div className="flex gap-2 pt-4 border-t border-gray-100 mt-auto">
                     <Button
-                      onClick={() => navigate(`/blog/detail/${blog.slug}`)}
+                      onClick={() => (
+                        setIsDetailOpen(true), setSelectedBlog(blog)
+                      )}
                       variant="outline"
                       size="sm"
                       className="flex-1 cursor-pointer text-blue-600 border-blue-200 hover:bg-blue-50 hover:border-blue-300"
@@ -370,6 +375,13 @@ const ManagerBlogs = () => {
           </div>
         )}
       </div>
+
+      {/* Blog Detail Dialog */}
+      <DialogDetailBlog
+        isDetailOpen={isDetailOpen}
+        setIsDetailOpen={setIsDetailOpen}
+        selectedBlog={selectedBlog}
+      />
     </div>
   );
 };
