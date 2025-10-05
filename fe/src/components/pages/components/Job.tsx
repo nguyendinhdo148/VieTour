@@ -28,8 +28,6 @@ const Job = ({ job, savedJobs, onJobSaveChange }: JobProps) => {
       toast.error("Vui lòng đăng nhập để lưu công việc!");
     }
     onJobSaveChange(job._id, !isSaved);
-
-    toast.success(isSaved ? "Đã bỏ lưu thành công!" : "Đã lưu thành công!");
   };
 
   return (
