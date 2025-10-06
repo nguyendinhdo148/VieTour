@@ -4,8 +4,8 @@ export const sendMail = async ({ to, subject, html, replyTo }) => {
   try {
     const transporter = nodemailer.createTransport({
       // service: "Gmail",
-      host: "smtp-brevo.com",
-      port: 2525,
+      host: "smtp-relay.brevo.com",
+      port: 587,
       secure: false,
       auth: {
         user: process.env.BREVO_SMTP_USER,
