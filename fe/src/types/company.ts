@@ -11,6 +11,9 @@ export interface Company {
   logo?: string; // Optional logo URL
   businessLicense?: string; // Optional business license URL
   taxCode?: string; // Optional tax code
+  noe?: string; // number of employees
+  yoe?: string; // years of experience
+  field?: string; // field of work
   userId: User; // ID của người dùng tạo công ty
   createdAt: string; // ISO date string
   updatedAt: string; // ISO date string

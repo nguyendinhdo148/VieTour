@@ -32,8 +32,18 @@ const LatestJobs = () => {
   const [currentPage, setCurrentPage] = useState(pageParam);
   const [filterCategory, setFilterCategory] = useState(categoryParam);
 
-  const itemPerPage = 9;
-  const categories = ["all", "it", "marketing", "design", "sales", "abc"];
+  const itemPerPage = 12;
+  const categories = [
+    "all",
+    "it",
+    "marketing",
+    "design",
+    "sales",
+    "banking",
+    "education",
+    "accountant",
+    "real estate",
+  ];
 
   const activeJobs = useMemo(
     () =>

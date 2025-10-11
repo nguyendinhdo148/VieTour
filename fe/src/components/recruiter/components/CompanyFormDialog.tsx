@@ -30,6 +30,9 @@ const initialFormData = {
   logo: null as File | null,
   businessLicense: null as File | null,
   taxCode: "",
+  noe: "", // number of employees
+  yoe: "", // years of experience
+  field: "", // field of work
 };
 
 const CompanyFormDialog = ({
@@ -65,6 +68,9 @@ const CompanyFormDialog = ({
         logo: null,
         businessLicense: null,
         taxCode: company.taxCode || "",
+        noe: company.noe || "",
+        yoe: company.yoe || "",
+        field: company.field || "",
       });
       setLogoPreview(company.logo || null);
     } else {
@@ -132,6 +138,9 @@ const CompanyFormDialog = ({
         submitFormData.append("businessLicense", formData.businessLicense);
       }
       submitFormData.append("taxCode", formData.taxCode.trim());
+      submitFormData.append("noe", formData.noe.trim());
+      submitFormData.append("yoe", formData.yoe.trim());
+      submitFormData.append("field", formData.field.trim());
 
       // Pass the FormData to parent component instead of making API call here
       onSuccess(submitFormData);
@@ -208,6 +217,45 @@ const CompanyFormDialog = ({
             />
           </div>
 
+          {/* Year of establishment */}
+          <div className="grid gap-2">
+            <Label htmlFor="yoe">Năm thành lập</Label>
+            <Input
+              id="yoe"
+              value={formData.yoe}
+              onChange={(e) =>
+                setFormData({ ...formData, yoe: e.target.value })
+              }
+              placeholder="VD: 2005"
+            />
+          </div>
+
+          {/* Number of employees */}
+          <div className="grid gap-2">
+            <Label htmlFor="noe">Quy mô</Label>
+            <Input
+              id="noe"
+              value={formData.noe}
+              onChange={(e) =>
+                setFormData({ ...formData, noe: e.target.value })
+              }
+              placeholder="VD: 500-1.000 nhân viên"
+            />
+          </div>
+
+          {/* Field of work */}
+          <div className="grid gap-2">
+            <Label htmlFor="noe">Lĩnh vực</Label>
+            <Input
+              id="field"
+              value={formData.field}
+              onChange={(e) =>
+                setFormData({ ...formData, field: e.target.value })
+              }
+              placeholder="VD: CNTT, Tài chính, Giáo dục,..."
+            />
+          </div>
+
           {/* Description */}
           <div className="grid gap-2">
             <Label htmlFor="description">Mô tả công ty</Label>
@@ -238,7 +286,9 @@ const CompanyFormDialog = ({
 
           {/* Location */}
           <div className="grid gap-2">
-            <Label htmlFor="location">Trụ sở (Tên tỉnh thành phố, VD: HCM, Hà Nội,...)</Label>
+            <Label htmlFor="location">
+              Trụ sở (Tên tỉnh thành phố, VD: HCM, Hà Nội,...)
+            </Label>
             <Input
               id="location"
               value={formData.location}

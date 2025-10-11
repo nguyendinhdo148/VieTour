@@ -22,6 +22,7 @@ import {
   Trash2,
   XCircle,
   AlertCircle,
+  RefreshCw,
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import axios from "axios";
@@ -217,6 +218,12 @@ const JobManager = () => {
     jobsRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  // handle refresh
+  const handleRefresh = () => {
+    setIsLoading(true);
+    fetchJobs();
+  };
+
   if (isLoading) return <CommonSkeleton />;
 
   return (
@@ -292,6 +299,7 @@ const JobManager = () => {
               </SelectContent>
             </Select>
           </div>
+
           {/* New approval filter */}
           <div className="flex gap-4 items-center">
             <label className="text-sm text-gray-600 font-medium">
@@ -332,6 +340,19 @@ const JobManager = () => {
               </SelectContent>
             </Select>
           </div>
+
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="cursor-pointer border border-gray-300 hover:border-gray-400 transition-all duration-200 rounded-full bg-gray-50 text-gray-600 hover:bg-gray-100"
+              onClick={handleRefresh}
+            >
+              <RefreshCw className="w-4 h-4 mr-1" />
+              Tải lại
+            </Button>
+          </div>
+
           {/* New approval note filter */}
           <div className="flex items-center gap-2">
             <label className="text-sm text-gray-600 font-medium">
@@ -343,6 +364,13 @@ const JobManager = () => {
               onChange={(e) => setApprovalNoteFilter(e.target.checked)}
               className="rounded border-gray-300"
             />
+          </div>
+
+          <div className="flex-none flex items-center gap-2 text-gray-600 text-sm font-medium whitespace-nowrap">
+            <span className="text-sm text-gray-600">Tổng số việc làm:</span>
+            <span className="text-sm font-medium text-gray-800">
+              {filteredJobs.length}
+            </span>
           </div>
         </div>
       </div>

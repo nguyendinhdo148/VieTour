@@ -27,15 +27,6 @@ interface CompanyOverviewProps {
 }
 
 const CompanyOverview = ({ company, jobs }: CompanyOverviewProps) => {
-  const companyStats = {
-    rating: 4.8,
-    reviews: 156,
-    employees: "100-500",
-    founded: 2018,
-    industry: "Technology",
-    revenue: "$10M - $50M",
-  };
-
   const benefits = [
     {
       icon: Coffee,
@@ -121,7 +112,7 @@ const CompanyOverview = ({ company, jobs }: CompanyOverviewProps) => {
           </div>
           <div className="text-center">
             <div className="text-3xl font-bold text-gray-800 mb-1">
-              {companyStats.founded}
+              {company.yoe || "N/A"}
             </div>
             <div className="text-sm text-gray-600 font-medium">
               Năm thành lập
@@ -135,7 +126,7 @@ const CompanyOverview = ({ company, jobs }: CompanyOverviewProps) => {
           </div>
           <div className="text-center">
             <div className="text-3xl font-bold text-gray-800 mb-1">
-              {companyStats.employees}
+              {company.noe || "N/A"}
             </div>
             <div className="text-sm text-gray-600 font-medium">Nhân viên</div>
           </div>
@@ -147,9 +138,9 @@ const CompanyOverview = ({ company, jobs }: CompanyOverviewProps) => {
           </div>
           <div className="text-center">
             <div className="text-3xl font-bold text-gray-800 mb-1">
-              {companyStats.industry}
+              {company.field || "N/A"}
             </div>
-            <div className="text-sm text-gray-600 font-medium">Ngành nghề</div>
+            <div className="text-sm text-gray-600 font-medium">Lĩnh vực</div>
           </div>
         </div>
       </div>

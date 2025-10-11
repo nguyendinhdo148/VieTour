@@ -211,7 +211,7 @@ export const updateJob = async (req, res, next) => {
       companyDoc._id.toString()
     );
 
-    console.log(slug);
+    // console.log(slug);
 
     if (!job) {
       return res.status(404).json({
@@ -369,7 +369,17 @@ export const createCompanyAdmin = async (req, res, next) => {
 
 export const updateCompany = async (req, res, next) => {
   try {
-    const { name, description, website, location, address, taxCode } = req.body;
+    const {
+      name,
+      description,
+      website,
+      location,
+      address,
+      taxCode,
+      noe,
+      yoe,
+      field,
+    } = req.body;
 
     const files = req.files; // req.files là một object chứa các file được upload
 
@@ -411,6 +421,9 @@ export const updateCompany = async (req, res, next) => {
       location,
       address,
       taxCode,
+      noe,
+      yoe,
+      field,
     };
 
     if (logo) {

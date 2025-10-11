@@ -25,6 +25,15 @@ const companySchema = new mongoose.Schema(
     logo: {
       type: String, // URL to company logo
     },
+    noe: {
+      type: String, // number of employees
+    },
+    yoe: {
+      type: String, // years of experience
+    },
+    field: {
+      type: String, // field of work
+    },
     businessLicense: {
       type: String, // URL ảnh scan giấy phép kinh doanh
     },

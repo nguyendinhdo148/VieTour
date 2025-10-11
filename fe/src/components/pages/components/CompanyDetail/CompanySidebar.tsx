@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -12,7 +11,6 @@ import {
   Calendar,
   Building,
   Share2,
-  Briefcase,
   ExternalLink,
   Link2,
 } from "lucide-react";
@@ -31,7 +29,7 @@ const CompanySidebar = ({ company, viewCount }: CompanySidebarProps) => {
     <div className="space-y-6">
       {/* Quick Stats */}
       <Card className="shadow-2xl border-0 bg-white/95 backdrop-blur-xl">
-        <CardHeader className="pb-4">
+        <CardHeader>
           <CardTitle className="text-lg font-bold text-gray-800 flex items-center gap-2">
             <BarChart3 className="h-5 w-5 text-emerald-600" />
             Thống kê nhanh
@@ -68,7 +66,7 @@ const CompanySidebar = ({ company, viewCount }: CompanySidebarProps) => {
 
       {/* Enhanced Contact Information */}
       <Card className="shadow-2xl border-0 bg-white/95 backdrop-blur-xl">
-        <CardHeader className="pb-4">
+        <CardHeader>
           <CardTitle className="text-lg font-bold text-gray-800 flex items-center gap-2">
             <FileText className="h-5 w-5 text-emerald-600" />
             Thông tin liên hệ
@@ -116,7 +114,7 @@ const CompanySidebar = ({ company, viewCount }: CompanySidebarProps) => {
             <div className="flex-1">
               <p className="text-sm text-gray-600 mb-1">Thành lập</p>
               <p className="text-gray-800 font-semibold">
-                {new Date(company.createdAt).toLocaleDateString("vi-VN")}
+                {company.yoe || "N/A"}
               </p>
             </div>
           </div>
@@ -127,32 +125,15 @@ const CompanySidebar = ({ company, viewCount }: CompanySidebarProps) => {
             </div>
             <div className="flex-1">
               <p className="text-sm text-gray-600 mb-1">Ngành nghề</p>
-              <p className="text-gray-800 font-semibold">Technology</p>
+              <p className="text-gray-800 font-semibold">{company.field}</p>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Premium Action Buttons */}
-      <Card className="shadow-2xl border-0 bg-white/95 backdrop-blur-xl">
-        <CardHeader>
-          <CardTitle className="text-lg font-bold text-gray-800">
-            Hành động
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="flex flex-col space-y-3">
-          <Link to="/jobs" className="w-full">
-            <Button className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
-              <Briefcase className="mr-2 h-5 w-5" />
-              Xem tất cả việc làm
-            </Button>
-          </Link>
-        </CardContent>
-      </Card>
-
       {/* Enhanced Social Sharing */}
       <Card className="shadow-2xl border-0 bg-white/95 backdrop-blur-xl">
-        <CardHeader className="pb-4">
+        <CardHeader>
           <CardTitle className="text-lg font-bold text-gray-800 flex items-center gap-2">
             <Share2 className="h-5 w-5 text-emerald-600" />
             Chia sẻ công ty
