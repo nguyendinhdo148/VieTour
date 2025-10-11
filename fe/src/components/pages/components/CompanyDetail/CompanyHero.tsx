@@ -105,7 +105,7 @@ const CompanyHero = ({ company, jobs, viewCount }: CompanyHeroProps) => {
                 </div>
                 <div className="flex items-center gap-2">
                   <Users className="h-5 w-5" />
-                  <span className="font-medium">100-500 nhân viên</span>
+                  <span className="font-medium">{company.noe} Nhân viên</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Eye className="h-5 w-5" />

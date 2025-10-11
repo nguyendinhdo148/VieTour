@@ -12,6 +12,7 @@ import CompanySidebar from "./components/CompanyDetail/CompanySidebar";
 import CompanyLoading from "./components/CompanyDetail/CompanyLoading";
 import CompanyNotFound from "./components/CompanyDetail/CompanyNotFound";
 import "./components/CompanyDetail/CompanyAnimations.css";
+import Footer from "../Footer";
 
 const CompanyDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -94,6 +95,8 @@ const CompanyDetail = () => {
           <CompanySidebar company={company} viewCount={viewCount} />
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 };

@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Search, Users } from "lucide-react";
+import { RefreshCw, Search, Users } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import axios from "axios";
@@ -22,6 +22,7 @@ import CommonSkeleton from "../components/Skeleton/CommonSkeleton";
 import ActionButtons from "../components/ActionButtons";
 import { PaginationButtons } from "@/components/helpers/PaginationButtons";
 import { paginate } from "@/components/helpers/pagination";
+import { Button } from "@/components/ui/button";
 
 const Candidates = () => {
   const { applications } = useSelector((store: RootState) => store.application);
@@ -105,7 +106,9 @@ const Candidates = () => {
     const jobTitle = app.job?.title.toLowerCase();
     const term = searchTerm.toLowerCase();
     return (
-      fullName?.includes(term) || email?.includes(term) || jobTitle?.includes(term)
+      fullName?.includes(term) ||
+      email?.includes(term) ||
+      jobTitle?.includes(term)
     );
   });
 
@@ -120,6 +123,12 @@ const Candidates = () => {
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     candidatesRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  // handle refresh
+  const handleRefresh = () => {
+    setLoading(true);
+    fetchApplications();
   };
 
   if (isLoading) {
@@ -146,7 +155,7 @@ const Candidates = () => {
       {/* Filters */}
       <Card className="p-6 shadow-sm border border-gray-200 rounded-xl">
         <div className="flex flex-col md:flex-row md:items-center gap-4">
-          <div className="flex-1">
+          <div className="flex">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
               <Input
@@ -156,6 +165,18 @@ const Candidates = () => {
                 className="pl-10 rounded-xl border-gray-300 focus:outline-none focus:ring-0 focus:border-transparent"
               />
             </div>
+          </div>
+
+          <div className="flex-1 flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="cursor-pointer border border-gray-300 hover:border-gray-400 transition-all duration-200 rounded-full bg-gray-50 text-gray-600 hover:bg-gray-100"
+              onClick={handleRefresh}
+            >
+              <RefreshCw className="w-4 h-4 mr-1" />
+              Tải lại
+            </Button>
           </div>
           <div className="flex flex-wrap gap-2">
             <Badge

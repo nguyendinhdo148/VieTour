@@ -302,7 +302,7 @@ const Company = () => {
             <div className="text-center py-6">
               <p className="text-gray-500">Chưa có công ty nào được thêm.</p>
               <Button
-                className="mt-4 bg-blue-600 hover:bg-blue-700"
+                className="cursor-pointer mt-4 bg-blue-600 hover:bg-blue-700 text-white"
                 onClick={() => {
                   setSelectedCompany(null);
                   setIsDialogOpen(true);

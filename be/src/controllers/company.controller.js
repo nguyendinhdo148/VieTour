@@ -16,8 +16,35 @@ function generateCompanySlug(name, location, taxCode) {
 // for recruiter
 export const createCompany = async (req, res, next) => {
   try {
-    const { name, description, website, location, address, taxCode } = req.body;
+    const {
+      name,
+      description,
+      website,
+      location,
+      address,
+      taxCode,
+      noe,
+      yoe,
+      field,
+    } = req.body;
     const files = req.files;
+
+    const userId = req.id;
+    if (!userId) {
+      return res.status(401).json({
+        message: "Unauthorized. Please login again.",
+        success: false,
+      });
+    }
+
+    // max 1 company per recruiter
+    let userCompanies = await Company.find({ userId });
+    if (userCompanies.length >= 1) {
+      return res.status(400).json({
+        message: "You can create up to 1 companies.",
+        success: false,
+      });
+    }
 
     // Kiểm tra taxCode trùng
     let company = await Company.findOne({ taxCode });
@@ -56,6 +83,9 @@ export const createCompany = async (req, res, next) => {
       taxCode,
       logo,
       businessLicense,
+      noe, // number of employees
+      yoe, // years of experience
+      field, // field of work
       userId: req.id,
     });
 
@@ -160,7 +190,17 @@ export const getJobByCompany = async (req, res, next) => {
 // for recruiter
 export const updateCompany = async (req, res, next) => {
   try {
-    const { name, description, website, location, address, taxCode } = req.body;
+    const {
+      name,
+      description,
+      website,
+      location,
+      address,
+      taxCode,
+      noe,
+      yoe,
+      field,
+    } = req.body;
 
     const files = req.files; // req.files là một object chứa các file được upload
 
@@ -202,6 +242,9 @@ export const updateCompany = async (req, res, next) => {
       location,
       address,
       taxCode,
+      noe, // number of employees
+      yoe, // years of experience
+      field, // field of work
     };
 
     if (logo) {

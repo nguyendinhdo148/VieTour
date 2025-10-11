@@ -23,6 +23,7 @@ import {
   Tag,
   BarChart3,
   BookOpen,
+  RefreshCw,
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import axios from "axios";
@@ -273,6 +274,12 @@ const BlogManagerAdmin = () => {
     navigate(`/blog/update-blog/${blog._id}`);
   };
 
+  // handle refresh
+  const handleRefresh = () => {
+    setIsLoading(true);
+    fetchBlogs();
+  };
+
   if (isLoading) return <CommonSkeleton />;
 
   return (
@@ -388,6 +395,25 @@ const BlogManagerAdmin = () => {
                 ))}
               </SelectContent>
             </Select>
+          </div>
+
+          <div className="flex-1 flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="cursor-pointer border border-gray-300 hover:border-gray-400 transition-all duration-200 rounded-full bg-gray-50 text-gray-600 hover:bg-gray-100"
+              onClick={handleRefresh}
+            >
+              <RefreshCw className="w-4 h-4 mr-1" />
+              Tải lại
+            </Button>
+          </div>
+
+          <div className="flex-none flex items-center gap-2 text-gray-600 text-sm font-medium whitespace-nowrap">
+            <span className="text-sm text-gray-600">Tổng số bài viết:</span>
+            <span className="text-sm font-medium text-gray-800">
+              {filteredBlogs.length}
+            </span>
           </div>
         </div>
       </div>
