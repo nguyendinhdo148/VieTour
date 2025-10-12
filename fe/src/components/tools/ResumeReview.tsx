@@ -61,53 +61,101 @@ const ResumeReview = () => {
   };
 
   const formatFeedbackText = (text: string) => {
-    // Parse the feedback text and format it with proper styling
     const lines = text.split("\n");
     const formattedContent: React.JSX.Element[] = [];
 
     lines.forEach((line, index) => {
-      if (line.trim() === "") {
-        formattedContent.push(<br key={index} />);
+      const trimmed = line.trim();
+
+      // Dòng trống → khoảng cách nhỏ
+      if (trimmed === "") {
+        formattedContent.push(<div key={index} className="h-1" />);
         return;
       }
 
-      // Handle bold text with **
-      if (line.includes("**")) {
-        const parts = line.split("**");
-        const formattedLine = parts.map((part, partIndex) => {
-          if (partIndex % 2 === 1) {
-            return (
-              <strong
-                key={partIndex}
-                className="text-[16px] font-bold text-gray-900"
-              >
-                {part}
-              </strong>
-            );
-          } else {
-            return <span key={partIndex}>{part}</span>;
-          }
-        });
+      // Tiêu đề chính (I. / II. / III. / ...)
+      if (/^[IVX]+\./.test(trimmed)) {
         formattedContent.push(
-          <div key={index} className="text-[15px] text-gray-800 mb-2">
-            {formattedLine}
-          </div>
+          <h3
+            key={index}
+            className="font-bold text-[17px] text-gray-900 mt-3 mb-1"
+          >
+            {trimmed}
+          </h3>
         );
-      } else if (line.trim().startsWith("*") || line.trim().startsWith("-")) {
-        // Handle bullet points
-        formattedContent.push(
-          <div key={index} className="text-[15px] ml-4 mb-1 text-gray-800">
-            {line.trim()}
-          </div>
-        );
-      } else {
-        // Regular text
-        formattedContent.push(
-          <div key={index} className="text-[15px] mb-2 text-gray-800">
-            {line}
-          </div>
-        );
+        return;
       }
+
+      // Tiêu đề phụ dạng **...**
+      if (/^\*\*(.+)\*\*$/.test(trimmed)) {
+        formattedContent.push(
+          <p
+            key={index}
+            className="font-semibold text-[15px] text-gray-800 mt-2 mb-1"
+          >
+            {trimmed.replace(/\*\*/g, "")}
+          </p>
+        );
+        return;
+      }
+
+      // Bullet point (- hoặc *)
+      if (/^[-*]\s+/.test(trimmed)) {
+        const content = trimmed.replace(/^[-*]\s+/, "");
+
+        // Xử lý chữ đậm trong bullet (giữa dòng hoặc nhiều lần)
+        const parts = content.split("**");
+        const formattedLine = parts.map((part, i) =>
+          i % 2 === 1 ? (
+            <strong key={i} className="font-bold text-gray-900">
+              {part}
+            </strong>
+          ) : (
+            <span key={i}>{part}</span>
+          )
+        );
+
+        formattedContent.push(
+          <div key={index} className="flex items-start ml-4 mb-1">
+            <span className="mr-2 mt-[-2px] text-gray-700 select-none">-</span>
+            <p className="text-[15px] text-gray-800 leading-snug">
+              {formattedLine}
+            </p>
+          </div>
+        );
+        return;
+      }
+
+      // Các dòng có **đậm** trong câu
+      if (trimmed.includes("**")) {
+        const parts = trimmed.split("**");
+        const formattedLine = parts.map((part, i) =>
+          i % 2 === 1 ? (
+            <strong key={i} className="font-bold text-gray-900">
+              {part}
+            </strong>
+          ) : (
+            <span key={i}>{part}</span>
+          )
+        );
+
+        formattedContent.push(
+          <p
+            key={index}
+            className="text-[15px] text-gray-800 mb-1 leading-snug"
+          >
+            {formattedLine}
+          </p>
+        );
+        return;
+      }
+
+      // Mặc định: dòng thường
+      formattedContent.push(
+        <p key={index} className="text-[15px] text-gray-800 mb-1 leading-snug">
+          {trimmed}
+        </p>
+      );
     });
 
     return formattedContent;

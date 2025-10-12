@@ -90,10 +90,36 @@ export const resumeReview = async (req, res, next) => {
     // 2. Gửi text lên Gemini API (Google Generative Language API)
     try {
       const geminiApiKey = process.env.GEMINI_API_KEY_REVIEW_CV;
-      const geminiApiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=${geminiApiKey}`;
-      const prompt = `Xem lại sơ yếu lý lịch sau đây và đưa ra phản hồi mang tính xây dựng về
-                    điểm mạnh, điểm yếu và các lĩnh vực cần cải thiện.
-                    Nội dung sơ yếu lý lịch:\n\n${extractedText}.`;
+      const geminiApiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${geminiApiKey}`;
+      const prompt = `
+                      Bạn là chuyên gia tuyển dụng và cố vấn nghề nghiệp.
+                      - Viết bằng tiếng Việt tự nhiên, thân thiện và chuyên nghiệp, không dùng ký hiệu "*" hay "•".
+                      - Bắt đầu phản hồi bằng **lời chào ngắn gọn và tích cực** (ví dụ: “Xin chào bạn, cảm ơn bạn đã gửi CV đến để được đánh giá!”).
+
+                      🎯 Mục tiêu:
+                      Đánh giá sơ yếu lý lịch (CV) bên dưới bằng tiếng Việt và viết phản hồi ngắn gọn, chuyên nghiệp, có bố cục rõ ràng.
+
+                      🧩 Yêu cầu trình bày:
+                      - Viết bằng tiếng Việt tự nhiên, dễ hiểu, không dùng ký hiệu "*" hay "•".
+                      - Dùng Markdown với cấu trúc các mục:
+                        **I. Tóm tắt tổng quan**  
+                        **II. Điểm mạnh**  
+                        **III. Điểm yếu / Hạn chế**  
+                        **IV. Đề xuất cải thiện**  
+                        **V. Kết luận / Lời khuyên**
+                      - Mỗi mục có 5–6 gạch đầu dòng, sử dụng dấu gạch ngang "-" cho mỗi ý (không dùng ký hiệu khác).
+                      - Nội dung cần cô đọng, có chiều sâu, tránh lặp lại, trình bày cân đối và dễ đọc.
+                      - Không trích nguyên văn nội dung CV, chỉ phân tích và nhận xét.
+                      - Kết thúc phản hồi bằng **lời chúc động viên** (ví dụ: “Chúc bạn thành công và sớm đạt được mục tiêu nghề nghiệp mong muốn!”).
+
+                      📄 Nội dung CV cần đánh giá:
+                      ----------------------------------------
+                      ${extractedText}
+                      ----------------------------------------
+
+                      Hãy xuất kết quả cuối cùng bằng Markdown, dễ hiển thị trên web, sử dụng khoảng cách dòng hợp lý, không quá thưa.
+                      `;
+
 
       const geminiRes = await axios.post(geminiApiUrl, {
         contents: [{ parts: [{ text: prompt }] }],
