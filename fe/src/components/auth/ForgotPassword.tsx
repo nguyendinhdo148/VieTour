@@ -8,7 +8,6 @@ import axios from "axios";
 import { API } from "@/utils/constant";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import logo from "/public/vj1.png";
 
 const ForgotPassword = () => {
   const { user } = useSelector((state: RootState) => state.auth);
@@ -61,7 +60,7 @@ const ForgotPassword = () => {
           {/* Logo */}
           <div className="mb-3">
             <img
-              src={logo}
+              src="vj1.png"
               alt="VieJobs Logo"
               className="h-12 w-auto mx-auto max-w-[160px] object-contain"
             />
@@ -181,7 +180,7 @@ const ForgotPassword = () => {
           {/* Logo */}
           <div className="flex justify-center mb-4">
             <img
-              src={logo}
+              src="vj1.png"
               alt="VieJobs Logo"
               className="h-full w-auto max-w-[240px] object-contain drop-shadow-[2px_2px_1px_rgba(0,0,0,0.25)]"
             />

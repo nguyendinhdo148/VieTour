@@ -14,7 +14,6 @@ import { toast } from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { setLoading } from "@/redux/authSlice";
-import logo from "/public/vj1.png";
 
 type FormData = {
   fullname: string;
@@ -185,7 +184,7 @@ const Signup = () => {
           {/* Header section */}
           <div className="text-center mb-6">
             <img
-              src={logo}
+              src="vj1.png"
               alt="VieJobs Logo"
               className="h-full w-auto max-w-[170px] mx-auto object-contain"
             />

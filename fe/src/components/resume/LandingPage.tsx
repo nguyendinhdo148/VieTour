@@ -30,7 +30,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import logo from "/public/vj1.png";
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -121,7 +120,7 @@ const LandingPage = () => {
                 <Link to="/" className="block">
                   <div className="flex flex-col items-start">
                     <img
-                      src={logo}
+                      src="vj1.png"
                       alt="viejobs-logo"
                       className="h-10 w-auto max-w-[160px] object-contain"
                     />

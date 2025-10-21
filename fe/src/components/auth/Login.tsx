@@ -12,7 +12,6 @@ import { API } from "@/utils/constant";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { setLoading, setUser } from "@/redux/authSlice";
-import logo from "/public/vj1.png";
 
 type FormData = {
   email: string;
@@ -149,7 +148,7 @@ const Login = () => {
           {/* Header section */}
           <div className="text-center mb-6">
             <img
-              src={logo}
+              src="vj1.png"
               alt="VieJobs Logo"
               className="h-full w-auto max-w-[170px] mx-auto object-contain"
             />
