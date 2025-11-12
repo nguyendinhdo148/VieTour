@@ -120,7 +120,6 @@ export const resumeReview = async (req, res, next) => {
                       Hãy xuất kết quả cuối cùng bằng Markdown, dễ hiển thị trên web, sử dụng khoảng cách dòng hợp lý, không quá thưa.
                       `;
 
-
       const geminiRes = await axios.post(geminiApiUrl, {
         contents: [{ parts: [{ text: prompt }] }],
       });
@@ -207,46 +206,35 @@ export const chat_with_ai = async (req, res, next) => {
   }
 
   try {
-    // 1. Cải thiện prompt để phân tích intent và keywords chính xác hơn
+    // 1️ Gọi OpenAI để phân tích yêu cầu
     const extractPrompt = `
-    Bạn là trợ lý AI phân tích ý định tìm việc làm. Hãy phân tích câu hỏi sau và trả về JSON với các trường:
-    - intent: "job_search" nếu người dùng muốn tìm việc, "other" nếu không
-    - keywords: mảng từ khóa chính xác về vị trí, kỹ năng, địa điểm, ngành nghề
-    - location: địa điểm cụ thể nếu có
-    - jobType: loại hình công việc (full-time, part-time, remote, internship, thực tập, bán thời gian, toàn thời gian, từ xa) nếu có
-    - salary: mức lương tối thiểu nếu có (số nguyên, đơn vị triệu)
-    - experienceLevel: số năm kinh nghiệm nếu có
-    - category: ngành nghề/lĩnh vực nếu có
-    
-    Ví dụ:
-    - "Tìm việc developer PHP ở Hà Nội" → {"intent": "job_search", "keywords": ["developer", "PHP"], "location": "Hà Nội", "category": "IT"}
-    - "Việc làm marketing lương trên 15 triệu" → {"intent": "job_search", "keywords": ["marketing"], "salary": 15}
-    - "Tìm intern NodeJS 0-1 năm kinh nghiệm" → {"intent": "job_search", "keywords": ["intern", "NodeJS"], "experienceLevel": 1, "jobType": "internship"}
-    
-    Chỉ trả về JSON, không giải thích thêm.
-    Câu hỏi: "${message}"
-    `;
+    Hãy phân tích câu hỏi sau và trả về JSON gồm:
+    {
+      "intent": "job_search" hoặc "other",
+      "keywords": ["từ khóa chính"],
+      "location": "địa điểm nếu có",
+      "salary": số (triệu),
+      "jobType": "full-time, part-time, remote, ...",
+      "experienceLevel": số năm,
+      "category": "lĩnh vực nếu có"
+    }
+    Câu hỏi: "${message}"`;
 
     const extractRes = await openai2.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
-        {
-          role: "system",
-          content:
-            "Bạn là trợ lý AI phân tích ý định tìm việc và trích xuất từ khóa chính xác.",
-        },
+        { role: "system", content: "Bạn là AI chuyên phân tích tìm việc." },
         { role: "user", content: extractPrompt },
       ],
-      temperature: 0.1, // Giảm temperature để có kết quả ổn định hơn
-      max_tokens: 400,
+      temperature: 0.1,
     });
 
     let parsedData = {
       intent: "other",
       keywords: [],
       location: null,
-      jobType: null,
       salary: null,
+      jobType: null,
       experienceLevel: null,
       category: null,
     };
@@ -255,175 +243,100 @@ export const chat_with_ai = async (req, res, next) => {
       const jsonStr =
         extractRes.choices[0].message.content.match(/\{[\s\S]*\}/)?.[0];
       if (jsonStr) {
-        const parsed = JSON.parse(jsonStr);
-        parsedData = { ...parsedData, ...parsed };
-
-        // Lọc keywords hợp lệ
-        parsedData.keywords =
-          parsedData.keywords?.filter(
-            (k) =>
-              typeof k === "string" &&
-              k.length > 1 &&
-              ![
-                "việc",
-                "làm",
-                "tìm",
-                "kiếm",
-                "công",
-                "ty",
-                "ở",
-                "tại",
-                "với",
-              ].includes(k.toLowerCase())
-          ) || [];
+        parsedData = { ...parsedData, ...JSON.parse(jsonStr) };
       }
-    } catch (e) {
-      console.error("JSON parse error:", e);
+    } catch {
+      console.warn("⚠️ Không parse được JSON từ AI");
     }
 
-    // 2. Nếu là tìm việc, xây dựng query thông minh hơn
-    if (parsedData.intent === "job_search") {
-      const searchQuery = buildSearchQuery(parsedData);
+    // 2️ Nếu không phải tìm việc → gọi OpenAI tư vấn
+    if (parsedData.intent !== "job_search") {
+      return callOpenAI(message, res);
+    }
 
-      // Tìm kiếm với scoring để sắp xếp kết quả tốt hơn
-      let jobs = await Job.aggregate([
-        { $match: searchQuery },
-        {
-          $lookup: {
-            from: "companies",
-            localField: "company",
-            foreignField: "_id",
-            as: "company",
-          },
-        },
-        { $unwind: "$company" },
-        {
-          $addFields: {
-            // Tính điểm relevance dựa trên match
-            relevanceScore: {
-              $add: [
-                // Bonus điểm cho title match
-                {
-                  $cond: [
-                    {
-                      $regexMatch: {
-                        input: "$title",
-                        regex: parsedData.keywords.join("|"),
-                        options: "i",
-                      },
-                    },
-                    10,
-                    0,
-                  ],
-                },
-                // Bonus điểm cho location match
-                {
-                  $cond: [
-                    parsedData.location
-                      ? {
-                          $regexMatch: {
-                            input: "$location",
-                            regex: parsedData.location,
-                            options: "i",
-                          },
-                        }
-                      : false,
-                    5,
-                    0,
-                  ],
-                },
-                // Bonus điểm cho category match
-                {
-                  $cond: [
-                    parsedData.category
-                      ? {
-                          $regexMatch: {
-                            input: "$category",
-                            regex: parsedData.category,
-                            options: "i",
-                          },
-                        }
-                      : false,
-                    5,
-                    0,
-                  ],
-                },
-                // Bonus điểm cho salary match
-                {
-                  $cond: [
-                    parsedData.salary
-                      ? { $gte: ["$salary", parsedData.salary] }
-                      : false,
-                    3,
-                    0,
-                  ],
-                },
-                // Bonus điểm cho experience match
-                {
-                  $cond: [
-                    parsedData.experienceLevel !== null
-                      ? {
-                          $lte: [
-                            "$experienceLevel",
-                            parsedData.experienceLevel + 1,
-                          ],
-                        }
-                      : false,
-                    3,
-                    0,
-                  ],
-                },
+    // 3️ Tạo query lỏng (chỉ lọc status, approval, keyword, location)
+    const query = {
+      status: "active",
+      approval: "approved",
+      $or: [
+        ...(parsedData.keywords.length
+          ? parsedData.keywords.map((kw) => ({
+              $or: [
+                { title: { $regex: kw, $options: "i" } },
+                { description: { $regex: kw, $options: "i" } },
+                { category: { $regex: kw, $options: "i" } },
               ],
-            },
-          },
+            }))
+          : []),
+        ...(parsedData.location
+          ? [{ location: { $regex: parsedData.location, $options: "i" } }]
+          : []),
+      ],
+    };
+
+    // 4️ Truy vấn MongoDB
+    let jobs = await Job.aggregate([
+      { $match: query },
+      {
+        $lookup: {
+          from: "companies",
+          localField: "company",
+          foreignField: "_id",
+          as: "company",
         },
-        { $sort: { relevanceScore: -1, createdAt: -1 } },
-        { $limit: 8 },
-      ]);
+      },
+      { $unwind: "$company" },
+      { $limit: 30 },
+    ]);
 
-      // Fallback search nếu không có kết quả
-      if (jobs.length === 0) {
-        jobs = await Job.find({
-          $or: [
-            ...parsedData.keywords.map((kw) => ({
-              title: { $regex: kw, $options: "i" },
-            })),
-            ...parsedData.keywords.map((kw) => ({
-              description: { $regex: kw, $options: "i" },
-            })),
-            ...parsedData.keywords.map((kw) => ({
-              category: { $regex: kw, $options: "i" },
-            })),
-            ...(parsedData.location
-              ? [{ location: { $regex: parsedData.location, $options: "i" } }]
-              : []),
-          ],
-          status: "active",
-          approval: "approved",
-        })
-          .populate("company")
-          .sort({ createdAt: -1 })
-          .limit(5);
+    // 5️ Lọc chính xác hậu truy vấn bằng normalize
+    const normalize = (s) =>
+      (s || "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/thanh pho|tp\.?|ho chi minh|hcmc/gi, "hcm")
+        .trim();
+
+    jobs = jobs.filter((job) => {
+      let ok = true;
+
+      if (parsedData.location) {
+        const loc1 = normalize(job.location);
+        const loc2 = normalize(parsedData.location);
+        ok = ok && (loc1.includes(loc2) || loc2.includes(loc1));
       }
 
-      if (jobs.length > 0) {
-        // Format kết quả tốt hơn
-        const answer = formatJobResults(jobs, parsedData);
-        return res.json({ success: true, answer });
-      } else {
-        return res.json({
-          success: true,
-          answer: generateNoResultsMessage(parsedData),
-        });
+      if (parsedData.keywords.length > 0) {
+        const combined = normalize(
+          `${job.title} ${job.description} ${job.category}`
+        );
+        ok =
+          ok &&
+          parsedData.keywords.some((kw) => combined.includes(normalize(kw)));
       }
+
+      if (parsedData.salary) {
+        const s = Number(job.salary);
+        const si = Number(parsedData.salary);
+        // Lọc chính xác: chỉ nhận job có lương nằm trong khoảng ±1 triệu (coi như đúng 15)
+        ok = ok && !isNaN(s) && Math.abs(s - si) <= 1;
+      }
+
+      return ok;
+    });
+
+    // 6️ Kết quả
+    if (jobs.length > 0) {
+      const answer = formatJobResults(jobs, parsedData);
+      return res.json({ success: true, answer });
+    } else {
+      const answer = generateNoResultsMessage(parsedData);
+      return res.json({ success: true, answer });
     }
-
-    // 3. Nếu không phải tìm việc, gọi OpenAI trả lời tư vấn
-    return callOpenAI(message, res);
   } catch (error) {
-    console.error("OpenAI Chat Error:", error);
-    res.status(500).json({ success: false, message: "AI chat failed!" });
-    next(error);
+    console.error("❌ chat_with_ai error:", error);
+    return res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
