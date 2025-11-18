@@ -161,14 +161,22 @@ export const generate_description = async (req, res, next) => {
 
   try {
     const prompt = `
-    Bạn là một chuyên gia tuyển dụng. Hãy viết mô tả công việc ngắn gọn, súc tích cho vị trí sau:
-    - Tiêu đề: ${title}
-    - Lĩnh vực: ${category || "Không xác định"}
+    Bạn là một chuyên gia tuyển dụng (HR Manager) chuyên nghiệp. 
+    Hãy viết nội dung tuyển dụng cho vị trí: "${title}" thuộc lĩnh vực: "${
+      category || "Không xác định"
+    }".
     
-    Yêu cầu:
-    - Viết 6-7 câu.
-    - Mỗi câu kết thúc bằng dấu chấm.
-    - Nội dung rõ ràng, chuyên nghiệp.
+    Hãy trả về kết quả dưới dạng **JSON object** (không kèm markdown) với các trường sau:
+    1. "description": Một đoạn văn mô tả công việc hấp dẫn, khoảng 6-7 câu, chuyên nghiệp.
+    2. "requirements": Một mảng (array) chứa 5-7 chuỗi. Mỗi chuỗi là một yêu cầu cụ thể, **bắt buộc phải kết thúc bằng dấu chấm (.)**.
+    3. "benefits": Một mảng (array) chứa 5-7 chuỗi. Mỗi chuỗi là một quyền lợi, **bắt buộc phải kết thúc bằng dấu chấm (.)**.
+
+    Ví dụ format mong muốn:
+    {
+      "description": "Chúng tôi đang tìm kiếm...",
+      "requirements": ["Có kinh nghiệm 2 năm.", "Thành thạo ReactJS."],
+      "benefits": ["Lương tháng 13.", "Bảo hiểm đầy đủ."]
+    }
     `;
 
     const response = await openai.chat.completions.create({
@@ -176,19 +184,34 @@ export const generate_description = async (req, res, next) => {
       messages: [
         {
           role: "system",
-          content: "Bạn là một chuyên gia viết mô tả công việc.",
+          content:
+            "Bạn là trợ lý AI chuyên tạo nội dung tuyển dụng dưới dạng JSON.",
         },
         { role: "user", content: prompt },
       ],
       temperature: 0.7,
-      max_tokens: 300,
+      max_tokens: 1000,
+      response_format: { type: "json_object" },
     });
 
-    const description = response.choices[0].message.content.trim();
+    const content = response.choices[0].message.content;
+    let data;
+
+    try {
+      data = JSON.parse(content);
+    } catch (e) {
+      // Fallback nếu AI không trả về JSON chuẩn (ít khi xảy ra với mode json_object)
+      console.error("JSON Parse error:", e);
+      return res
+        .status(500)
+        .json({ success: false, message: "AI output format error" });
+    }
 
     res.json({
       success: true,
-      description,
+      description: data.description || "",
+      requirements: data.requirements || [],
+      benefits: data.benefits || [],
     });
   } catch (error) {
     console.error("OpenAI Error:", error);
@@ -207,26 +230,42 @@ export const chat_with_ai = async (req, res, next) => {
 
   try {
     // 1️ Gọi OpenAI để phân tích yêu cầu
-    const extractPrompt = `
-    Hãy phân tích câu hỏi sau và trả về JSON gồm:
+    const systemPrompt = `
+    Bạn là một trợ lý AI thông minh cho nền tảng tuyển dụng VieJobs.
+    Nhiệm vụ của bạn là trích xuất thông tin từ câu hỏi của người dùng thành dạng JSON.
+    
+    Quy tắc trích xuất:
+    - intent: "job_search" (nếu tìm việc), "advice" (nếu xin lời khuyên), "other" (chào hỏi/khác).
+    - keywords: Mảng các từ khóa quan trọng (kỹ năng, tên công việc, ngôn ngữ). Bỏ qua các từ "tìm", "việc", "tại", "ở".
+    - location: Tên thành phố/tỉnh thành chuẩn hóa (VD: "hcm", "hanoi", "danang"). Nếu không có trả về null.
+    - salary: Số nguyên (đơn vị Triệu VNĐ). Nếu người dùng nhập USD, hãy quy đổi (1 USD = 25.000 VND). VD: "1000 đô" -> 25.
+    - experienceLevel: Số năm kinh nghiệm (number). "Mới ra trường" = 0.
+    - jobType: "Full-Time" | "Part-Time" | "Remote" | "Internship" | null.
+    - category: Lĩnh vực nếu rõ ràng (IT, Marketing, Kế toán...).
+
+    Ví dụ: "Tìm việc ReactJS lương trên 1000 đô tại Sài Gòn"
+    Output:
     {
-      "intent": "job_search" hoặc "other",
-      "keywords": ["từ khóa chính"],
-      "location": "địa điểm nếu có",
-      "salary": số (triệu),
-      "jobType": "full-time, part-time, remote, ...",
-      "experienceLevel": số năm,
-      "category": "lĩnh vực nếu có"
+      "intent": "job_search",
+      "keywords": ["ReactJS"],
+      "location": "hcm",
+      "salary": 25,
+      "jobType": null,
+      "experienceLevel": null,
+      "category": "IT"
     }
-    Câu hỏi: "${message}"`;
+    `;
+
+    const userMessage = `Câu hỏi: "${message}"`;
 
     const extractRes = await openai2.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
-        { role: "system", content: "Bạn là AI chuyên phân tích tìm việc." },
-        { role: "user", content: extractPrompt },
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userMessage },
       ],
       temperature: 0.1,
+      response_format: { type: "json_object" },
     });
 
     let parsedData = {
@@ -437,7 +476,7 @@ function formatJobResults(jobs, parsedData) {
         .filter(Boolean)
         .join(" • ");
 
-      return `${idx + 1}. **${job.title}** tại ${company}
+      return `${idx + 1}. ${job.title} tại ${company}
    ${details}
    🔗 Xem chi tiết: ${
      process.env.FRONTEND_URL || "http://localhost:5173"

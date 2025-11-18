@@ -23,7 +23,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setCompanies } from "@/redux/companySlice";
 import axios from "axios";
 import { API } from "@/utils/constant";
-import { Loader2 } from "lucide-react";
+import { Loader2, Sparkles } from "lucide-react";
 
 export interface JobFormData {
   title: string;
@@ -190,14 +190,21 @@ export const JobFormDialog = ({
         { withCredentials: true }
       );
 
-      if (res.data.success && res.data.description) {
+      if (res.data.success) {
+        const { description, requirements, benefits } = res.data;
+
         setFormData((prev) => ({
           ...prev,
-          description: res.data.description,
+          description: description || prev.description,
+          requirements: Array.isArray(requirements)
+            ? requirements
+            : prev.requirements,
+          benefits: Array.isArray(benefits) ? benefits : prev.benefits,
         }));
-        toast.success("Đã tạo mô tả công việc thành công!");
+
+        toast.success("Đã tạo nội dung công việc thành công!");
       } else {
-        toast.error("Không tạo được mô tả, vui lòng thử lại!");
+        toast.error("Không tạo được nội dung, vui lòng thử lại!");
       }
     } catch (error) {
       console.error("Generate AI error:", error);
@@ -210,65 +217,92 @@ export const JobFormDialog = ({
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[800px] bg-white max-h-[90vh] overflow-y-auto border-none p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-200 ease-in-out">
-        <DialogHeader>
-          <DialogTitle>
+        <DialogHeader className="flex flex-row items-center justify-between pb-2 border-b mb-4 space-y-0">
+          <DialogTitle className="text-xl font-bold">
             {job ? "Chỉnh sửa tin tuyển dụng" : "Đăng tin tuyển dụng mới"}
           </DialogTitle>
+
+          {/* Button AI Gen */}
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            className="mr-8 gap-2 cursor-pointer text-indigo-600 border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700 transition-all shadow-sm"
+            onClick={handleGenDescription}
+            disabled={isGenerating || !formData.title.trim()}
+            title={
+              !formData.title.trim()
+                ? "Vui lòng nhập tiêu đề trước"
+                : "Tự động điền mô tả, yêu cầu, quyền lợi"
+            }
+          >
+            {isGenerating ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Sparkles className="w-4 h-4" />
+            )}
+            {isGenerating ? "Đang viết..." : "AI Hỗ trợ nội dung"}
+          </Button>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* --- Thông tin công việc --- */}
-          <div className="space-y-4 border p-4 rounded-xl shadow-sm">
-            <h3 className="text-lg font-semibold">Thông tin công việc</h3>
+          <div className="space-y-4 border p-4 rounded-xl shadow-sm bg-gray-50/50">
+            <h3 className="text-lg font-semibold text-gray-800">
+              Thông tin chung
+            </h3>
 
-            <div className="grid gap-2">
-              <Label htmlFor="company">
-                Công ty <span className="text-red-700">*</span>
-              </Label>
-              <Select
-                value={formData.company._id}
-                onValueChange={(value) =>
-                  setFormData({
-                    ...formData,
-                    company: { ...formData.company, _id: value },
-                  })
-                }
-              >
-                <SelectTrigger className="cursor-pointer">
-                  <SelectValue placeholder="Chọn công ty">
-                    {
-                      companies.find((c) => c._id === formData.company._id)
-                        ?.name
-                    }
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent className="bg-white max-h-[300px] overflow-y-auto">
-                  {companies.map((company) => (
-                    <SelectItem
-                      className="cursor-pointer hover:bg-gray-100"
-                      key={company._id}
-                      value={company._id}
-                    >
-                      {company.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="company">
+                  Công ty <span className="text-red-700">*</span>
+                </Label>
+                <Select
+                  value={formData.company._id}
+                  onValueChange={(value) =>
+                    setFormData({
+                      ...formData,
+                      company: { ...formData.company, _id: value },
+                    })
+                  }
+                >
+                  <SelectTrigger className="cursor-pointer bg-white">
+                    <SelectValue placeholder="Chọn công ty">
+                      {
+                        companies.find((c) => c._id === formData.company._id)
+                          ?.name
+                      }
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent className="bg-white max-h-[300px] overflow-y-auto">
+                    {companies.map((company) => (
+                      <SelectItem
+                        className="cursor-pointer hover:bg-gray-100"
+                        key={company._id}
+                        value={company._id}
+                      >
+                        {company.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-            <div className="grid gap-2">
-              <Label htmlFor="title">
-                Tiêu đề công việc <span className="text-red-700">*</span>
-              </Label>
-              <Input
-                id="title"
-                value={formData.title}
-                onChange={(e) =>
-                  setFormData({ ...formData, title: e.target.value })
-                }
-                placeholder="VD: Senior Frontend Developer"
-                required
-              />
+              <div className="grid gap-2">
+                <Label htmlFor="title">
+                  Tiêu đề công việc <span className="text-red-700">*</span>
+                </Label>
+                <Input
+                  id="title"
+                  value={formData.title}
+                  onChange={(e) =>
+                    setFormData({ ...formData, title: e.target.value })
+                  }
+                  placeholder="VD: Senior Frontend Developer"
+                  className="resize-none focus:ring-indigo-500"
+                  required
+                />
+              </div>
             </div>
 
             <div className="grid gap-2">
@@ -282,19 +316,23 @@ export const JobFormDialog = ({
                   setFormData({ ...formData, location: e.target.value })
                 }
                 placeholder="VD: Tòa nhà A, Quận 1, Hồ Chí Minh"
+                className="resize-none focus:ring-indigo-500"
                 required
               />
             </div>
           </div>
 
           {/* --- Mô tả & Yêu cầu --- */}
-          <div className="space-y-4 border p-4 rounded-xl shadow-sm">
-            <h3 className="text-lg font-semibold">Mô tả & Yêu cầu công việc</h3>
+          <div className="space-y-4 border p-4 rounded-xl shadow-sm bg-white">
+            <h3 className="text-lg font-semibold text-gray-800">
+              Nội dung chi tiết
+            </h3>
 
             <div className="grid gap-2">
               <Label htmlFor="description">
                 Mô tả công việc <span className="text-red-700">*</span>
               </Label>
+              {/* Đã xóa nút AI cũ ở đây */}
               <Textarea
                 id="description"
                 value={formData.description}
@@ -304,26 +342,8 @@ export const JobFormDialog = ({
                 placeholder="Mô tả chi tiết về công việc. Mỗi đoạn mô tả đều kết thúc bằng dấu chấm."
                 required
                 rows={5}
+                className="resize-none focus:ring-indigo-500"
               />
-
-              {/* Gen mô tả bằng AI */}
-              <Button
-                type="button"
-                size="sm"
-                variant="outline"
-                className="hover:bg-gray-100 cursor-pointer right-2 top-2 text-sm flex gap-2 items-center"
-                onClick={handleGenDescription}
-                disabled={isGenerating || !formData.title.trim()}
-              >
-                {isGenerating ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Đang tạo...
-                  </>
-                ) : (
-                  "✨ Dùng AI tạo mô tả"
-                )}
-              </Button>
             </div>
 
             <div className="grid gap-2">
@@ -342,13 +362,9 @@ export const JobFormDialog = ({
                 placeholder="Mỗi yêu cầu đều kết thúc bằng dấu chấm."
                 required
                 rows={5}
+                className="resize-none focus:ring-indigo-500"
               />
             </div>
-          </div>
-
-          {/* --- Phúc lợi & Thông tin thêm --- */}
-          <div className="space-y-4 border p-4 rounded-xl shadow-sm">
-            <h3 className="text-lg font-semibold">Phúc lợi & Thông tin thêm</h3>
 
             <div className="grid gap-2">
               <Label htmlFor="benefits">
@@ -366,186 +382,211 @@ export const JobFormDialog = ({
                 placeholder="Mỗi quyền lợi đều kết thúc bằng dấu chấm."
                 required
                 rows={5}
-              />
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="jobType">
-                Hình thức làm việc <span className="text-red-700">*</span>
-              </Label>
-              <Select
-                value={formData.jobType}
-                onValueChange={(value) =>
-                  setFormData({ ...formData, jobType: value })
-                }
-              >
-                <SelectTrigger id="jobType" className="cursor-pointer">
-                  <SelectValue placeholder="Chọn hình thức" />
-                </SelectTrigger>
-                <SelectContent className="bg-white max-h-[300px] overflow-y-auto">
-                  <SelectItem
-                    className="cursor-pointer hover:bg-gray-100"
-                    value="Full-Time"
-                  >
-                    Toàn thời gian
-                  </SelectItem>
-                  <SelectItem
-                    className="cursor-pointer hover:bg-gray-100"
-                    value="Part-Time"
-                  >
-                    Bán thời gian
-                  </SelectItem>
-                  <SelectItem
-                    className="cursor-pointer hover:bg-gray-100"
-                    value="Remote"
-                  >
-                    Từ xa
-                  </SelectItem>
-                  <SelectItem
-                    className="cursor-pointer hover:bg-gray-100"
-                    value="Internship"
-                  >
-                    Thực tập
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="experienceLevel">
-                Chuyên ngành <span className="text-red-700">*</span>
-              </Label>
-              <input
-                type="text"
-                name="category"
-                value={formData.category}
-                onChange={(e) =>
-                  setFormData({ ...formData, category: e.target.value })
-                }
-                className="w-full border rounded-md px-3 py-2 text-gray-800"
-                placeholder="Ví dụ: IT, Kế toán, Marketing..."
-                required
-              />
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="experienceLevel">
-                Kinh nghiệm (năm) <span className="text-red-700">*</span>
-              </Label>
-              <Input
-                id="experienceLevel"
-                type="number"
-                min="0"
-                value={formData.experienceLevel}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    experienceLevel: parseInt(e.target.value) || 0,
-                  })
-                }
-                placeholder="VD: 2"
-                required
-              />
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="salary">
-                Mức lương (Triệu) <span className="text-red-700">*</span>
-              </Label>
-              <Input
-                id="salary"
-                type="number"
-                value={formData.salary}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    salary: parseInt(e.target.value) || 0,
-                  })
-                }
-                placeholder="VD: 15"
-                required
-              />
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="position">
-                Số lượng tuyển <span className="text-red-700">*</span>
-              </Label>
-              <Input
-                id="position"
-                type="number"
-                min="1"
-                value={formData.position}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    position: parseInt(e.target.value) || 1,
-                  })
-                }
-                placeholder="VD: 1"
-                required
+                className="resize-none focus:ring-indigo-500"
               />
             </div>
           </div>
 
-          {/* --- Trạng thái & Nút --- */}
-          <div className="space-y-4 border p-4 rounded-xl shadow-sm">
-            <h3 className="text-lg font-semibold">Trạng thái & Hành động</h3>
+          {/* --- Thông tin bổ sung --- */}
+          <div className="space-y-4 border p-4 rounded-xl shadow-sm bg-gray-50/50">
+            <h3 className="text-lg font-semibold text-gray-800">
+              Thông tin bổ sung
+            </h3>
 
-            <div className="grid gap-2">
-              <Label htmlFor="status">
-                Trạng thái <span className="text-red-700">*</span>
-              </Label>
-              <Select
-                value={formData.status}
-                onValueChange={(value) =>
-                  setFormData({ ...formData, status: value })
-                }
-              >
-                <SelectTrigger id="status" className="cursor-pointer">
-                  <SelectValue placeholder="Chọn trạng thái" />
-                </SelectTrigger>
-                <SelectContent className="bg-white max-h-[300px] overflow-y-auto">
-                  <SelectItem
-                    className="cursor-pointer hover:bg-gray-100"
-                    value="active"
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="jobType">
+                  Hình thức làm việc <span className="text-red-700">*</span>
+                </Label>
+                <Select
+                  value={formData.jobType}
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, jobType: value })
+                  }
+                >
+                  <SelectTrigger
+                    id="jobType"
+                    className="cursor-pointer bg-white"
                   >
-                    Hoạt động
-                  </SelectItem>
-                  <SelectItem
-                    className="cursor-pointer hover:bg-gray-100"
-                    value="draft"
-                  >
-                    Nháp
-                  </SelectItem>
-                  <SelectItem
-                    className="cursor-pointer hover:bg-gray-100"
-                    value="closed"
-                  >
-                    Đã đóng
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+                    <SelectValue placeholder="Chọn hình thức" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white max-h-[300px] overflow-y-auto">
+                    <SelectItem
+                      className="cursor-pointer hover:bg-gray-100"
+                      value="Full-Time"
+                    >
+                      Toàn thời gian
+                    </SelectItem>
+                    <SelectItem
+                      className="cursor-pointer hover:bg-gray-100"
+                      value="Part-Time"
+                    >
+                      Bán thời gian
+                    </SelectItem>
+                    <SelectItem
+                      className="cursor-pointer hover:bg-gray-100"
+                      value="Remote"
+                    >
+                      Từ xa
+                    </SelectItem>
+                    <SelectItem
+                      className="cursor-pointer hover:bg-gray-100"
+                      value="Internship"
+                    >
+                      Thực tập
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-            <div className="flex justify-end gap-3 pt-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={onClose}
-                disabled={isSubmitting}
-                className="border-gray-300 text-black hover:bg-gray-100 cursor-pointer"
-              >
-                Hủy
-              </Button>
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                className="text-white bg-blue-600 hover:bg-blue-700 cursor-pointer"
-              >
-                {isSubmitting ? "Đang xử lý..." : job ? "Cập nhật" : "Đăng tin"}
-              </Button>
+              <div className="grid gap-2">
+                <Label htmlFor="category">
+                  Chuyên ngành <span className="text-red-700">*</span>
+                </Label>
+                <Input
+                  type="text"
+                  id="category"
+                  name="category"
+                  value={formData.category}
+                  onChange={(e) =>
+                    setFormData({ ...formData, category: e.target.value })
+                  }
+                  className="resize-none focus:ring-indigo-500"
+                  placeholder="Ví dụ: IT, Kế toán, Marketing..."
+                  required
+                />
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="experienceLevel">
+                  Kinh nghiệm (năm) <span className="text-red-700">*</span>
+                </Label>
+                <Input
+                  id="experienceLevel"
+                  type="number"
+                  min="0"
+                  value={formData.experienceLevel}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      experienceLevel: parseInt(e.target.value) || 0,
+                    })
+                  }
+                  placeholder="VD: 2"
+                  className="resize-none focus:ring-indigo-500"
+                  required
+                />
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="salary">
+                  Mức lương (Triệu) <span className="text-red-700">*</span>
+                </Label>
+                <Input
+                  id="salary"
+                  type="number"
+                  value={formData.salary}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      salary: parseInt(e.target.value) || 0,
+                    })
+                  }
+                  placeholder="VD: 15"
+                  className="resize-none focus:ring-indigo-500"
+                  required
+                />
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="position">
+                  Số lượng tuyển <span className="text-red-700">*</span>
+                </Label>
+                <Input
+                  id="position"
+                  type="number"
+                  min="1"
+                  value={formData.position}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      position: parseInt(e.target.value) || 1,
+                    })
+                  }
+                  placeholder="VD: 1"
+                  className="resize-none focus:ring-indigo-500"
+                  required
+                />
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="status">
+                  Trạng thái <span className="text-red-700">*</span>
+                </Label>
+                <Select
+                  value={formData.status}
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, status: value })
+                  }
+                >
+                  <SelectTrigger
+                    id="status"
+                    className="cursor-pointer bg-white"
+                  >
+                    <SelectValue placeholder="Chọn trạng thái" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white max-h-[300px] overflow-y-auto">
+                    <SelectItem
+                      className="cursor-pointer hover:bg-gray-100"
+                      value="active"
+                    >
+                      Hoạt động
+                    </SelectItem>
+                    <SelectItem
+                      className="cursor-pointer hover:bg-gray-100"
+                      value="draft"
+                    >
+                      Nháp
+                    </SelectItem>
+                    <SelectItem
+                      className="cursor-pointer hover:bg-gray-100"
+                      value="closed"
+                    >
+                      Đã đóng
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
+          </div>
+
+          {/* --- Footer Actions --- */}
+          <div className="flex justify-end gap-3 pt-4 border-t">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={onClose}
+              disabled={isSubmitting}
+              className="hover:bg-gray-100"
+            >
+              Hủy
+            </Button>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="text-white bg-blue-600 hover:bg-blue-700 cursor-pointer min-w-[120px]"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Đang xử lý...
+                </>
+              ) : job ? (
+                "Cập nhật"
+              ) : (
+                "Đăng tin"
+              )}
+            </Button>
           </div>
         </form>
       </DialogContent>
