@@ -74,8 +74,8 @@ const ActionButtons = ({
                 <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 border-b pb-4">
                   <Avatar className="h-24 w-24 rounded-full shadow">
                     <AvatarImage
-                      src={applicant.profile.profilePhoto.url}
-                      alt={applicant.fullname}
+                      src={applicant?.profile?.profilePhoto?.url}
+                      alt={applicant?.fullname}
                     />
                     <AvatarFallback className="bg-gray-100 text-gray-700">
                       {applicant?.fullname
@@ -86,9 +86,9 @@ const ActionButtons = ({
                   </Avatar>
                   <div className="text-center sm:text-left">
                     <h2 className="text-xl font-semibold">
-                      {applicant.fullname}
+                      {applicant?.fullname}
                     </h2>
-                    <p className="text-sm text-gray-600">{applicant.email}</p>
+                    <p className="text-sm text-gray-600">{applicant?.email}</p>
                   </div>
                 </div>
 
@@ -98,7 +98,7 @@ const ActionButtons = ({
                     Giới thiệu
                   </h3>
                   <p className="text-sm">
-                    {applicant.profile.bio || "Không có"}
+                    {applicant?.profile?.bio || "Không có"}
                   </p>
                 </div>
 
@@ -108,8 +108,8 @@ const ActionButtons = ({
                     Kỹ năng
                   </h3>
                   <p className="text-sm">
-                    {applicant.profile.skills?.length
-                      ? applicant.profile.skills.join(", ")
+                    {applicant?.profile?.skills?.length
+                      ? applicant?.profile?.skills.join(", ")
                       : "Không có"}
                   </p>
                 </div>
@@ -119,15 +119,15 @@ const ActionButtons = ({
                   <h3 className="text-lg font-semibold text-gray-700">
                     Hồ sơ đính kèm
                   </h3>
-                  {applicant.profile.resumeOriginalName &&
-                  applicant.profile.resume ? (
+                  {applicant?.profile?.resumeOriginalName &&
+                  applicant?.profile?.resume ? (
                     <a
-                      href={applicant.profile.resume.url}
+                      href={applicant?.profile?.resume.url}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-blue-600 hover:underline text-sm"
                     >
-                      📄 {applicant.profile.resumeOriginalName}
+                      📄 {applicant?.profile?.resumeOriginalName}
                     </a>
                   ) : (
                     <p className="text-sm">Không có file</p>
