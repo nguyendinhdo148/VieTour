@@ -11,74 +11,11 @@ const __dirname = dirname(__filename);
 import cloudinary from "../utils/cloudinary.js";
 import getDataUri from "../utils/datauri.js";
 import { suggestJobsForResume } from "../services/suggestionService.js";
+import defaultResumeData from "../utils/defaultResumeData.js";
 
 export const createResume = async (req, res, next) => {
   try {
     const { title } = req.body;
-
-    const defaultResumeData = {
-      profileInfo: {
-        profileImg: null,
-        previewUrl: "",
-        fullName: "",
-        designation: "",
-        summary: "",
-      },
-      contactInfo: {
-        email: "",
-        phone: "",
-        location: "",
-        linkedin: "",
-        github: "",
-        facebook: "",
-        website: "",
-      },
-      workExperience: [
-        {
-          company: "",
-          role: "",
-          startDate: "",
-          endDate: "",
-          description: "",
-        },
-      ],
-      education: [
-        {
-          degree: "",
-          institution: "",
-          startDate: "",
-          endDate: "",
-        },
-      ],
-      skills: [
-        {
-          name: "",
-          progress: 0,
-        },
-      ],
-      projects: [
-        {
-          title: "",
-          description: "",
-          github: "",
-          liveDemo: "",
-        },
-      ],
-      certifications: [
-        {
-          name: "",
-          issuer: "",
-          year: "",
-        },
-      ],
-      languages: [
-        {
-          name: "",
-          progress: 0,
-        },
-      ],
-      interests: [""],
-    };
 
     const newResume = await Resume.create({
       userId: req.id,

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { MapIcon, ExternalLink } from "lucide-react";
 import type { Company } from "@/types/company";
 import "./LeafletFix.css";
+import { API_KEY_MAP } from "@/utils/constant";
 
 interface CompanyMapProps {
   company: Company;
@@ -283,7 +284,7 @@ const CompanyMap = ({ company }: CompanyMapProps) => {
           name: "LocationIQ",
           url: "https://us1.locationiq.com/v1/search",
           params: {
-            key: "pk.766805e6a56d9e7d9fe60f93e2cf078e", // Replace with real key
+            key: API_KEY_MAP, // Replace with real key
             format: "json",
             countrycodes: "vn",
             limit: "3",
