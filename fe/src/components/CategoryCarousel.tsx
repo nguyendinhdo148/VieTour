@@ -100,6 +100,7 @@ const CategoryCarousel = () => {
     intervalRef.current = setInterval(() => {
       carouselRef.current?.scrollNext();
     }, 4000);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const stopAutoplay = useCallback(() => {
@@ -182,7 +183,7 @@ const CategoryCarousel = () => {
                 isAutoPlaying ? "bg-green-500" : "bg-gray-400"
               }`}
             ></div>
-            <span>{isAutoPlaying ? "Đang tự động duyệt" : "Đã tạm dừng"}</span>
+            <span>{isAutoPlaying ? "Đang tự động" : "Đã tạm dừng"}</span>
           </div>
         </div>
 

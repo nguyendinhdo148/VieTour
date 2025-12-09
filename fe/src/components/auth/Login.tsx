@@ -216,7 +216,7 @@ const Login = () => {
           {/* Chọn role (ẩn nếu admin) */}
           {!isAdmin && (
             <div className="flex items-center justify-between">
-              <RadioGroup className="flex items-center gap-4 my-5">
+              <RadioGroup className="flex flex-row items-center gap-8 my-3">
                 <div className="flex items-center space-x-2">
                   <Input
                     type="radio"
@@ -225,9 +225,14 @@ const Login = () => {
                     value="student"
                     checked={formData.role === "student"}
                     onChange={handleChange}
-                    className="cursor-pointer"
+                    className="cursor-pointer size-4"
                   />
-                  <Label htmlFor="student">Student</Label>
+                  <Label
+                    htmlFor="student"
+                    className="whitespace-nowrap font-medium"
+                  >
+                    Ứng viên
+                  </Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Input
@@ -237,9 +242,14 @@ const Login = () => {
                     value="recruiter"
                     checked={formData.role === "recruiter"}
                     onChange={handleChange}
-                    className="cursor-pointer"
+                    className="cursor-pointer h-4 w-4"
                   />
-                  <Label htmlFor="recruiter">Recruiter</Label>
+                  <Label
+                    htmlFor="recruiter"
+                    className="whitespace-nowrap font-medium"
+                  >
+                    Nhà tuyển dụng
+                  </Label>
                 </div>
               </RadioGroup>
               {errors.role && (

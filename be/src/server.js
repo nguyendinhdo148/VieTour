@@ -14,6 +14,9 @@ import adminRoute from "./routes/admin.route.js";
 import blogRoute from "./routes/blog.route.js";
 import mbtiRoute from "./routes/mbti.route.js";
 import miRoute from "./routes/mi.route.js";
+import searchHistoryRoute from "./routes/searchHistory.route.js";
+import notificationRoute from "./routes/notification.route.js";
+import { startNotificationScheduler } from "./services/notificationService.js";
 
 dotenv.config({});
 
@@ -44,6 +47,8 @@ app.use("/api/v1/admin", adminRoute);
 app.use("/api/v1/blog", blogRoute);
 app.use("/api/v1/mbti", mbtiRoute);
 app.use("/api/v1/mi", miRoute);
+app.use("/api/v1/search-history", searchHistoryRoute);
+app.use("/api/v1/notification", notificationRoute);
 
 // error handler
 app.use((err, req, res, next) => {
@@ -58,4 +63,6 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   connectDB();
   console.log(`Server running at port ${PORT}`);
+  // Khởi động notification scheduler
+  startNotificationScheduler();
 });

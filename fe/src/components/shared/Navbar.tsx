@@ -35,6 +35,7 @@ import {
   HoverCardTrigger,
 } from "@radix-ui/react-hover-card";
 import { useState } from "react";
+import NotificationBell from "./NotificationBell";
 
 const Navbar = () => {
   const { user } = useSelector((store: RootState) => store.auth);
@@ -276,150 +277,153 @@ const Navbar = () => {
             </div>
           ) : (
             user?.role === "student" && (
-              <Popover>
-                <PopoverTrigger asChild>
-                  <div className="relative cursor-pointer size-10">
-                    <Avatar className="w-full h-full">
-                      <AvatarImage
-                        src={user.profile?.profilePhoto?.url}
-                        alt={user.fullname}
-                        className="object-cover hover:scale-105 transition-transform duration-200"
-                      />
-                      <AvatarFallback className="bg-gray-100 text-gray-700">
-                        {user.fullname
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="absolute bottom-0 right-0 bg-white rounded-full p-1 shadow">
-                      <ChevronDown className="size-2 text-gray-600" />
-                    </div>
-                  </div>
-                </PopoverTrigger>
-                <PopoverContent className="w-80 p-4 bg-white rounded-lg shadow-lg border border-gray-100">
-                  {/* User Profile Section */}
-                  <div className="flex items-center gap-4 pb-4 border-b border-gray-100">
-                    <Avatar className="size-12">
-                      <AvatarImage
-                        src={user.profile?.profilePhoto?.url}
-                        alt={user.fullname}
-                        className="object-cover"
-                      />
-                      <AvatarFallback className="bg-gray-100 text-gray-700">
-                        {user.fullname
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="overflow-hidden">
-                      <h4 className="font-medium text-gray-900 truncate">
-                        {user.fullname}
-                      </h4>
-                      <p className="text-sm text-gray-500 truncate">
-                        {user.email}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Menu Actions */}
-                  <div className="mt-3 space-y-1.5">
-                    <Button
-                      variant="default"
-                      className="w-full justify-start gap-3 px-3 py-2 text-gray-700 hover:bg-gray-50"
-                      asChild
-                    >
-                      <Link to="/profile">
-                        <User2 className="h-4 w-4 text-gray-500" />
-                        <span>Xem hồ sơ</span>
-                      </Link>
-                    </Button>
-
-                    <Button
-                      variant="default"
-                      className="w-full justify-start gap-3 px-3 py-2 text-gray-700 hover:bg-gray-50"
-                      asChild
-                    >
-                      <Link to="/resume/dashboard-resume">
-                        <FileText className="h-4 w-4 text-gray-500" />
-                        <span>CV của tôi</span>
-                      </Link>
-                    </Button>
-
-                    <Button
-                      variant="default"
-                      className="w-full justify-start gap-3 px-3 py-2 text-gray-700 hover:bg-gray-50"
-                      asChild
-                    >
-                      <Link to="/saved-jobs">
-                        <Heart className="h-4 w-4 text-gray-500" />
-                        <span>Việc làm đã lưu</span>
-                      </Link>
-                    </Button>
-
-                    <Button
-                      variant="default"
-                      className="w-full justify-start gap-3 px-3 py-2 text-gray-700 hover:bg-gray-50"
-                      asChild
-                    >
-                      <Link to="/applied-jobs">
-                        <BriefcaseBusiness className="h-4 w-4 text-gray-500" />
-                        <span>Việc làm đã ứng tuyển</span>
-                      </Link>
-                    </Button>
-
-                    <div>
-                      <Button
-                        className="w-full flex items-center justify-between text-sm text-gray-700 hover:text-indigo-600 px-3 py-2 font-medium cursor-pointer"
-                        onClick={() => setOpenBlogMenu(!openBlogMenu)}
-                      >
-                        <span className="flex items-center gap-3">
-                          <Share2 className="h-4 w-4 text-gray-500" />
-                          Góc Chia Sẻ
-                        </span>
-                        <ChevronDown
-                          className={`h-4 w-4 text-gray-500 transition-transform ${
-                            openBlogMenu ? "rotate-180" : ""
-                          }`}
+              <div className="flex items-center gap-3">
+                <NotificationBell />
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <div className="relative cursor-pointer size-10">
+                      <Avatar className="w-full h-full">
+                        <AvatarImage
+                          src={user.profile?.profilePhoto?.url}
+                          alt={user.fullname}
+                          className="object-cover hover:scale-105 transition-transform duration-200"
                         />
+                        <AvatarFallback className="bg-gray-100 text-gray-700">
+                          {user.fullname
+                            .split(" ")
+                            .map((n) => n[0])
+                            .join("")}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="absolute bottom-0 right-0 bg-white rounded-full p-1 shadow">
+                        <ChevronDown className="size-2 text-gray-600" />
+                      </div>
+                    </div>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-80 p-4 bg-white rounded-lg shadow-lg border border-gray-100">
+                    {/* User Profile Section */}
+                    <div className="flex items-center gap-4 pb-4 border-b border-gray-100">
+                      <Avatar className="size-12">
+                        <AvatarImage
+                          src={user.profile?.profilePhoto?.url}
+                          alt={user.fullname}
+                          className="object-cover"
+                        />
+                        <AvatarFallback className="bg-gray-100 text-gray-700">
+                          {user.fullname
+                            .split(" ")
+                            .map((n) => n[0])
+                            .join("")}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="overflow-hidden">
+                        <h4 className="font-medium text-gray-900 truncate">
+                          {user.fullname}
+                        </h4>
+                        <p className="text-sm text-gray-500 truncate">
+                          {user.email}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Menu Actions */}
+                    <div className="mt-3 space-y-1.5">
+                      <Button
+                        variant="default"
+                        className="w-full justify-start gap-3 px-3 py-2 text-gray-700 hover:bg-gray-50"
+                        asChild
+                      >
+                        <Link to="/profile">
+                          <User2 className="h-4 w-4 text-gray-500" />
+                          <span>Xem hồ sơ</span>
+                        </Link>
                       </Button>
 
-                      {openBlogMenu && (
-                        <div className="pl-9 mt-1 space-y-1 text-sm">
-                          <Link
-                            to="/blog/manager-blogs"
-                            className="block text-gray-700 hover:text-indigo-600 transition"
-                          >
-                            <div className="flex items-center gap-2">
-                              <SquareChartGantt className="h-4 w-4 text-gray-500" />
-                              <span>Quản lý bài viết</span>
-                            </div>
-                          </Link>
-                          <Link
-                            to="/blog/create-blog"
-                            className="block text-gray-700 hover:text-indigo-600 transition"
-                          >
-                            <div className="flex items-center gap-2">
-                              <NotebookPen className="h-4 w-4 text-gray-500" />
-                              <span>Tạo bài viết</span>
-                            </div>
-                          </Link>
-                        </div>
-                      )}
-                    </div>
+                      <Button
+                        variant="default"
+                        className="w-full justify-start gap-3 px-3 py-2 text-gray-700 hover:bg-gray-50"
+                        asChild
+                      >
+                        <Link to="/resume/dashboard-resume">
+                          <FileText className="h-4 w-4 text-gray-500" />
+                          <span>CV của tôi</span>
+                        </Link>
+                      </Button>
 
-                    <Button
-                      variant="default"
-                      className="cursor-pointer w-full justify-start gap-3 px-3 py-2 text-gray-700 hover:bg-gray-50"
-                      onClick={logoutHandler}
-                    >
-                      <LogOut className="h-4 w-4 text-gray-500" />
-                      <span>Đăng xuất</span>
-                    </Button>
-                  </div>
-                </PopoverContent>
-              </Popover>
+                      <Button
+                        variant="default"
+                        className="w-full justify-start gap-3 px-3 py-2 text-gray-700 hover:bg-gray-50"
+                        asChild
+                      >
+                        <Link to="/saved-jobs">
+                          <Heart className="h-4 w-4 text-gray-500" />
+                          <span>Việc làm đã lưu</span>
+                        </Link>
+                      </Button>
+
+                      <Button
+                        variant="default"
+                        className="w-full justify-start gap-3 px-3 py-2 text-gray-700 hover:bg-gray-50"
+                        asChild
+                      >
+                        <Link to="/applied-jobs">
+                          <BriefcaseBusiness className="h-4 w-4 text-gray-500" />
+                          <span>Việc làm đã ứng tuyển</span>
+                        </Link>
+                      </Button>
+
+                      <div>
+                        <Button
+                          className="w-full flex items-center justify-between text-sm text-gray-700 hover:text-indigo-600 px-3 py-2 font-medium cursor-pointer"
+                          onClick={() => setOpenBlogMenu(!openBlogMenu)}
+                        >
+                          <span className="flex items-center gap-3">
+                            <Share2 className="h-4 w-4 text-gray-500" />
+                            Góc Chia Sẻ
+                          </span>
+                          <ChevronDown
+                            className={`h-4 w-4 text-gray-500 transition-transform ${
+                              openBlogMenu ? "rotate-180" : ""
+                            }`}
+                          />
+                        </Button>
+
+                        {openBlogMenu && (
+                          <div className="pl-9 mt-1 space-y-1 text-sm">
+                            <Link
+                              to="/blog/manager-blogs"
+                              className="block text-gray-700 hover:text-indigo-600 transition"
+                            >
+                              <div className="flex items-center gap-2">
+                                <SquareChartGantt className="h-4 w-4 text-gray-500" />
+                                <span>Quản lý bài viết</span>
+                              </div>
+                            </Link>
+                            <Link
+                              to="/blog/create-blog"
+                              className="block text-gray-700 hover:text-indigo-600 transition"
+                            >
+                              <div className="flex items-center gap-2">
+                                <NotebookPen className="h-4 w-4 text-gray-500" />
+                                <span>Tạo bài viết</span>
+                              </div>
+                            </Link>
+                          </div>
+                        )}
+                      </div>
+
+                      <Button
+                        variant="default"
+                        className="cursor-pointer w-full justify-start gap-3 px-3 py-2 text-gray-700 hover:bg-gray-50"
+                        onClick={logoutHandler}
+                      >
+                        <LogOut className="h-4 w-4 text-gray-500" />
+                        <span>Đăng xuất</span>
+                      </Button>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              </div>
             )
           )}
         </div>
