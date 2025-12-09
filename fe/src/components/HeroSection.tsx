@@ -1,14 +1,21 @@
-import { Search, Loader2, Sparkles } from "lucide-react";
+import { Search, Loader2, Sparkles, Clock, X } from "lucide-react";
 import { Button } from "./ui/button";
 import { setSearchedQuery } from "@/redux/jobSlice";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useRef, useState } from "react";
 import FullScreenLoader from "./skeletons/FullScreenLoader";
 import SuggestionList from "./helpers/SuggestionList";
 import axios from "axios";
-import { debounce } from "lodash";
 import { API } from "@/utils/constant";
+import { RootState } from "@/redux/store";
+
+interface SearchHistoryItem {
+  _id: string;
+  query: string;
+  searchCount: number;
+  lastSearchedAt: string;
+}
 
 const HeroSection = () => {
   const [query, setQuery] = useState("");
@@ -17,50 +24,145 @@ const HeroSection = () => {
   const [isFetchingSuggestions, setIsFetchingSuggestions] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1);
+  const [searchHistory, setSearchHistory] = useState<SearchHistoryItem[]>([]);
+  const [isFetchingHistory, setIsFetchingHistory] = useState(false);
+  const [isInputFocused, setIsInputFocused] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { user } = useSelector((store: RootState) => store.auth);
 
   const searchJobHandler = async (selectedQuery?: string) => {
     const finalQuery = selectedQuery || query;
     if (!finalQuery.trim()) return;
     setIsSearching(true);
     dispatch(setSearchedQuery(finalQuery));
+
+    // Lưu lịch sử tìm kiếm nếu user đã đăng nhập
+    if (user) {
+      try {
+        await axios.post(
+          `${API}/search-history/save`,
+          { query: finalQuery },
+          { withCredentials: true }
+        );
+      } catch (error) {
+        // Silently fail if API fails
+        console.error("Failed to save search history:", error);
+      }
+    }
+
     await new Promise((resolve) => setTimeout(resolve, 300));
     navigate(`/browse?query=${finalQuery}`);
     setIsSearching(false);
     setShowSuggestions(false);
   };
 
-  const fetchSuggestions = debounce(async (keyword: string) => {
+  // Fetch lịch sử tìm kiếm
+  const fetchSearchHistory = async () => {
+    if (!user) return;
+
     try {
-      setIsFetchingSuggestions(true);
-      const res = await axios.get(`${API}/job/suggestions?keyword=${keyword}`);
-      setSuggestions(res.data.suggestions || []);
-    } catch (err) {
-      console.error("Failed to fetch suggestions", err);
+      setIsFetchingHistory(true);
+      const res = await axios.get(`${API}/search-history`, {
+        withCredentials: true,
+      });
+      if (res.data.success) {
+        setSearchHistory(res.data.searchHistories || []);
+      }
+    } catch (error) {
+      console.error("Failed to fetch search history:", error);
     } finally {
-      setIsFetchingSuggestions(false);
+      setIsFetchingHistory(false);
     }
-  }, 300);
+  };
 
   // Bắt sự kiện thay đổi input
   useEffect(() => {
     if (query.trim()) {
-      fetchSuggestions(query);
+      const timeoutId = setTimeout(async () => {
+        try {
+          setIsFetchingSuggestions(true);
+          const res = await axios.get(
+            `${API}/job/suggestions?keyword=${query}`
+          );
+          setSuggestions(res.data.suggestions || []);
+        } catch (err) {
+          console.error("Failed to fetch suggestions", err);
+        } finally {
+          setIsFetchingSuggestions(false);
+        }
+      }, 300);
+
       setShowSuggestions(true);
+
+      return () => clearTimeout(timeoutId);
     } else {
       setSuggestions([]);
-      setShowSuggestions(false);
+      // Nếu input trống và đang focus, hiển thị lịch sử
+      if (isInputFocused && user) {
+        setShowSuggestions(true);
+        if (searchHistory.length === 0) {
+          fetchSearchHistory();
+        }
+      } else {
+        setShowSuggestions(false);
+      }
     }
-  }, [query]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query, isInputFocused, user]);
 
   // Bắt sự kiện click với suggestion
   const handleSelectSuggestion = (item: { title: string }) => {
     setQuery(item.title);
     searchJobHandler(item.title);
+  };
+
+  // Xử lý khi click vào lịch sử tìm kiếm
+  const handleSelectHistory = (historyQuery: string) => {
+    setQuery(historyQuery);
+    searchJobHandler(historyQuery);
+  };
+
+  // Xóa lịch sử tìm kiếm
+  const handleDeleteHistory = async (
+    e: React.MouseEvent,
+    historyId: string
+  ) => {
+    e.stopPropagation(); // Ngăn chặn sự kiện click vào item
+    try {
+      await axios.delete(`${API}/search-history/${historyId}`, {
+        withCredentials: true,
+      });
+      // Cập nhật state sau khi xóa
+      setSearchHistory((prev) => prev.filter((item) => item._id !== historyId));
+    } catch (error) {
+      console.error("Failed to delete search history:", error);
+    }
+  };
+
+  // Xử lý khi input được focus
+  const handleInputFocus = () => {
+    setIsInputFocused(true);
+    if (!query.trim() && user && searchHistory.length === 0) {
+      fetchSearchHistory();
+    }
+    if (!query.trim() && user) {
+      setShowSuggestions(true);
+    }
+  };
+
+  // Xử lý khi input mất focus
+  const handleInputBlur = () => {
+    // Delay để cho phép click vào suggestion
+    setTimeout(() => {
+      setIsInputFocused(false);
+      if (!query.trim()) {
+        setShowSuggestions(false);
+      }
+    }, 200);
   };
 
   // Bắt sự kiện click ra ngoài input để ẩn gợi ý
@@ -161,28 +263,43 @@ const HeroSection = () => {
                     <input
                       ref={inputRef}
                       onChange={(e) => setQuery(e.target.value)}
+                      onFocus={handleInputFocus}
+                      onBlur={handleInputBlur}
                       onKeyDown={(e) => {
+                        const totalItems = query.trim()
+                          ? suggestions.length
+                          : searchHistory.length;
+
                         if (e.key === "Enter") {
                           e.preventDefault();
-                          if (
-                            activeSuggestionIndex >= 0 &&
-                            suggestions[activeSuggestionIndex]
-                          ) {
-                            handleSelectSuggestion(
+                          if (query.trim()) {
+                            if (
+                              activeSuggestionIndex >= 0 &&
                               suggestions[activeSuggestionIndex]
+                            ) {
+                              handleSelectSuggestion(
+                                suggestions[activeSuggestionIndex]
+                              );
+                            } else {
+                              searchJobHandler();
+                            }
+                          } else if (
+                            activeSuggestionIndex >= 0 &&
+                            searchHistory[activeSuggestionIndex]
+                          ) {
+                            handleSelectHistory(
+                              searchHistory[activeSuggestionIndex].query
                             );
-                          } else {
-                            searchJobHandler();
                           }
                         } else if (e.key === "ArrowDown") {
                           e.preventDefault();
                           setActiveSuggestionIndex((prev) =>
-                            Math.min(prev + 1, suggestions.length - 1)
+                            Math.min(prev + 1, totalItems - 1)
                           );
                         } else if (e.key === "ArrowUp") {
                           e.preventDefault();
                           setActiveSuggestionIndex((prev) =>
-                            Math.max(prev - 1, 0)
+                            Math.max(prev - 1, -1)
                           );
                         }
                       }}
@@ -226,18 +343,75 @@ const HeroSection = () => {
               </div>
             )}
 
-            {/* Suggestions */}
+            {/* Suggestions or Search History */}
             {showSuggestions && (
               <div
                 ref={suggestionsRef}
                 className="absolute top-full left-0 right-0 z-50 mt-2"
               >
-                <SuggestionList
-                  suggestions={suggestions}
-                  onSelect={handleSelectSuggestion}
-                  keyword={query}
-                  activeIndex={activeSuggestionIndex}
-                />
+                {query.trim() ? (
+                  // Hiển thị suggestions khi có query
+                  <SuggestionList
+                    suggestions={suggestions}
+                    onSelect={handleSelectSuggestion}
+                    keyword={query}
+                    activeIndex={activeSuggestionIndex}
+                  />
+                ) : (
+                  // Hiển thị lịch sử tìm kiếm khi query trống
+                  user && (
+                    <div className="bg-white rounded-2xl shadow-2xl border border-gray-200/50 backdrop-blur-sm overflow-hidden">
+                      <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Clock className="h-4 w-4 text-gray-500" />
+                          <h3 className="font-semibold text-sm text-gray-700">
+                            Lịch sử tìm kiếm
+                          </h3>
+                        </div>
+                      </div>
+                      {isFetchingHistory ? (
+                        <div className="flex items-center justify-center py-8">
+                          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-indigo-600"></div>
+                        </div>
+                      ) : searchHistory.length === 0 ? (
+                        <div className="px-4 py-8 text-center text-gray-500 text-sm">
+                          Chưa có lịch sử tìm kiếm
+                        </div>
+                      ) : (
+                        <ul className="max-h-64 overflow-y-auto">
+                          {searchHistory.map((item, index) => (
+                            <li
+                              key={item._id}
+                              onClick={() => handleSelectHistory(item.query)}
+                              className={`px-4 py-3 cursor-pointer hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-b-0 ${
+                                index === activeSuggestionIndex
+                                  ? "bg-indigo-50"
+                                  : ""
+                              }`}
+                            >
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3 flex-1 min-w-0">
+                                  <Clock className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                                  <span className="font-medium text-gray-900 truncate">
+                                    {item.query}
+                                  </span>
+                                </div>
+                                <button
+                                  onClick={(e) =>
+                                    handleDeleteHistory(e, item._id)
+                                  }
+                                  className="p-1.5 cursor-pointer hover:bg-gray-200 rounded-full transition-colors flex-shrink-0"
+                                >
+                                  <X className="h-4 w-4 text-gray-500 hover:text-red-500" />
+                                </button>
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  )
+                )}
               </div>
             )}
           </div>
