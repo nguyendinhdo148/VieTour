@@ -103,11 +103,19 @@ const MBTIResult = () => {
   const mbtiImage = MBTI_IMAGES[result.type] || "/mbti_icons/default.webp";
   const mbtiDetailPath = MBTI_DETAIL_PATHS[result.type];
 
+  // Helper function to clean text (remove markdown symbols)
+  const cleanText = (text: string) => {
+    return text
+      .replace(/\*\*/g, "") // Remove bold markers **
+      .replace(/^[-*•]\s*/, "") // Remove bullet points at start
+      .trim();
+  };
+
   const renderFormattedText = (text: string) => {
     return text.split("\n").map((paragraph, i) =>
       paragraph.trim() ? (
         <p key={i} className="mb-4 text-gray-700 leading-relaxed text-justify">
-          {paragraph}
+          {cleanText(paragraph)}
         </p>
       ) : null
     );
@@ -432,9 +440,6 @@ const MBTIResult = () => {
               {result.strengths
                 .filter((s) => s && s.trim() !== "")
                 .map((strength, i) => {
-                  const cleanText = strength
-                    .replace(/\*\*/g, "") // bỏ dấu ** trong câu
-                    .replace(/^\*\s*/, ""); // bỏ dấu * và khoảng trắng ở đầu
                   return (
                     <li key={i} className="flex items-start">
                       <span className="text-green-500 mr-3 mt-1">
@@ -452,7 +457,7 @@ const MBTIResult = () => {
                         </svg>
                       </span>
                       <span className="text-gray-700 leading-relaxed">
-                        {cleanText}
+                        {cleanText(strength)}
                       </span>
                     </li>
                   );
@@ -470,13 +475,10 @@ const MBTIResult = () => {
             </div>
             <ul className="space-y-4">
               {result.weaknesses.map((weakness, i) => {
-                const cleanText = weakness
-                  .replace(/\*\*/g, "") // bỏ dấu ** trong câu
-                  .replace(/^\*\s*/, ""); // bỏ dấu * và khoảng trắng ở đầu
                 return (
                   <li key={i} className="flex items-start">
                     <span className="text-red-500 mr-2 mt-[-1px]">⚠️</span>
-                    <span className="text-gray-700">{cleanText}</span>
+                    <span className="text-gray-700">{cleanText(weakness)}</span>
                   </li>
                 );
               })}
@@ -519,7 +521,7 @@ const MBTIResult = () => {
                     </svg>
                   </span>
                   <span className="font-medium text-blue-800 group-hover:text-blue-900 transition-colors">
-                    {career}
+                    {cleanText(career)}
                   </span>
                 </div>
               </div>

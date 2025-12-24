@@ -4,7 +4,7 @@ import { validateMIScores, validateAnswers } from "../utils/validators.js";
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY_MI);
 
 const model = genAI.getGenerativeModel({
-  model: "gemini-2.0-flash",
+  model: "gemini-2.5-flash",
   generationConfig: {
     maxOutputTokens: 2000,
     temperature: 0.9,
