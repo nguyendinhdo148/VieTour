@@ -14,6 +14,10 @@ export interface Company {
   noe?: string; // number of employees
   yoe?: string; // years of experience
   field?: string; // field of work
+  email?: string; // Email của công ty/người đại diện
+  phoneNumber?: string; // Số điện thoại liên hệ
+  approval?: string; // "pending" | "approved" | "rejected"
+  approvalNote?: string; // Ghi chú từ admin
   userId: User; // ID của người dùng tạo công ty
   createdAt: string; // ISO date string
   updatedAt: string; // ISO date string

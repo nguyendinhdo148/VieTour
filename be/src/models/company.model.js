@@ -41,6 +41,21 @@ const companySchema = new mongoose.Schema(
       type: String, // Mã số thuế
       unique: true, // Mã số thuế là duy nhất
     },
+    email: {
+      type: String, // Email của công ty/người đại diện
+    },
+    phoneNumber: {
+      type: String, // Số điện thoại liên hệ
+    },
+    approval: {
+      type: String,
+      enum: ["pending", "approved", "rejected"],
+      default: "pending",
+    },
+    approvalNote: {
+      type: String,
+      default: "",
+    },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

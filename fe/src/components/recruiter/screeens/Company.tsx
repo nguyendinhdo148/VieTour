@@ -9,7 +9,22 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Building, Edit2, Plus, Trash2 } from "lucide-react";
+import {
+  Building,
+  Edit2,
+  Plus,
+  Trash2,
+  CheckCircle2,
+  XCircle,
+  AlertCircle,
+} from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import CompanyFormDialog from "../components/CompanyFormDialog";
 import axios from "axios";
@@ -191,6 +206,7 @@ const Company = () => {
                   <TableHead className="text-center">
                     Giấy phép kinh doanh
                   </TableHead>
+                  <TableHead className="text-center">Trạng thái</TableHead>
                   <TableHead className="text-center">Ngày tạo</TableHead>
                   <TableHead className="text-center">Ngày cập nhật</TableHead>
                   <TableHead className="text-center">Thao tác</TableHead>
@@ -255,6 +271,57 @@ const Company = () => {
                         >
                           Xem Giấy phép
                         </a>
+                      )}
+                    </TableCell>
+                    {/* Approval status */}
+                    <TableCell className="text-center">
+                      {company.approval === "rejected" ? (
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Badge
+                                className="px-3 py-1 rounded-full font-medium bg-red-100 text-red-700 cursor-help"
+                                variant="outline"
+                                style={{
+                                  minWidth: 110,
+                                  justifyContent: "center",
+                                }}
+                              >
+                                <div className="flex items-center gap-1 justify-center">
+                                  <XCircle className="w-4 h-4" />
+                                  Từ chối
+                                </div>
+                              </Badge>
+                            </TooltipTrigger>
+                            <TooltipContent className="bg-gray-900 text-white p-3 rounded-lg max-w-[300px] text-sm">
+                              <p className="whitespace-pre-wrap">
+                                Lý do: {company.approvalNote || "Không có"}
+                              </p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      ) : (
+                        <Badge
+                          className={
+                            "px-3 py-1 rounded-full font-medium " +
+                            (company.approval === "approved"
+                              ? "bg-green-100 text-green-700"
+                              : "bg-yellow-100 text-yellow-700")
+                          }
+                          variant="outline"
+                          style={{ minWidth: 110, justifyContent: "center" }}
+                        >
+                          <div className="flex items-center gap-1 justify-center">
+                            {company.approval === "approved" ? (
+                              <CheckCircle2 className="w-4 h-4" />
+                            ) : (
+                              <AlertCircle className="w-4 h-4" />
+                            )}
+                            {company.approval === "approved"
+                              ? "Đã duyệt"
+                              : "Chờ duyệt"}
+                          </div>
+                        </Badge>
                       )}
                     </TableCell>
                     <TableCell className="text-center">
