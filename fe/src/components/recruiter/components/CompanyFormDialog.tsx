@@ -105,6 +105,16 @@ const CompanyFormDialog = ({
       return;
     }
 
+    if (!formData.location.trim()) {
+      toast.error("Vui lòng nhập trụ sở công ty");
+      return;
+    }
+
+    if (!formData.address.trim()) {
+      toast.error("Vui lòng nhập địa chỉ công ty");
+      return;
+    }
+
     if (!formData.businessLicense && !company) {
       toast.error("Vui lòng chọn giấy phép kinh doanh");
       return;
@@ -287,7 +297,8 @@ const CompanyFormDialog = ({
           {/* Location */}
           <div className="grid gap-2">
             <Label htmlFor="location">
-              Trụ sở (Tên tỉnh thành phố, VD: HCM, Hà Nội,...)
+              Trụ sở (Tên tỉnh thành phố, VD: HCM, Hà Nội,...){" "}
+              <span className="text-red-700">*</span>
             </Label>
             <Input
               id="location"
@@ -296,12 +307,15 @@ const CompanyFormDialog = ({
                 setFormData({ ...formData, location: e.target.value })
               }
               placeholder="Trụ sở công ty"
+              required
             />
           </div>
 
           {/* Address */}
           <div className="grid gap-2">
-            <Label htmlFor="address">Địa điểm</Label>
+            <Label htmlFor="address">
+              Địa chỉ <span className="text-red-700">*</span>
+            </Label>
             <Input
               id="address"
               value={formData.address}
@@ -309,6 +323,7 @@ const CompanyFormDialog = ({
                 setFormData({ ...formData, address: e.target.value })
               }
               placeholder="Địa chỉ công ty"
+              required
             />
           </div>
 

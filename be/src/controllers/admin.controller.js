@@ -153,6 +153,14 @@ export const createJob = async (req, res, next) => {
       });
     }
 
+    // check if company has been approved by admin
+    if (companyDoc.approval !== "approved") {
+      return res.status(403).json({
+        message: "Công ty chưa được duyệt bởi admin. Vui lòng duyệt công ty trước khi tạo công việc.",
+        success: false,
+      });
+    }
+
     // check if job already exists with this title for this company by recruiter
     const jobExists = await Job.findOne({ title });
     if (jobExists) {
@@ -608,6 +616,33 @@ export const approveBlog = async (req, res, next) => {
       success: true,
       message:
         approval === "approved" ? "Đã duyệt bài viết" : "Đã từ chối bài viết",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const approveCompany = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { approval, approvalNote } = req.body;
+
+    const company = await Company.findById(id);
+    if (!company) {
+      return res.status(404).json({
+        success: false,
+        message: "Không tìm thấy công ty",
+      });
+    }
+
+    company.approval = approval;
+    company.approvalNote = approvalNote || "";
+    await company.save();
+
+    res.status(200).json({
+      success: true,
+      message:
+        approval === "approved" ? "Đã duyệt công ty" : "Đã từ chối công ty",
     });
   } catch (error) {
     next(error);

@@ -9,7 +9,16 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Building, Edit2, Plus, Trash2 } from "lucide-react";
+import {
+  Building,
+  Edit2,
+  Plus,
+  Trash2,
+  CheckCircle2,
+  XCircle,
+  Clock,
+  Settings,
+} from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import CompanyFormDialog from "../components/CompanyFormDialog";
 import axios from "axios";
@@ -23,6 +32,16 @@ import CommonSkeleton from "../components/Skeleton/CommonSkeleton";
 import { CustomTooltip } from "@/components/helpers/CustomTooltip";
 import { paginate } from "@/components/helpers/pagination";
 import { PaginationButtons } from "@/components/helpers/PaginationButtons";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Company } from "@/types/company";
+import EditApprovalCompanyDialog from "../components/EditApprovalCompanyDialog";
 
 const CompanyAdmin = () => {
   const { companies, selectedCompany } = useSelector(
@@ -31,6 +50,20 @@ const CompanyAdmin = () => {
 
   const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isRejectDialogOpen, setIsRejectDialogOpen] = useState(false);
+  const [isEditApprovalDialogOpen, setIsEditApprovalDialogOpen] =
+    useState(false);
+  const [rejectNote, setRejectNote] = useState("");
+  const [companyToReject, setCompanyToReject] = useState<string | null>(null);
+  const [companyToEditApproval, setCompanyToEditApproval] = useState<{
+    id: string;
+    currentApproval: string;
+    currentNote: string;
+  } | null>(null);
+  const [editApprovalStatus, setEditApprovalStatus] = useState<
+    "pending" | "approved" | "rejected"
+  >("pending");
+  const [editApprovalNote, setEditApprovalNote] = useState("");
   const dispatch = useDispatch();
 
   // Pagination
@@ -132,6 +165,88 @@ const CompanyAdmin = () => {
     }
   };
 
+  // handleApproveCompany function
+  const handleApproveCompany = async (
+    companyId: string,
+    approval: "approved" | "rejected",
+    note?: string
+  ) => {
+    try {
+      const response = await axios.put(
+        `${API}/admin/approve-company/${companyId}`,
+        {
+          approval,
+          approvalNote: note || "",
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      if (response.data.success) {
+        toast.success(
+          approval === "approved"
+            ? "Đã duyệt công ty thành công"
+            : approval === "rejected"
+            ? "Đã từ chối công ty thành công"
+            : "Cập nhật trạng thái công ty thành công"
+        );
+        fetchCompanies();
+      }
+    } catch (error) {
+      console.error("Approve company error:", error);
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data.message || "Không thể duyệt công ty");
+      } else {
+        toast.error("Không thể duyệt công ty");
+      }
+    }
+  };
+
+  // Handle reject company click
+  const handleRejectClick = (companyId: string) => {
+    setCompanyToReject(companyId);
+    setRejectNote("");
+    setIsRejectDialogOpen(true);
+  };
+
+  // Confirm reject company
+  const handleConfirmReject = async () => {
+    if (!companyToReject) return;
+    await handleApproveCompany(companyToReject, "rejected", rejectNote);
+    setIsRejectDialogOpen(false);
+    setCompanyToReject(null);
+    setRejectNote("");
+  };
+
+  // Handle edit approval click
+  const handleEditApprovalClick = (company: Company) => {
+    setCompanyToEditApproval({
+      id: company._id,
+      currentApproval: company.approval || "pending",
+      currentNote: company.approvalNote || "",
+    });
+    setEditApprovalStatus(
+      company.approval as "pending" | "approved" | "rejected"
+    );
+    setEditApprovalNote(company.approvalNote || "");
+    setIsEditApprovalDialogOpen(true);
+  };
+
+  // Confirm edit approval
+  const handleConfirmEditApproval = async () => {
+    if (!companyToEditApproval) return;
+    await handleApproveCompany(
+      companyToEditApproval.id,
+      editApprovalStatus as "approved" | "rejected",
+      editApprovalNote
+    );
+    setIsEditApprovalDialogOpen(false);
+    setCompanyToEditApproval(null);
+    setEditApprovalStatus("pending");
+    setEditApprovalNote("");
+  };
+
   // handleDelete function
   const handleDelete = async (company_id: string) => {
     const result = await Swal.fire({
@@ -214,6 +329,9 @@ const CompanyAdmin = () => {
                   <TableHead className="text-center">
                     Giấy phép kinh doanh
                   </TableHead>
+                  <TableHead className="text-center">Trạng thái</TableHead>
+                  <TableHead className="text-center">Email</TableHead>
+                  <TableHead className="text-center">Số điện thoại</TableHead>
                   <TableHead className="text-center">Ngày tạo</TableHead>
                   <TableHead className="text-center">Ngày cập nhật</TableHead>
                   <TableHead className="text-center">Thao tác</TableHead>
@@ -278,6 +396,30 @@ const CompanyAdmin = () => {
                       )}
                     </TableCell>
                     <TableCell className="text-center">
+                      {company.approval === "approved" ? (
+                        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                          <CheckCircle2 className="h-3 w-3" />
+                          Đã duyệt
+                        </span>
+                      ) : company.approval === "rejected" ? (
+                        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                          <XCircle className="h-3 w-3" />
+                          Đã từ chối
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                          <Clock className="h-3 w-3" />
+                          Chờ duyệt
+                        </span>
+                      )}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      {company.email || "N/A"}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      {company.phoneNumber || "N/A"}
+                    </TableCell>
+                    <TableCell className="text-center">
                       {new Date(company.createdAt).toLocaleDateString("vi-VN", {
                         year: "numeric",
                         month: "2-digit",
@@ -301,14 +443,49 @@ const CompanyAdmin = () => {
                             dispatch(setSelectedCompany(company));
                             setIsDialogOpen(true);
                           }}
+                          title="Chỉnh sửa"
                         >
                           <Edit2 className="h-4 w-4" />
+                        </Button>
+                        {company.approval === "pending" && (
+                          <>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="hover:bg-green-50 text-green-600 cursor-pointer"
+                              onClick={() =>
+                                handleApproveCompany(company._id, "approved")
+                              }
+                              title="Duyệt"
+                            >
+                              <CheckCircle2 className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="hover:bg-red-50 text-red-600 cursor-pointer"
+                              onClick={() => handleRejectClick(company._id)}
+                              title="Từ chối"
+                            >
+                              <XCircle className="h-4 w-4" />
+                            </Button>
+                          </>
+                        )}
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="hover:bg-purple-50 text-purple-600 cursor-pointer"
+                          onClick={() => handleEditApprovalClick(company)}
+                          title="Chỉnh sửa trạng thái"
+                        >
+                          <Settings className="h-4 w-4" />
                         </Button>
                         <Button
                           variant="ghost"
                           size="icon"
                           className="hover:bg-red-50 text-red-600 cursor-pointer"
                           onClick={() => handleDelete(company?._id)}
+                          title="Xóa"
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
@@ -358,6 +535,60 @@ const CompanyAdmin = () => {
           //   handleAddCompany(formData);
           // }
         }}
+      />
+
+      {/* Reject Dialog */}
+      <Dialog open={isRejectDialogOpen} onOpenChange={setIsRejectDialogOpen}>
+        <DialogContent className="sm:max-w-[425px] bg-white rounded-lg shadow-lg">
+          <DialogHeader>
+            <DialogTitle>Lý do từ chối công ty</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <Label htmlFor="note">Nhập lý do từ chối:</Label>
+            <Textarea
+              id="note"
+              placeholder="Vui lòng nhập lý do từ chối..."
+              value={rejectNote}
+              onChange={(e) => setRejectNote(e.target.value)}
+              className="min-h-[100px] outline-none border border-gray-300 rounded-lg p-3 transition-all duration-200"
+              required
+            />
+          </div>
+          <div className="flex justify-end gap-3">
+            <Button
+              variant="outline"
+              onClick={() => setIsRejectDialogOpen(false)}
+              className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 cursor-pointer"
+            >
+              Hủy
+            </Button>
+            <Button
+              onClick={handleConfirmReject}
+              className="bg-red-500 text-white hover:bg-red-600 cursor-pointer"
+              disabled={!rejectNote.trim()}
+            >
+              Xác nhận từ chối
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Approval Dialog */}
+      <EditApprovalCompanyDialog
+        open={isEditApprovalDialogOpen}
+        onOpenChange={setIsEditApprovalDialogOpen}
+        status={editApprovalStatus}
+        note={editApprovalNote}
+        currentNote={companyToEditApproval?.currentNote}
+        onStatusChange={setEditApprovalStatus}
+        onNoteChange={setEditApprovalNote}
+        onCancel={() => {
+          setIsEditApprovalDialogOpen(false);
+          setCompanyToEditApproval(null);
+          setEditApprovalStatus("pending");
+          setEditApprovalNote("");
+        }}
+        onConfirm={handleConfirmEditApproval}
       />
     </div>
   );

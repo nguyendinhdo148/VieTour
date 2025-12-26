@@ -1,6 +1,7 @@
 import { Company } from "../models/company.model.js";
 import { Job } from "../models/job.model.js";
 import { Application } from "../models/application.model.js";
+import { User } from "../models/user.model.js";
 import cloudinary from "../utils/cloudinary.js";
 import getDataUri from "../utils/datauri.js";
 import slugify from "slugify";
@@ -33,6 +34,24 @@ export const createCompany = async (req, res, next) => {
     if (!userId) {
       return res.status(401).json({
         message: "Unauthorized. Please login again.",
+        success: false,
+      });
+    }
+
+    // Validate các trường bắt buộc
+    if (!name || !taxCode || !location || !address) {
+      return res.status(400).json({
+        message:
+          "Vui lòng điền đầy đủ thông tin: Tên công ty, Mã số thuế, Địa điểm, và Địa chỉ.",
+        success: false,
+      });
+    }
+
+    // Lấy thông tin user để lấy email và phoneNumber
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found.",
         success: false,
       });
     }
@@ -86,11 +105,15 @@ export const createCompany = async (req, res, next) => {
       noe, // number of employees
       yoe, // years of experience
       field, // field of work
+      email: user.email, // Lấy email từ user
+      phoneNumber: user.phoneNumber?.toString() || "", // Lấy phoneNumber từ user
+      approval: "pending", // Mặc định là pending, cần admin duyệt
       userId: req.id,
     });
 
     return res.status(201).json({
-      message: "Company created successfully.",
+      message:
+        "Công ty đã được tạo thành công. Vui lòng chờ admin duyệt để có thể đăng tin tuyển dụng.",
       company,
       success: true,
     });

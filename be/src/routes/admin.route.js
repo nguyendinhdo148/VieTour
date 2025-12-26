@@ -15,6 +15,7 @@ import {
   updateProfile,
   approveJob,
   approveBlog,
+  approveCompany,
 } from "../controllers/admin.controller.js";
 import { isAuthenticated, isAdmin } from "../middleware/auth.middleware.js";
 import { companyUpload } from "../middleware/multer.js";
@@ -53,6 +54,9 @@ router.delete("/company/:id", isAuthenticated, isAdmin, deleteCompany);
 
 // blog
 router.put("/approve-blog/:id", isAuthenticated, isAdmin, approveBlog);
+
+// company approval
+router.put("/approve-company/:id", isAuthenticated, isAdmin, approveCompany);
 
 // overview
 router.get("/overview", isAuthenticated, isAdmin, getAdminOverview);

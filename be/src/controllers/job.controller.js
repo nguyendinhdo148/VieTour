@@ -68,6 +68,14 @@ export const createJob = async (req, res, next) => {
       });
     }
 
+    // check if company has been approved by admin
+    if (companyDoc.approval !== "approved") {
+      return res.status(403).json({
+        message: "Công ty của bạn chưa được duyệt bởi admin. Vui lòng chờ admin duyệt trước khi đăng tin tuyển dụng.",
+        success: false,
+      });
+    }
+
     // check if job already exists with this title for this company by recruiter
     const jobExists = await Job.findOne({ title });
     if (jobExists) {
