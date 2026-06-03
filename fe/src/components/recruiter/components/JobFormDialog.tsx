@@ -25,16 +25,17 @@ import axios from "axios";
 import { API } from "@/utils/constant";
 import { Loader2, Sparkles } from "lucide-react";
 
+// Thay đổi type cho phép chuỗi rỗng "" để ô input không hiện số 0
 export interface JobFormData {
   title: string;
   description: string;
   requirements: string[];
-  salary: number;
+  salary: number | ""; 
   benefits: string[];
   location: string;
   jobType: string;
-  experienceLevel: number;
-  position: number;
+  experienceLevel: number | "";
+  position: number | "";
   category: string;
   company: {
     _id: string;
@@ -47,19 +48,21 @@ interface JobFormDialogProps {
   open: boolean;
   onClose: () => void;
   job: Job | null;
-  onSuccess: (data: JobFormData) => Promise<void>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onSuccess: (data: any) => Promise<void>; // Nới lỏng type onSuccess để truyền dữ liệu đi
 }
 
+// Chuyển 0 thành ""
 const initialFormData: JobFormData = {
   title: "",
   description: "",
   requirements: [],
   benefits: [],
-  salary: 0,
+  salary: "",
   location: "",
   jobType: "",
-  experienceLevel: 0,
-  position: 1,
+  experienceLevel: "",
+  position: "",
   category: "",
   company: {
     _id: "",
@@ -111,11 +114,11 @@ export const JobFormDialog = ({
         description: job.description,
         requirements: job.requirements,
         benefits: job.benefits,
-        salary: Number(job.salary) || 0,
+        salary: job.salary ? Number(job.salary) : "",
         location: job.location,
         jobType: job.jobType,
-        experienceLevel: job.experienceLevel,
-        position: job.position,
+        experienceLevel: job.experienceLevel ?? "",
+        position: job.position ?? "",
         category: job.category,
         company: {
           _id: job.company?._id || "",
@@ -133,27 +136,36 @@ export const JobFormDialog = ({
     e.preventDefault();
 
     if (!formData.title.trim()) {
-      toast.error("Vui lòng nhập tiêu đề công việc");
+      toast.error("Vui lòng nhập tiêu đề bài quảng cáo");
       return;
     }
     if (!formData.description.trim()) {
-      toast.error("Vui lòng nhập mô tả công việc");
+      toast.error("Vui lòng nhập mô tả chi tiết");
       return;
     }
     if (!formData.location.trim()) {
-      toast.error("Vui lòng nhập địa điểm làm việc");
+      toast.error("Vui lòng nhập địa điểm");
       return;
     }
     if (!formData.company._id) {
-      toast.error("Vui lòng chọn công ty");
+      toast.error("Vui lòng chọn công ty/thương hiệu");
       return;
     }
-    if (formData.salary <= 0) {
-      toast.error("Vui lòng nhập mức lương hợp lệ");
+    if (!formData.category) {
+      toast.error("Vui lòng chọn danh mục");
       return;
     }
-    if (formData.experienceLevel < 0) {
+    // Validate các số không được rỗng
+    if (formData.salary === "" || formData.salary <= 0) {
+      toast.error("Vui lòng nhập chi phí trung bình hợp lệ");
+      return;
+    }
+    if (formData.experienceLevel === "" || formData.experienceLevel < 0) {
       toast.error("Vui lòng nhập số năm kinh nghiệm hợp lệ");
+      return;
+    }
+    if (formData.position === "" || formData.position < 1) {
+      toast.error("Vui lòng nhập sức chứa khách hợp lệ");
       return;
     }
 
@@ -219,7 +231,7 @@ export const JobFormDialog = ({
       <DialogContent className="sm:max-w-[800px] bg-white max-h-[90vh] overflow-y-auto border-none p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-200 ease-in-out">
         <DialogHeader className="flex flex-row items-center justify-between pb-2 border-b mb-4 space-y-0">
           <DialogTitle className="text-xl font-bold">
-            {job ? "Chỉnh sửa tin tuyển dụng" : "Đăng tin tuyển dụng mới"}
+            {job ? "Chỉnh sửa bài đăng" : "Đăng bài quảng cáo mới"}
           </DialogTitle>
 
           {/* Button AI Gen */}
@@ -255,7 +267,7 @@ export const JobFormDialog = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="company">
-                  Công ty <span className="text-red-700">*</span>
+                  Công ty / Thương hiệu <span className="text-red-700">*</span>
                 </Label>
                 <Select
                   value={formData.company._id}
@@ -267,7 +279,7 @@ export const JobFormDialog = ({
                   }
                 >
                   <SelectTrigger className="cursor-pointer bg-white">
-                    <SelectValue placeholder="Chọn công ty">
+                    <SelectValue placeholder="Chọn thương hiệu">
                       {
                         companies.find((c) => c._id === formData.company._id)
                           ?.name
@@ -290,7 +302,7 @@ export const JobFormDialog = ({
 
               <div className="grid gap-2">
                 <Label htmlFor="title">
-                  Tiêu đề công việc <span className="text-red-700">*</span>
+                  Tiêu đề bài quảng cáo <span className="text-red-700">*</span>
                 </Label>
                 <Input
                   id="title"
@@ -298,7 +310,7 @@ export const JobFormDialog = ({
                   onChange={(e) =>
                     setFormData({ ...formData, title: e.target.value })
                   }
-                  placeholder="VD: Senior Frontend Developer"
+                  placeholder="Sau khi điền tiêu đề có thể click AI để tạo mô tả "
                   className="resize-none focus:ring-indigo-500"
                   required
                 />
@@ -330,16 +342,15 @@ export const JobFormDialog = ({
 
             <div className="grid gap-2">
               <Label htmlFor="description">
-                Mô tả công việc <span className="text-red-700">*</span>
+                Mô tả nội dung <span className="text-red-700">*</span>
               </Label>
-              {/* Đã xóa nút AI cũ ở đây */}
               <Textarea
                 id="description"
                 value={formData.description}
                 onChange={(e) =>
                   setFormData({ ...formData, description: e.target.value })
                 }
-                placeholder="Mô tả chi tiết về công việc. Mỗi đoạn mô tả đều kết thúc bằng dấu chấm."
+                placeholder="Mô tả chi tiết về chương trình. Mỗi đoạn mô tả đều kết thúc bằng dấu chấm."
                 required
                 rows={5}
                 className="resize-none focus:ring-indigo-500"
@@ -348,7 +359,7 @@ export const JobFormDialog = ({
 
             <div className="grid gap-2">
               <Label htmlFor="requirements">
-                Yêu cầu ứng viên <span className="text-red-700">*</span>
+                Áp dụng cho <span className="text-red-700">*</span>
               </Label>
               <Textarea
                 id="requirements"
@@ -396,7 +407,7 @@ export const JobFormDialog = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="jobType">
-                  Hình thức làm việc <span className="text-red-700">*</span>
+                  Hình thức áp dụng <span className="text-red-700">*</span>
                 </Label>
                 <Select
                   value={formData.jobType}
@@ -413,27 +424,21 @@ export const JobFormDialog = ({
                   <SelectContent className="bg-white max-h-[300px] overflow-y-auto">
                     <SelectItem
                       className="cursor-pointer hover:bg-gray-100"
-                      value="Full-Time"
+                      value="Tại chỗ"
                     >
-                      Toàn thời gian
+                      Tại chỗ
                     </SelectItem>
                     <SelectItem
                       className="cursor-pointer hover:bg-gray-100"
-                      value="Part-Time"
+                      value="Giao đồ ăn / thức uống"
                     >
-                      Bán thời gian
+                      Giao đồ ăn / thức uống
                     </SelectItem>
                     <SelectItem
                       className="cursor-pointer hover:bg-gray-100"
-                      value="Remote"
+                      value="Tại chỗ và giao hàng"
                     >
-                      Từ xa
-                    </SelectItem>
-                    <SelectItem
-                      className="cursor-pointer hover:bg-gray-100"
-                      value="Internship"
-                    >
-                      Thực tập
+                      Tại chỗ và giao hàng
                     </SelectItem>
                   </SelectContent>
                 </Select>
@@ -441,22 +446,38 @@ export const JobFormDialog = ({
 
               <div className="grid gap-2">
                 <Label htmlFor="category">
-                  Chuyên ngành <span className="text-red-700">*</span>
+                  Danh mục <span className="text-red-700">*</span>
                 </Label>
-                <Input
-                  type="text"
-                  id="category"
-                  name="category"
+                <Select
                   value={formData.category}
-                  onChange={(e) =>
-                    setFormData({ ...formData, category: e.target.value })
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, category: value })
                   }
-                  className="resize-none focus:ring-indigo-500"
-                  placeholder="Ví dụ: IT, Kế toán, Marketing..."
-                  required
-                />
+                >
+                  <SelectTrigger
+                    id="category"
+                    className="cursor-pointer bg-white focus:ring-indigo-500"
+                  >
+                    <SelectValue placeholder="Chọn danh mục" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white max-h-[300px] overflow-y-auto">
+                    <SelectItem className="cursor-pointer hover:bg-gray-100" value="Cà phê">
+                      Cà phê
+                    </SelectItem>
+                    <SelectItem className="cursor-pointer hover:bg-gray-100" value="Nhà hàng">
+                      Nhà hàng
+                    </SelectItem>
+                    <SelectItem className="cursor-pointer hover:bg-gray-100" value="Quán ăn">
+                      Quán ăn
+                    </SelectItem>
+                    <SelectItem className="cursor-pointer hover:bg-gray-100" value="Quán cơm">
+                      Quán cơm
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
+              {/* SỬA CHỖ NÀY: KIỂM TRA VALUE RỖNG THÌ ĐỂ "", NẾU CÓ THÌ GÁN SỐ */}
               <div className="grid gap-2">
                 <Label htmlFor="experienceLevel">
                   Kinh nghiệm (năm) <span className="text-red-700">*</span>
@@ -469,7 +490,7 @@ export const JobFormDialog = ({
                   onChange={(e) =>
                     setFormData({
                       ...formData,
-                      experienceLevel: parseInt(e.target.value) || 0,
+                      experienceLevel: e.target.value === "" ? "" : parseInt(e.target.value),
                     })
                   }
                   placeholder="VD: 2"
@@ -478,9 +499,10 @@ export const JobFormDialog = ({
                 />
               </div>
 
+              {/* SỬA CHỖ NÀY */}
               <div className="grid gap-2">
                 <Label htmlFor="salary">
-                  Mức lương (Triệu) <span className="text-red-700">*</span>
+                  Chi phí trung bình / khách <span className="text-red-700">*</span>
                 </Label>
                 <Input
                   id="salary"
@@ -489,18 +511,19 @@ export const JobFormDialog = ({
                   onChange={(e) =>
                     setFormData({
                       ...formData,
-                      salary: parseInt(e.target.value) || 0,
+                      salary: e.target.value === "" ? "" : parseInt(e.target.value),
                     })
                   }
-                  placeholder="VD: 15"
+                  placeholder="VD: 155000"
                   className="resize-none focus:ring-indigo-500"
                   required
                 />
               </div>
 
+              {/* SỬA CHỖ NÀY */}
               <div className="grid gap-2">
                 <Label htmlFor="position">
-                  Số lượng tuyển <span className="text-red-700">*</span>
+                  Sức chứa khách <span className="text-red-700">*</span>
                 </Label>
                 <Input
                   id="position"
@@ -510,10 +533,10 @@ export const JobFormDialog = ({
                   onChange={(e) =>
                     setFormData({
                       ...formData,
-                      position: parseInt(e.target.value) || 1,
+                      position: e.target.value === "" ? "" : parseInt(e.target.value),
                     })
                   }
-                  placeholder="VD: 1"
+                  placeholder="VD: 50"
                   className="resize-none focus:ring-indigo-500"
                   required
                 />

@@ -6,39 +6,41 @@ import { Mail, Phone, MapPin, ArrowRight, Heart } from "lucide-react";
 const Footer = () => {
   const currentYear = new Date().getFullYear();
 
+  // Đổi menu link sang concept Khám phá / Đặt chỗ
   const footerLinks = [
     {
-      title: "Về VieJobs",
+      title: "Về VieBooking",
       links: [
         { name: "Giới thiệu", href: "#" },
         { name: "Liên hệ", href: "#" },
-        { name: "Tuyển dụng", href: "#" },
+        { name: "Trở thành đối tác", href: "#" },
       ],
     },
     {
-      title: "Xây dựng sự nghiệp",
+      title: "Khám phá dịch vụ",
       links: [
-        { name: "Việc làm tốt nhất", href: "#" },
-        { name: "Việc làm lương cao", href: "#" },
-        { name: "Việc làm quản lý", href: "#" },
-        { name: "Việc làm IT", href: "#" },
-        { name: "Việc làm bán thời gian", href: "#" },
+        { name: "Nhà hàng & Quán ăn", href: "#" },
+        { name: "Cà phê & Trà sữa", href: "#" },
+        { name: "Spa & Massage", href: "#" },
+        { name: "Salon làm đẹp", href: "#" },
+        { name: "Ưu đãi cực HOT", href: "#" },
       ],
     },
     {
-      title: "Khám phá",
+      title: "Cộng đồng",
       links: [
-        { name: "Blog việc làm", href: "#" },
-        { name: "Mẹo phỏng vấn", href: "#" },
-        { name: "Mẫu CV", href: "#" },
-        { name: "Tính lương", href: "#" },
+        { name: "Blog ẩm thực", href: "#" },
+        { name: "Top địa điểm", href: "#" },
+        { name: "Góc Review", href: "#" },
+        { name: "Cẩm nang trải nghiệm", href: "#" },
       ],
     },
     {
       title: "Hỗ trợ",
       links: [
         { name: "Trung tâm trợ giúp", href: "#" },
-        { name: "Cộng đồng", href: "#" },
+        { name: "Hướng dẫn đặt chỗ", href: "#" },
+        { name: "Hủy & Đổi lịch", href: "#" },
         { name: "Live Chat", href: "#" },
       ],
     },
@@ -82,8 +84,8 @@ const Footer = () => {
   const contactInfo = [
     {
       icon: Mail,
-      text: "contact@viejobs.com",
-      href: "mailto:contact@viejobs.com",
+      text: "contact@viebooking.com", // Đổi tên email
+      href: "mailto:contact@viebooking.com",
     },
     {
       icon: Phone,
@@ -124,7 +126,7 @@ const Footer = () => {
             <div className="mb-8">
               <img
                 src="/vj1.png"
-                alt="VieJobs - Nền tảng tuyển dụng hàng đầu Việt Nam"
+                alt="VieBooking - Nền tảng Đặt chỗ & Khám phá dịch vụ hàng đầu"
                 className="h-10 w-auto object-contain"
               />
             </div>
@@ -133,9 +135,7 @@ const Footer = () => {
               variants={fadeInUp}
               className="text-gray-600 mb-8 leading-relaxed"
             >
-              Kết nối những tài năng hàng đầu với các công ty đẳng cấp thế giới.
-              Nền tảng của chúng tôi giúp hàng triệu người tìm được công việc mơ
-              ước và xây dựng sự nghiệp có ý nghĩa.
+              Khám phá và trải nghiệm dịch vụ tuyệt vời tại hàng ngàn nhà hàng, quán cà phê và spa nổi bật. Nền tảng của chúng tôi giúp bạn dễ dàng tìm kiếm địa điểm và đặt lịch hẹn hoàn hảo.
             </motion.p>
 
             {/* Enhanced Contact Info */}
@@ -264,7 +264,7 @@ const Footer = () => {
             className="flex flex-col md:flex-row md:items-center gap-6 order-2 lg:order-1"
           >
             <p className="text-sm text-gray-500 font-medium">
-              &copy; {currentYear} VieJobs, Inc. All rights reserved.
+              &copy; {currentYear} VieBooking, Inc. All rights reserved.
             </p>
           </motion.div>
 

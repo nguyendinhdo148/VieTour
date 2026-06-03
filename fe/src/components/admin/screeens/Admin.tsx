@@ -279,7 +279,7 @@ const Admin = () => {
                     variant="secondary"
                     className="text-xs bg-indigo-100 text-indigo-700 font-medium"
                   >
-                    {job.applications?.length || 0} ứng viên
+                    {job.applications?.length || 0} khách hàng
                   </Badge>
                 </div>
                 <p className="mt-1 text-sm text-gray-500">{job.location}</p>
@@ -294,7 +294,7 @@ const Admin = () => {
                     variant="outline"
                     className="text-xs border-emerald-200 bg-emerald-50 text-emerald-700"
                   >
-                    {job.salary} triệu
+                    {job.salary}  
                   </Badge>
                 </div>
                 <div className="mt-3 flex items-center justify-between">

@@ -214,7 +214,7 @@ const ForgotPassword = () => {
                 </p>
               </div>
               <p className="text-white/90 italic">
-                "VieJobs đã giúp hơn 10,000 ứng viên tìm được công việc mơ ước
+                "VieJobs đã giúp hơn 10,000 khách hàng tìm được công việc mơ ước
                 chỉ sau 2 tuần!"
               </p>
             </div>

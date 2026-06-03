@@ -1,61 +1,79 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Building, Briefcase, Camera } from "lucide-react";
+import { Building, PartyPopper } from "lucide-react";
 import CompanyOverview from "./CompanyOverview";
 import CompanyJobs from "./CompanyJobs";
-import CompanyPhotos from "./CompanyPhotos";
 import type { Company } from "@/types/company";
 import type { Job } from "@/types/job";
 
+// ==========================================================
+// ĐỊNH NGHĨA PROPS 
+// ==========================================================
 interface CompanyTabsProps {
-  company: Company;
+  company: Company | any; 
   jobs: Job[];
   isJobsLoading: boolean;
+  onOpenReviewModal: (review?: any) => void;
+  onDeleteReview: (reviewId: string) => Promise<void>;
+  onOpenBookingModal: () => void; // THÊM PROP NÀY ĐỂ XỬ LÝ ĐẶT BÀN
+  user: any; 
 }
 
-const CompanyTabs = ({ company, jobs, isJobsLoading }: CompanyTabsProps) => {
+// ==========================================================
+// MAIN COMPONENT: CompanyTabs
+// ==========================================================
+const CompanyTabs = ({ 
+  company, 
+  jobs, 
+  isJobsLoading, 
+  onOpenReviewModal, 
+  onDeleteReview, 
+  onOpenBookingModal, // NHẬN PROP TỪ CHA
+  user 
+}: CompanyTabsProps) => {
   const [activeTab, setActiveTab] = useState("overview");
 
   return (
-    <Card className="shadow-2xl py-0 border-0 bg-white/95 backdrop-blur-xl mb-8">
+    <Card className="shadow-xl py-0 border-0 bg-white/95 backdrop-blur-xl mb-8 rounded-3xl overflow-hidden">
       <CardContent className="p-0">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 bg-gray-50/80 gap-x-2 p-8 rounded-t-xl">
+          
+          <TabsList className="grid w-full grid-cols-2 bg-gray-50/80 gap-x-3 p-4 border-b border-gray-100">
             <TabsTrigger
               value="overview"
-              className="data-[state=active]:bg-gray-100 border border-gray-100 hover:border-gray-200 data-[state=active]:shadow-sm rounded-lg"
+              className="data-[state=active]:bg-white data-[state=active]:text-orange-600 text-gray-600 font-bold py-3.5 data-[state=active]:shadow-sm rounded-xl transition-all flex items-center justify-center"
             >
-              <Building className="w-4 h-4 mr-2" />
-              Tổng quan
+              <Building className="w-5 h-5 mr-2" />
+              <span className="hidden sm:inline">Tổng quan</span>
             </TabsTrigger>
+
             <TabsTrigger
               value="jobs"
-              className="data-[state=active]:bg-gray-100 border border-gray-100 hover:border-gray-200 data-[state=active]:shadow-sm rounded-lg"
+              className="data-[state=active]:bg-white data-[state=active]:text-orange-600 text-gray-600 font-bold py-3.5 data-[state=active]:shadow-sm rounded-xl transition-all flex items-center justify-center"
             >
-              <Briefcase className="w-4 h-4 mr-2" />
-              Việc làm
-            </TabsTrigger>
-            <TabsTrigger
-              value="photos"
-              className="data-[state=active]:bg-gray-100 border border-gray-100 hover:border-gray-200 data-[state=active]:shadow-sm rounded-lg"
-            >
-              <Camera className="w-4 h-4 mr-2" />
-              Hình ảnh
+              <PartyPopper className="w-5 h-5 mr-2" />
+              <span className="hidden sm:inline">Chương trình & Sự kiện</span>
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="overview">
-            <CompanyOverview company={company} jobs={jobs} />
+          <TabsContent value="overview" className="mt-0">
+            {/* Truyền các props Đánh giá và Đặt bàn xuống CompanyOverview */}
+            <CompanyOverview 
+              company={company} 
+              jobs={jobs} 
+              user={user}
+              onOpenReviewModal={onOpenReviewModal}
+              onDeleteReview={onDeleteReview}
+              onOpenBookingModal={onOpenBookingModal} // TRUYỀN PROP XUỐNG ĐÂY
+            />
           </TabsContent>
 
-          <TabsContent value="jobs">
+          <TabsContent value="jobs" className="mt-0">
             <CompanyJobs jobs={jobs} isJobsLoading={isJobsLoading} />
           </TabsContent>
-
-          <TabsContent value="photos">
-            <CompanyPhotos />
-          </TabsContent>
+          
         </Tabs>
       </CardContent>
     </Card>

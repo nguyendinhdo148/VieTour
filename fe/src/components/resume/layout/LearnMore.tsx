@@ -316,7 +316,7 @@ const LearnMore = () => {
                 name: "Nguyễn Minh Tuấn",
                 position: "Software Engineer tại FPT Software",
                 story:
-                  "Sau khi sử dụng VieJobs CV, tôi đã nhận được 5 lời mời phỏng vấn chỉ trong 2 tuần. CV được thiết kế rất chuyên nghiệp và nổi bật so với các ứng viên khác.",
+                  "Sau khi sử dụng VieJobs CV, tôi đã nhận được 5 lời mời phỏng vấn chỉ trong 2 tuần. CV được thiết kế rất chuyên nghiệp và nổi bật so với các khách hàng khác.",
                 salary: "Tăng lương 150%",
                 avatar: "/user.webp",
               },

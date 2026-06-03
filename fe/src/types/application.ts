@@ -2,6 +2,8 @@ import { Job } from "./job";
 import { User } from "./user";
 
 export interface Application {
+  bookingDate: any;
+  numberOfGuests: number;
   _id: string;
   job: Job;
   applicant: User; // ID của người nộp đơn

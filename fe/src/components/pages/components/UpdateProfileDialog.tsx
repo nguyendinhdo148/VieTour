@@ -52,20 +52,17 @@ const UpdateProfileDialog = ({ open, setOpen }: UpdateProfileDialogProps) => {
     file: user?.profile?.resume?.url || ("" as string | File),
   });
 
-  // Handle change events for file input
   const fileChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files && e.target.files[0];
     setInput({ ...input, file: file || "" });
   };
 
-  // Handle change events for input fields and textarea
   const changeHandler = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setInput({ ...input, [e.target.name]: e.target.value });
   };
 
-  // Handle form submission
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData();
@@ -96,7 +93,6 @@ const UpdateProfileDialog = ({ open, setOpen }: UpdateProfileDialogProps) => {
       setLoading(false);
     }
     setOpen(false);
-    console.log(input);
   };
 
   return (
@@ -109,13 +105,12 @@ const UpdateProfileDialog = ({ open, setOpen }: UpdateProfileDialogProps) => {
           <DialogHeader className="border-b pb-4">
             <DialogTitle>
               <span className="text-xl font-semibold text-gray-800">
-                Cập nhật thông tin cá nhân
+                Thông tin thực khách
               </span>
             </DialogTitle>
             <DialogDescription>
               <span className="text-gray-600">
-                Thực hiện thay đổi cho hồ sơ của bạn tại đây. Nhấp vào lưu khi
-                bạn hoàn tất.
+                Cập nhật thông tin cá nhân và sở thích ăn uống để nhà hàng phục vụ bạn tốt hơn.
               </span>
             </DialogDescription>
           </DialogHeader>
@@ -135,9 +130,8 @@ const UpdateProfileDialog = ({ open, setOpen }: UpdateProfileDialogProps) => {
                   name="fullname"
                   value={input.fullname}
                   onChange={changeHandler}
-                  className="sm:col-span-3"
+                  className="sm:col-span-3 focus-visible:ring-orange-500"
                   placeholder="Nhập họ và tên"
-                  aria-label="Full name"
                 />
               </div>
 
@@ -154,7 +148,6 @@ const UpdateProfileDialog = ({ open, setOpen }: UpdateProfileDialogProps) => {
                   onChange={changeHandler}
                   className="sm:col-span-3"
                   placeholder="Nhập địa chỉ email"
-                  aria-label="Email"
                   disabled
                 />
               </div>
@@ -166,62 +159,59 @@ const UpdateProfileDialog = ({ open, setOpen }: UpdateProfileDialogProps) => {
                 </Label>
                 <Input
                   id="number"
-                  name="number"
+                  name="phoneNumber"
                   value={input.phoneNumber}
                   onChange={changeHandler}
-                  className="sm:col-span-3"
+                  className="sm:col-span-3 focus-visible:ring-orange-500"
                   placeholder="Nhập số điện thoại"
-                  aria-label="Phone number"
                 />
               </div>
 
-              {/* Bio Field */}
+              {/* Bio Field (Bây giờ làm "Ghi chú/Dị ứng") */}
               <div className="grid grid-cols-1 sm:grid-cols-4 items-start gap-4">
                 <Label
                   htmlFor="bio"
                   className="sm:text-right text-gray-700 mt-2"
                 >
-                  Tiểu sử
+                  Ghi chú dị ứng
                 </Label>
                 <Textarea
                   id="bio"
                   name="bio"
                   value={input.bio}
                   onChange={changeHandler}
-                  className="sm:col-span-3"
+                  className="sm:col-span-3 focus-visible:ring-orange-500"
                   rows={3}
-                  placeholder="Mô tả về bản thân"
-                  aria-label="Bio"
+                  placeholder="Ghi chú về các thành phần dị ứng hoặc yêu cầu đặc biệt..."
                 />
               </div>
 
-              {/* Skills Field */}
+              {/* Skills Field (Bây giờ làm "Khẩu vị yêu thích") */}
               <div className="grid grid-cols-1 sm:grid-cols-4 items-center gap-4">
                 <Label htmlFor="skills" className="sm:text-right text-gray-700">
-                  Kĩ năng
+                  Khẩu vị
                 </Label>
                 <Input
                   id="skills"
                   name="skills"
                   value={input.skills}
                   onChange={changeHandler}
-                  className="sm:col-span-3"
-                  placeholder="Nhập các kỹ năng (cách nhau bằng dấu phẩy)"
-                  aria-label="Skills"
+                  className="sm:col-span-3 focus-visible:ring-orange-500"
+                  placeholder="VD: Thích ăn cay, Ít đường, Không hành (cách nhau dấu phẩy)"
                 />
               </div>
 
-              {/* Resume Upload */}
+              {/* Resume Upload (Bây giờ làm Thẻ thành viên/Ảnh hóa đơn PDF) */}
               <div className="grid grid-cols-1 sm:grid-cols-4 items-start gap-4">
                 <Label
                   htmlFor="file"
                   className="sm:text-right text-gray-700 pt-2"
                 >
-                  Resume
+                  Tài liệu đính kèm
                 </Label>
 
                 <div className="sm:col-span-3 space-y-2">
-                  {typeof input.file === "string" && (
+                  {typeof input.file === "string" && input.file !== "" && (
                     <div className="text-sm text-blue-600">
                       <span className="font-medium">File hiện tại:</span>{" "}
                       <a
@@ -241,12 +231,11 @@ const UpdateProfileDialog = ({ open, setOpen }: UpdateProfileDialogProps) => {
                     type="file"
                     onChange={fileChangeHandler}
                     accept="application/pdf"
-                    className="w-full cursor-pointer"
-                    aria-label="Resume upload"
+                    className="w-full cursor-pointer focus-visible:ring-orange-500"
                   />
 
                   <p className="text-sm text-gray-500">
-                    Chọn file CV/Resume của bạn (PDF)
+                    Chọn file (PDF) thẻ thành viên hoặc voucher chứng minh (nếu có)
                   </p>
                 </div>
               </div>
@@ -258,7 +247,7 @@ const UpdateProfileDialog = ({ open, setOpen }: UpdateProfileDialogProps) => {
                   variant="default"
                   type="button"
                   disabled
-                  className="mr-2 text-white bg-gray-400 hover:bg-gray-500 transition-colors cursor-pointer"
+                  className="mr-2 text-white bg-gray-400 cursor-pointer"
                 >
                   <span className="flex items-center">
                     <Loader2 className="mr-2 animate-spin" size="sm" />
@@ -268,7 +257,7 @@ const UpdateProfileDialog = ({ open, setOpen }: UpdateProfileDialogProps) => {
               ) : (
                 <Button
                   type="submit"
-                  className="text-white transition-colors cursor-pointer bg-blue-500 hover:bg-blue-600"
+                  className="text-white bg-orange-500 hover:bg-orange-600 transition-colors cursor-pointer"
                 >
                   Lưu thay đổi
                 </Button>

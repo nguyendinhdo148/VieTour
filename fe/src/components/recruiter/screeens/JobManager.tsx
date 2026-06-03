@@ -169,7 +169,7 @@ const JobManager = () => {
       );
 
       if (response.data.success) {
-        toast.success("Cập nhật tin tuyển dụng thành công!");
+        toast.success("Cập nhật tin bài đăng thành công!");
         await fetchJobs();
       }
     } catch (error) {
@@ -177,7 +177,7 @@ const JobManager = () => {
       toast.error(
         axios.isAxiosError(error)
           ? error.response?.data.message
-          : "Không thể cập nhật tin tuyển dụng"
+          : "Không thể cập nhật tin bài đăng"
       );
     }
   };
@@ -235,10 +235,10 @@ const JobManager = () => {
           </div>
           <div>
             <h1 className="text-3xl font-semibold text-gray-800">
-              Quản lý việc làm
+              Quản lý bài quảng cáo
             </h1>
             <p className="mt-1 text-gray-500">
-              Đăng và quản lý các tin tuyển dụng của bạn
+              Quản lý và theo dõi các bài quảng cáo đã đăng
             </p>
           </div>
         </div>
@@ -251,7 +251,7 @@ const JobManager = () => {
         >
           <div className="flex items-center gap-2">
             <Plus className="size-5" />
-            <span className="text-[16px]">Đăng tin tuyển dụng</span>
+            <span className="text-[16px]">Đăng bài quảng cáo</span>
           </div>
         </Button>
       </div>
@@ -367,7 +367,7 @@ const JobManager = () => {
           </div>
 
           <div className="flex-none flex items-center gap-2 text-gray-600 text-sm font-medium whitespace-nowrap">
-            <span className="text-sm text-gray-600">Tổng số việc làm:</span>
+            <span className="text-sm text-gray-600">Tổng số bài đăng :</span>
             <span className="text-sm font-medium text-gray-800">
               {filteredJobs.length}
             </span>
@@ -380,7 +380,7 @@ const JobManager = () => {
           <Table>
             <TableHeader>
               <TableRow className="bg-gray-50 text-gray-700">
-                <TableHead className="w-[180px]">Vị trí & Công ty</TableHead>
+                <TableHead className="w-[180px]">Tiêu đề bài đăng</TableHead>
                 <TableHead className="w-[180px] text-center">
                   Địa điểm
                 </TableHead>
@@ -389,10 +389,10 @@ const JobManager = () => {
                 </TableHead>
                 <TableHead className="w-[120px] text-center">Duyệt</TableHead>
                 <TableHead className="w-[100px] text-center">
-                  Mức lương
+                  Chi phí khoảng
                 </TableHead>
-                <TableHead className="w-[80px] text-center">KN</TableHead>
-                <TableHead className="w-[80px] text-center">ƯV</TableHead>
+                <TableHead className="w-[80px] text-center">Kinh nghiệm HĐ</TableHead>
+                <TableHead className="w-[80px] text-center">Khách hàng</TableHead>
                 <TableHead className="w-[100px] text-center">
                   Thao tác
                 </TableHead>
@@ -496,7 +496,7 @@ const JobManager = () => {
                       )}
                     </TableCell>
                     <TableCell className="text-gray-800 font-medium text-center">
-                      {job.salary.toLocaleString()} Triệu VNĐ
+                      {job.salary.toLocaleString()}   VNĐ
                     </TableCell>
                     <TableCell className="text-[14px] text-gray-800 font-medium text-center">
                       {job.experienceLevel} năm

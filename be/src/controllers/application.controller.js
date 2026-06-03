@@ -1,60 +1,10 @@
 import { Application } from "../models/application.model.js";
 import { Job } from "../models/job.model.js";
+import { Company } from "../models/company.model.js";
 import { sendMail } from "../services/emailService.js";
-import { buildEmailTemplate } from "../services/template.js";
-
-// for student
-export const applyJob = async (req, res, next) => {
-  try {
-    const userId = req.id;
-    const jobId = req.params.id;
-
-    if (!jobId) {
-      return res.status(400).json({
-        message: "Job id is required.",
-        success: false,
-      });
-    }
-    // check if the user has already applied for the job
-    const existApplication = await Application.findOne({
-      job: jobId,
-      applicant: userId,
-    });
-
-    if (existApplication) {
-      return res.status(400).json({
-        message: "You have applied for this job.",
-        success: false,
-      });
-    }
-
-    // check if the jobs exists
-    const job = await Job.findById(jobId);
-    if (!job) {
-      return res.status(404).json({
-        message: "Job not found",
-        success: false,
-      });
-    }
-    // create a new application
-    const newApplication = await Application.create({
-      job: jobId,
-      applicant: userId,
-    });
-
-    job.applications.push(newApplication._id);
-    await job.save();
-
-    return res.status(201).json({
-      message: "Job applied successfully.",
-      success: true,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-// for student
+import { buildEmailTemplate, buildNewBookingToRecruiterTemplate } from "../services/template.js";
+import { User } from "../models/user.model.js";
+// for student/customer
 export const getAppliedJobs = async (req, res, next) => {
   try {
     const userId = req.id;
@@ -71,9 +21,13 @@ export const getAppliedJobs = async (req, res, next) => {
           select: "-_id -userId -createdAt -updatedAt -__v",
           options: { sort: { createdAt: -1 } },
         },
+      })
+      .populate({
+        path: "company",
+        select: "name logo description location", 
       });
 
-    if (!applications) {
+    if (!applications || applications.length === 0) {
       return res.status(404).json({
         message: "Applications not found.",
         success: false,
@@ -111,7 +65,6 @@ export const getApplicants = async (req, res, next) => {
       });
     }
 
-    // check if the user is authorized to view this job
     if (job.created_by.toString() !== req.id) {
       return res.status(401).json({
         message: "You are not authorized to view this job.",
@@ -128,17 +81,21 @@ export const getApplicants = async (req, res, next) => {
   }
 };
 
+// ==========================================
+// ĐÃ SỬA: Lấy tất cả khách hàng (Cả đặt Job + Đặt trực tiếp Company)
+// ==========================================
 export const getApplicantsForRecruiter = async (req, res, next) => {
   try {
     const userId = req.id;
+
+    // 1. Lấy khách đặt qua Job
     const jobs = await Job.find({ created_by: userId })
       .select("id title")
       .populate({
         path: "applications",
         populate: {
           path: "applicant",
-          select:
-            "id fullname email phoneNumber profile.skills profile.bio profile.profilePhoto profile.resume profile.resumeOriginalName",
+          select: "id fullname email phoneNumber profile.skills profile.bio profile.profilePhoto",
         },
       })
       .populate({
@@ -146,14 +103,23 @@ export const getApplicantsForRecruiter = async (req, res, next) => {
         select: "id name",
       });
 
-    if (!jobs) {
-      return res.status(404).json({
-        message: "Jobs not found.",
-        success: false,
-      });
-    }
+    // 2. Lấy khách đặt trực tiếp vào Company của user này
+    const companies = await Company.find({ userId: userId }).select("_id name");
+    const companyIds = companies.map(c => c._id);
+    
+    const companyApplications = await Application.find({
+      company: { $in: companyIds }
+    }).populate({
+      path: "applicant",
+      select: "id fullname email phoneNumber profile.skills profile.bio profile.profilePhoto",
+    }).populate({
+      path: "company",
+      select: "id name"
+    });
 
-    const applications = [];
+    let applications = [];
+
+    // Nạp data từ Job
     jobs.forEach((job) => {
       job.applications.forEach((app) => {
         applications.push({
@@ -167,14 +133,21 @@ export const getApplicantsForRecruiter = async (req, res, next) => {
       });
     });
 
+    // Nạp data từ đặt trực tiếp Company
+    companyApplications.forEach((app) => {
+      applications.push({
+        ...app.toObject(),
+      });
+    });
+
+    // Sắp xếp trạng thái ưu tiên
     const statusPriority = { pending: 1, accepted: 2, rejected: 3 };
 
     applications.sort((a, b) => {
       const statusA = statusPriority[a.status] || 99;
       const statusB = statusPriority[b.status] || 99;
       if (statusA !== statusB) return statusA - statusB;
-      // Nếu cùng status thì mới so sánh createdAt (ưu tiên các ứng viên đã nộp trước)
-      return new Date(a.createdAt) - new Date(b.createdAt);
+      return new Date(b.createdAt) - new Date(a.createdAt); // Xếp mới nhất lên đầu
     });
 
     return res.status(200).json({
@@ -199,8 +172,16 @@ export const updateApplicationStatus = async (req, res, next) => {
       });
     }
 
+    // Populate thêm thông tin userId (chủ doanh nghiệp) từ company
     const application = await Application.findOne({ _id: applicationId })
       .populate("applicant")
+      .populate({
+        path: "company",
+        populate: {
+          path: "userId",
+          select: "email"
+        }
+      }) 
       .populate({
         path: "job",
         populate: [
@@ -222,37 +203,55 @@ export const updateApplicationStatus = async (req, res, next) => {
       });
     }
 
-    const job = await Job.findById(application.job);
+    // Lấy thông tin user (quản lý) đang thực hiện thao tác duyệt
+    const recruiter = await User.findById(req.id);
 
-    // check if the user is authorized to update this application
-    if (job.created_by.toString() !== req.id) {
-      return res.status(401).json({
-        message: "You are not authorized to update this application.",
-        success: false,
-      });
+    let emailRecruiter = null;
+    let jobTitle = "Đặt bàn tự do";
+    let companyName = "";
+    let companyLogo = "";
+    let jobDetailUrl = "";
+
+    if (application.job) {
+      const job = await Job.findById(application.job);
+      if (job.created_by.toString() !== req.id) {
+        return res.status(401).json({
+          message: "You are not authorized to update this application.",
+          success: false,
+        });
+      }
+      jobTitle = application.job.title;
+      companyName = application.job.company?.name;
+      companyLogo = application.job.company?.logo;
+      emailRecruiter = application.job.created_by?.email || recruiter?.email;
+      jobDetailUrl = `${process.env.URL_CLIENT}/job/detail/${job.slug}`;
+    } else if (application.company) {
+      companyName = application.company.name;
+      companyLogo = application.company.logo;
+      jobDetailUrl = `${process.env.URL_CLIENT}/company/${application.company._id}`;
+      
+      // FIX LỖI EMAIL NULL: Lấy email của công ty, hoặc email chủ công ty, hoặc email người đang duyệt
+      emailRecruiter = application.company.email || application.company.userId?.email || recruiter?.email || "cskh@viejobs.com";
     }
 
     application.status = status.toLowerCase();
     await application.save();
 
-    // Gửi email thông báo
     const applicantEmail = application.applicant?.email;
     const applicantName = application.applicant?.fullname;
-    const jobTitle = application.job?.title;
-    const companyName = application.job?.company?.name;
-    const companyLogo = application.job?.company?.logo;
-    const emailRecruiter = application.job?.created_by?.email;
-
-    const jobDetailUrl = `${process.env.URL_CLIENT}/job/detail/${job.slug}`;
+    const bookingDate = application.bookingDate
+      ? new Date(application.bookingDate).toLocaleDateString("vi-VN")
+      : null;
 
     const { subject, html } = buildEmailTemplate({
-      type: status.toLowerCase(), // "accepted" hoặc "rejected"
+      type: status.toLowerCase(),
       applicantName,
       jobTitle,
       companyName,
       companyLogo,
       emailRecruiter,
       jobDetailUrl,
+      bookingDate,
     });
 
     if (subject && html) {
@@ -264,18 +263,6 @@ export const updateApplicationStatus = async (req, res, next) => {
       });
     }
 
-    // delete application after 1 minute
-    // if (status.toLowerCase() === "rejected") {
-    //   setTimeout(async () => {
-    //     try {
-    //       await Application.findByIdAndDelete(applicationId);
-    //       console.log(`Application ${applicationId} deleted after 1 minute.`);
-    //     } catch (err) {
-    //       console.error(`Failed to delete application ${applicationId}:`, err);
-    //     }
-    //   }, 1 * 60 * 1000);
-    // }
-
     return res.status(200).json({
       message: "Application status updated.",
       success: true,
@@ -285,26 +272,33 @@ export const updateApplicationStatus = async (req, res, next) => {
   }
 };
 
+// ==========================================
+// ĐÃ SỬA: Gộp thống kê (Cả Job + Company)
+// ==========================================
 export const getOverview = async (req, res, next) => {
   try {
     const userId = req.id;
 
-    // Set mốc thời gian hôm nay và hôm qua
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-
     const yesterday = new Date(today);
     yesterday.setDate(today.getDate() - 1);
 
-    // 1. Lấy tất cả jobs của recruiter
+    // 1. Lấy applications từ Jobs
     const jobs = await Job.find({ created_by: userId });
+    const jobApplicationIds = jobs.flatMap((job) => job.applications);
 
-    // 2. Lấy tất cả application IDs từ các jobs
-    const applicationIds = jobs.flatMap((job) => job.applications);
+    // 2. Lấy applications đặt trực tiếp vào Company của user này
+    const companies = await Company.find({ userId: userId }).select("_id");
+    const companyIds = companies.map(c => c._id);
+    const companyApplications = await Application.find({ company: { $in: companyIds } }).select("_id");
+    const directApplicationIds = companyApplications.map(app => app._id);
 
-    // 3. Lấy tất cả applications từ applicationIds
+    // 3. Gộp 2 loại ID lại để query một lần
+    const allApplicationIds = [...jobApplicationIds, ...directApplicationIds];
+
     const applications = await Application.find({
-      _id: { $in: applicationIds },
+      _id: { $in: allApplicationIds },
     })
       .populate({
         path: "applicant",
@@ -312,8 +306,11 @@ export const getOverview = async (req, res, next) => {
       })
       .populate({
         path: "job",
-        select:
-          "title location jobType salary experienceLevel applications company",
+        select: "title location jobType salary experienceLevel applications company",
+      })
+      .populate({
+        path: "company",
+        select: "name"
       })
       .lean();
 
@@ -329,7 +326,6 @@ export const getOverview = async (req, res, next) => {
 
     const activeJobs = jobs.filter((job) => job.status === "active").length;
 
-    // Nếu có status job hôm qua thì lọc theo createdAt, nếu không thì lấy job tạo trước today
     const yesterdayActiveJobs = jobs.filter((job) => {
       const createdAt = new Date(job.createdAt);
       return job.status === "active" && createdAt < today;
@@ -365,10 +361,180 @@ export const getOverview = async (req, res, next) => {
         yesterdayActiveJobs,
         pendingApplications,
         yesterdayPendingApplications,
-        upcomingInterviews: 0, // bạn có thể cập nhật sau
-        yesterdayUpcomingInterviews: 0, // để frontend dễ tính toán
+        upcomingInterviews: 0, 
+        yesterdayUpcomingInterviews: 0, 
         recentApplications,
         popularJobs,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const applyJob = async (req, res, next) => {
+  try {
+    const userId = req.id;
+    const jobId = req.params.id;
+    const { bookingDate, numberOfGuests } = req.body;
+
+    if (!jobId || !bookingDate || !numberOfGuests || numberOfGuests < 1) {
+      return res.status(400).json({
+        message: "Dữ liệu đặt bàn không hợp lệ.",
+        success: false,
+      });
+    }
+
+    const date = new Date(bookingDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (isNaN(date.getTime()) || date < today) {
+      return res.status(400).json({
+        message: "Ngày đặt bàn không hợp lệ hoặc nằm trong quá khứ.",
+        success: false,
+      });
+    }
+
+    const existApplication = await Application.findOne({ job: jobId, applicant: userId });
+    if (existApplication) {
+      return res.status(400).json({ message: "Bạn đã đăng ký/đặt bàn cho chương trình này rồi.", success: false });
+    }
+
+    const job = await Job.findById(jobId).populate('created_by', 'fullname email').populate('company', 'name');
+    if (!job) {
+      return res.status(404).json({ message: "Không tìm thấy chương trình.", success: false });
+    }
+
+    const newApplication = await Application.create({
+      job: jobId,
+      applicant: userId,
+      bookingDate: bookingDate,
+      numberOfGuests: numberOfGuests,
+    });
+
+    job.applications.push(newApplication._id);
+    await job.save();
+
+    // ============================================
+    // GỬI EMAIL CHO DOANH NGHIỆP THÔNG BÁO CÓ KHÁCH
+    // ============================================
+    try {
+      const applicantUser = await User.findById(userId);
+      const bookingDateStr = new Date(bookingDate).toLocaleString("vi-VN", {
+        hour: "2-digit", minute: "2-digit", day: "2-digit", month: "2-digit", year: "numeric"
+      });
+
+      const { subject, html } = buildNewBookingToRecruiterTemplate({
+        recruiterName: job.created_by?.fullname,
+        applicantName: applicantUser.fullname,
+        applicantEmail: applicantUser.email,
+        applicantPhone: applicantUser.phoneNumber,
+        bookingDate: bookingDateStr,
+        numberOfGuests: numberOfGuests,
+        jobTitle: job.title,
+        companyName: job.company?.name,
+        dashboardUrl: `${process.env.URL_CLIENT}/recruiter/candidates` // Sửa đường dẫn nếu cần
+      });
+
+      if (job.created_by?.email) {
+        await sendMail({ to: job.created_by.email, subject, html });
+      }
+    } catch (mailErr) {
+      console.log("Lỗi gửi email cho doanh nghiệp (Job):", mailErr);
+      // Không throw error để khách vẫn đặt bàn thành công dù lỗi mail
+    }
+
+    return res.status(201).json({
+      message: "Đặt bàn thành công.",
+      success: true,
+      data: {
+        applicationId: newApplication._id,
+        bookingDate: newApplication.bookingDate,
+        numberOfGuests: newApplication.numberOfGuests,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// for student/customer - Đặt trực tiếp Công ty (Venue)
+export const applyCompany = async (req, res, next) => {
+  try {
+    const userId = req.id;
+    const companyId = req.params.id;
+    const { bookingDate, numberOfGuests } = req.body;
+
+    if (!companyId || !bookingDate || !numberOfGuests || numberOfGuests < 1) {
+      return res.status(400).json({
+        message: "Dữ liệu đặt bàn không hợp lệ.",
+        success: false,
+      });
+    }
+
+    const date = new Date(bookingDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); 
+    if (isNaN(date.getTime()) || date < today) {
+      return res.status(400).json({
+        message: "Ngày đặt bàn không hợp lệ hoặc nằm trong quá khứ.",
+        success: false,
+      });
+    }
+
+    const existApplication = await Application.findOne({ company: companyId, applicant: userId, bookingDate: bookingDate });
+    if (existApplication) {
+      return res.status(400).json({ message: "Bạn đã đặt bàn tại địa điểm này vào ngày được chọn rồi.", success: false });
+    }
+
+    // Populate userId để lấy thông tin Chủ doanh nghiệp (Email, tên)
+    const company = await Company.findById(companyId).populate('userId', 'fullname email');
+    if (!company) {
+      return res.status(404).json({ message: "Không tìm thấy địa điểm/công ty.", success: false });
+    }
+
+    const newApplication = await Application.create({
+      company: companyId, 
+      applicant: userId,
+      bookingDate: bookingDate,
+      numberOfGuests: numberOfGuests,
+    });
+
+    // ============================================
+    // GỬI EMAIL CHO DOANH NGHIỆP THÔNG BÁO CÓ KHÁCH
+    // ============================================
+    try {
+      const applicantUser = await User.findById(userId);
+      const bookingDateStr = new Date(bookingDate).toLocaleString("vi-VN", {
+        hour: "2-digit", minute: "2-digit", day: "2-digit", month: "2-digit", year: "numeric"
+      });
+
+      const { subject, html } = buildNewBookingToRecruiterTemplate({
+        recruiterName: company.userId?.fullname,
+        applicantName: applicantUser.fullname,
+        applicantEmail: applicantUser.email,
+        applicantPhone: applicantUser.phoneNumber,
+        bookingDate: bookingDateStr,
+        numberOfGuests: numberOfGuests,
+        jobTitle: "Đặt bàn tự do (Không qua chương trình)",
+        companyName: company.name,
+        dashboardUrl: `${process.env.URL_CLIENT}/recruiter/candidates`
+      });
+
+      if (company.userId?.email) {
+        await sendMail({ to: company.userId.email, subject, html });
+      }
+    } catch (mailErr) {
+      console.log("Lỗi gửi email cho doanh nghiệp (Company):", mailErr);
+    }
+
+    return res.status(201).json({
+      message: "Đặt bàn tại địa điểm thành công.",
+      success: true,
+      data: {
+        applicationId: newApplication._id,
+        bookingDate: newApplication.bookingDate,
+        numberOfGuests: newApplication.numberOfGuests,
       },
     });
   } catch (error) {

@@ -156,7 +156,7 @@ const Login = () => {
               Chào mừng bạn đã quay trở lại
             </h1>
             <h1 className="font-bold text-2xl mb-1 bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-              Đăng nhập để tìm việc thích hợp
+              Đăng nhập để tìm quán ăn thích hợp
             </h1>
 
             {errors.server && (
@@ -231,7 +231,7 @@ const Login = () => {
                     htmlFor="student"
                     className="whitespace-nowrap font-medium"
                   >
-                    Ứng viên
+                    khách hàng
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">

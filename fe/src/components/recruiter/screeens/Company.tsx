@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect, useCallback } from "react";
 import { Card } from "@/components/ui/card";
 import {
@@ -17,6 +18,7 @@ import {
   CheckCircle2,
   XCircle,
   AlertCircle,
+  Star
 } from "lucide-react";
 import {
   Tooltip,
@@ -201,6 +203,7 @@ const Company = () => {
                   <TableHead className="text-center w-[200px]">
                     Địa điểm
                   </TableHead>
+                  <TableHead className="text-center">Đánh giá</TableHead>
                   <TableHead className="text-center">Website</TableHead>
                   <TableHead className="text-center">Mã số thuế</TableHead>
                   <TableHead className="text-center">
@@ -213,7 +216,7 @@ const Company = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {companies.map((company) => (
+                {companies.map((company: any) => (
                   <TableRow key={company._id}>
                     <TableCell>
                       <div className="flex items-center gap-3">
@@ -244,6 +247,12 @@ const Company = () => {
                     <TableCell className="text-center">
                       <div className="truncate max-w-[200px] ">
                         {company.address || "Chưa cập nhật địa điểm"}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <div className="flex items-center justify-center gap-1 text-orange-500 font-medium">
+                        <Star className="w-4 h-4 fill-current" />
+                        <span>{company.rating ? company.rating.toFixed(1) : "0"}</span>
                       </div>
                     </TableCell>
                     <TableCell className="text-center">

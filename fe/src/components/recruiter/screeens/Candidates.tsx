@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { RefreshCw, Search, Users } from "lucide-react";
+import { RefreshCw, Search, Users, Calendar } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import axios from "axios";
@@ -23,6 +23,49 @@ import ActionButtons from "../components/ActionButtons";
 import { PaginationButtons } from "@/components/helpers/PaginationButtons";
 import { paginate } from "@/components/helpers/pagination";
 import { Button } from "@/components/ui/button";
+
+// Định nghĩa interface thay thế cho 'any'
+interface CandidateApplication {
+  _id: string;
+  status: string;
+  createdAt: string | Date;
+  bookingDate?: string | Date;
+  numberOfGuests?: number;
+  applicant: {
+    _id: string;
+    fullname: string;
+    email: string;
+    role: string;
+    phoneNumber: number;
+    profile: {
+      bio?: string;
+      skills?: string[];
+      resume?: {
+        url: string;
+        public_id: string;
+      };
+      resumeOriginalName?: string;
+      company?: string;
+      profilePhoto: {
+        url: string;
+        public_id?: string;
+      };
+    };
+    createdAt?: string | Date;
+    updatedAt?: string | Date;
+  };
+  // job có thể không có nếu khách đặt trực tiếp
+  job?: {
+    title: string;
+    company: {
+      name: string;
+    };
+  };
+  // Thêm company để lấy thông tin nếu khách đặt trực tiếp
+  company?: {
+    name: string;
+  };
+}
 
 const Candidates = () => {
   const { applications } = useSelector((store: RootState) => store.application);
@@ -85,30 +128,33 @@ const Candidates = () => {
         fetchApplications();
         toast.success(
           status === "accepted"
-            ? "Chấp nhận ứng viên thành công"
-            : "Từ chối ứng viên thành công"
+            ? "Chấp nhận đặt bàn thành công"
+            : "Từ chối đặt bàn thành công"
         );
       }
     } catch (error) {
       console.error("Error accepting application:", error);
-      toast.error("Lỗi khi chấp nhận ứng viên");
+      toast.error("Lỗi khi xử lý thao tác");
     }
   };
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
-  const itemPerPage = 6; // Number of jobs per page
+  const itemPerPage = 6;
+
+  // Ép kiểu mảng applications sang CandidateApplication[]
+  const typedApplications = applications as CandidateApplication[];
 
   // Filter applications based on search term
-  const filteredApplications = applications.filter((app) => {
-    const fullName = app.applicant?.fullname.toLowerCase();
-    const email = app.applicant?.email.toLowerCase();
-    const jobTitle = app.job?.title.toLowerCase();
+  const filteredApplications = typedApplications.filter((app) => {
+    const fullName = app.applicant?.fullname?.toLowerCase() || "";
+    const email = app.applicant?.email?.toLowerCase() || "";
+    const jobTitle = app.job?.title?.toLowerCase() || "đặt bàn tự do trực tiếp";
     const term = searchTerm.toLowerCase();
     return (
-      fullName?.includes(term) ||
-      email?.includes(term) ||
-      jobTitle?.includes(term)
+      fullName.includes(term) ||
+      email.includes(term) ||
+      jobTitle.includes(term)
     );
   });
 
@@ -125,7 +171,6 @@ const Candidates = () => {
     candidatesRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  // handle refresh
   const handleRefresh = () => {
     setLoading(true);
     fetchApplications();
@@ -137,29 +182,27 @@ const Candidates = () => {
 
   return (
     <div ref={candidatesRef} className="space-y-6">
-      {/* Header */}
       <div className="flex items-center gap-4">
         <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl shadow-lg">
           <Users className="w-8 h-8 text-white" />
         </div>
         <div>
           <h1 className="text-3xl font-semibold text-gray-800">
-            Quản lý ứng viên
+            Quản lý khách hàng
           </h1>
           <p className="mt-1 text-gray-500">
-            Xem và quản lý danh sách ứng viên ứng tuyển vào các vị trí công việc
+            Xem và quản lý danh sách khách hàng đã đặt bàn vào doanh nghiệp của bạn
           </p>
         </div>
       </div>
 
-      {/* Filters */}
       <Card className="p-6 shadow-sm border border-gray-200 rounded-xl">
         <div className="flex flex-col md:flex-row md:items-center gap-4">
           <div className="flex">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
               <Input
-                placeholder="Tìm kiếm ứng viên..."
+                placeholder="Tìm tên, email, sự kiện..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 rounded-xl border-gray-300 focus:outline-none focus:ring-0 focus:border-transparent"
@@ -183,50 +226,58 @@ const Candidates = () => {
               variant="outline"
               className="cursor-pointer rounded-full border-gray-300 px-4 py-1 text-sm hover:bg-gray-100"
             >
-              Tất cả ({applications.length})
+              Tất cả ({typedApplications.length})
             </Badge>
             <Badge
               variant="outline"
               className="cursor-pointer rounded-full px-4 py-1 text-sm hover:bg-yellow-50 text-yellow-700 border-yellow-300"
             >
               Đang xem xét (
-              {applications.filter((app) => app.status === "pending").length})
+              {typedApplications.filter((app) => app.status === "pending").length})
             </Badge>
             <Badge
               variant="outline"
               className="cursor-pointer rounded-full px-4 py-1 text-sm hover:bg-green-50 text-green-700 border-green-300"
             >
               Đã chấp nhận (
-              {applications.filter((app) => app.status === "accepted").length})
+              {typedApplications.filter((app) => app.status === "accepted").length})
             </Badge>
             <Badge
               variant="outline"
               className="cursor-pointer rounded-full px-4 py-1 text-sm hover:bg-red-50 text-red-700 border-red-300"
             >
               Đã từ chối (
-              {applications.filter((app) => app.status === "rejected").length})
+              {typedApplications.filter((app) => app.status === "rejected").length})
             </Badge>
           </div>
         </div>
       </Card>
 
-      {/* Candidates List */}
       <Card className="shadow-sm border border-gray-200 rounded-xl">
         <div className="p-6 overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow className="bg-gray-50">
-                <TableHead className="w-[300px] text-gray-700 font-semibold">
-                  Ứng viên
+                <TableHead className="w-[250px] text-gray-700 font-semibold">
+                  Khách hàng
                 </TableHead>
-                <TableHead className="w-[300px] text-gray-700 font-semibold">
-                  Vị trí ứng tuyển
+                <TableHead className="w-[250px] text-gray-700 font-semibold">
+                  Chương trình / Dịch vụ
                 </TableHead>
                 <TableHead className="text-gray-700 font-semibold text-center">
                   Số điện thoại
                 </TableHead>
                 <TableHead className="text-gray-700 font-semibold text-center">
-                  Ngày ứng tuyển
+                  Số lượng
+                </TableHead>
+                <TableHead className="text-gray-700 font-semibold text-center">
+                  <div className="flex items-center justify-center gap-2">
+                    <Calendar className="w-4 h-4" />
+                    <span>Đặt cho ngày</span>
+                  </div>
+                </TableHead>
+                <TableHead className="text-gray-700 font-semibold text-center">
+                  Ngày đặt bàn
                 </TableHead>
                 <TableHead className="text-gray-700 font-semibold text-center">
                   Trạng thái
@@ -252,7 +303,7 @@ const Candidates = () => {
                             }
                           />
                           <AvatarFallback className="bg-blue-100 text-blue-600">
-                            {app.applicant?.fullname.charAt(0)}
+                            {app.applicant?.fullname?.charAt(0)}
                           </AvatarFallback>
                         </Avatar>
                         <div>
@@ -265,28 +316,66 @@ const Candidates = () => {
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell className="max-w-[300px]">
-                      <div className="font-medium truncate">
-                        {app.job?.title}
+
+                    {/* HIỂN THỊ "ĐẶT BÀN TỰ DO" NẾU LÀ ĐẶT TRỰC TIẾP DOANH NGHIỆP */}
+                    <TableCell className="max-w-[250px]">
+                      <div className={`font-medium truncate ${!app.job ? 'text-emerald-600' : ''}`}>
+                        {app.job ? app.job.title : "Đặt bàn tự do (Qua doanh nghiệp)"}
                       </div>
                       <div className="text-sm text-gray-500">
-                        {app.job?.company.name}
+                        {app.job ? app.job.company?.name : (app.company?.name || "Dành cho Doanh nghiệp")}
                       </div>
                     </TableCell>
+
                     <TableCell className="text-center">
                       <div className="font-medium text-gray-800">
                         0{app.applicant?.phoneNumber}
                       </div>
                     </TableCell>
                     <TableCell className="text-center">
-                      {new Date(app.createdAt).toLocaleDateString("vi-VN")}
+                      <div className="font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full inline-block whitespace-nowrap">
+                        {app.numberOfGuests || 1} khách
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      {app.bookingDate ? (
+                        <div className="flex flex-col items-center gap-1">
+                          <span className="font-medium text-gray-800 whitespace-nowrap">
+                            {new Date(app.bookingDate).toLocaleDateString(
+                              "vi-VN",
+                              {
+                                year: "numeric",
+                                month: "2-digit",
+                                day: "2-digit",
+                              }
+                            )}
+                          </span>
+                          <span className="text-xs text-gray-500">
+                            {new Date(app.bookingDate).toLocaleTimeString(
+                              "vi-VN",
+                              {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              }
+                            )}
+                          </span>
+                        </div>
+                      ) : (
+                        <span className="text-gray-400 italic">Chưa chọn</span>
+                      )}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <span className="text-sm text-gray-700">
+                        {new Date(app.createdAt).toLocaleDateString("vi-VN")}
+                      </span>
                     </TableCell>
                     <TableCell className="text-center">
                       {getStatusBadge(app.status)}
                     </TableCell>
                     <TableCell className="text-right">
                       <ActionButtons
-                        applicant={app.applicant}
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        applicant={app.applicant as any} 
                         status={app.status}
                         onView={() => console.log("Xem chi tiết", app._id)}
                         onAccept={() =>
@@ -301,9 +390,9 @@ const Candidates = () => {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-10">
+                  <TableCell colSpan={8} className="text-center py-10">
                     <div className="text-gray-500 text-lg flex flex-col items-center gap-2">
-                      <span>📭 Không có ứng viên nào</span>
+                      <span>📭 Không có khách hàng nào</span>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -313,7 +402,6 @@ const Candidates = () => {
         </div>
       </Card>
 
-      {/* Pagination Buttons */}
       <PaginationButtons
         currentPage={currentPage}
         totalPages={totalPages}

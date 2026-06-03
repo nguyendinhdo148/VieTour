@@ -64,6 +64,9 @@ import LearnMore from "./components/resume/layout/LearnMore";
 import SocialInsurance from "./components/tools/SocialInsurance";
 import UnemploymentInsurance from "./components/tools/UnemploymentInsurance";
 import SavingPlan from "./components/tools/SavingPlan";
+import RecruiterReviews from "./components/recruiter/screeens/RecruiterReviews";
+// THÊM IMPORT TRANG NEARBYPAGE VÀO ĐÂY
+import NearbyPage from "./components/NearbyPage";
 
 function App() {
   return (
@@ -84,6 +87,9 @@ function App() {
         <Route path="/job/detail/:slug" element={<JobDetail />} />
         <Route path="/company/detail/:slug" element={<CompanyDetail />} />
         <Route path="/tools/resume-review" element={<ResumeReview />} />
+        
+        {/* THÊM ROUTE CHO TÌM KIẾM QUANH ĐÂY */}
+        <Route path="/nearby" element={<NearbyPage />} />
 
         {/* Blog routes */}
         <Route path="/blog" element={<LandingPageBlog />} />
@@ -135,6 +141,7 @@ function App() {
           <Route path="/recruiter/company" element={<Company />} />
           <Route path="/recruiter/jobs" element={<JobManager />} />
           <Route path="/recruiter/candidates" element={<Candidates />} />
+          <Route path="/recruiter/reviews" element={<RecruiterReviews />} />
         </Route>
 
         {/* Admin routes */}

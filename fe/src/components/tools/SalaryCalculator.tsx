@@ -252,7 +252,7 @@ const SalaryCalculator = () => {
     setErrorMsg("");
     if (salaryNum <= 0) {
       setResult(null);
-      setErrorMsg("Vui lòng nhập mức lương hợp lệ.");
+      setErrorMsg("Vui lòng nhập Chi phí khoảng / khách hợp lệ.");
       return;
     }
     if (!(region in config.minSalaries)) {
@@ -331,7 +331,7 @@ const SalaryCalculator = () => {
             <p className="text-indigo-700 text-sm max-w-xl">
               {effectiveDate === "2024"
                 ? "Từ 01/07/2024 - 30/06/2025 (Nghị định số 73/2024/NĐ-CP)"
-                : "Từ 01/07/2025 (Nghị định 128/2025/NĐ-CP, cập nhật mức lương cơ sở và tối thiểu vùng)"}
+                : "Từ 01/07/2025 (Nghị định 128/2025/NĐ-CP, cập nhật Chi phí khoảng / khách cơ sở và tối thiểu vùng)"}
             </p>
           </div>
         </section>
@@ -423,7 +423,7 @@ const SalaryCalculator = () => {
                         htmlFor="insurance-select"
                         className="block mb-2 font-semibold text-gray-900 text-base"
                       >
-                        Mức lương đóng bảo hiểm
+                        Chi phí khoảng / khách đóng bảo hiểm
                       </Label>
                       <Select
                         value={insuranceSalary}
@@ -604,7 +604,7 @@ const SalaryCalculator = () => {
                       1. Tính các khoản bảo hiểm
                     </h3>
                     <p>
-                      Mức lương đóng bảo hiểm:{" "}
+                      Chi phí khoảng / khách đóng bảo hiểm:{" "}
                       <b className="text-gray-900">
                         {formatCurrency(result.insuranceBase)}
                       </b>

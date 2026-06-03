@@ -60,11 +60,11 @@ const ActionButtons = ({
             </TooltipContent>
           </Tooltip>
 
-          {/* Dialog để hiển thị thông tin ứng viên */}
+          {/* Dialog để hiển thị thông tin khách hàng */}
           <DialogContent className="bg-white border-none p-6 rounded-xl shadow-xl max-w-2xl text-gray-800">
             <DialogHeader>
               <DialogTitle className="text-2xl font-bold text-center mb-4">
-                Hồ sơ ứng viên
+                Hồ sơ khách hàng
               </DialogTitle>
             </DialogHeader>
 
@@ -136,7 +136,7 @@ const ActionButtons = ({
               </div>
             ) : (
               <p className="text-gray-500 text-center">
-                Không tìm thấy thông tin ứng viên.
+                Không tìm thấy thông tin khách hàng.
               </p>
             )}
           </DialogContent>
@@ -156,7 +156,7 @@ const ActionButtons = ({
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Chấp nhận ứng viên</p>
+                <p>Chấp nhận khách hàng</p>
               </TooltipContent>
             </Tooltip>
 
@@ -172,7 +172,7 @@ const ActionButtons = ({
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Từ chối ứng viên</p>
+                <p>Từ chối khách hàng</p>
               </TooltipContent>
             </Tooltip>
           </>

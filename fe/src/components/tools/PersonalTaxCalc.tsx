@@ -395,7 +395,7 @@ const PersonalTaxCalc = () => {
                     htmlFor="customInsurance"
                     className="text-base ml-2 text-gray-700 font-medium"
                   >
-                    Sử dụng mức lương đóng BHXH khác
+                    Sử dụng Chi phí khoảng / khách đóng BHXH khác
                   </Label>
                 </div>
 
@@ -404,7 +404,7 @@ const PersonalTaxCalc = () => {
                     <Input
                       type="text"
                       className="bg-white rounded-xl border border-gray-300 shadow-sm focus-visible:ring-indigo-400 focus-visible:border-indigo-500 transition px-4 py-3 text-lg"
-                      placeholder="Nhập mức lương đóng BHXH"
+                      placeholder="Nhập Chi phí khoảng / khách đóng BHXH"
                       value={insuranceBase}
                       onChange={handleInsuranceBaseChange}
                     />
@@ -639,7 +639,7 @@ const PersonalTaxCalc = () => {
                 </p>
                 <p>
                   Thuế thu nhập cá nhân không đánh vào tất cả các đối tượng mà
-                  có mức lương quy định cần đóng riêng, góp phần thu hẹp khoảng
+                  có Chi phí khoảng / khách quy định cần đóng riêng, góp phần thu hẹp khoảng
                   cách giữa các tầng lớp trong xã hội.
                 </p>
               </div>
@@ -647,7 +647,7 @@ const PersonalTaxCalc = () => {
 
             <div>
               <h3 className="text-xl font-medium text-gray-900 mb-2">
-                Mức lương tối thiểu vùng{" "}
+                Chi phí khoảng / khách tối thiểu vùng{" "}
                 {taxYear === "2025" ? "2025" : "2024-2025"}
               </h3>
               <div className="overflow-x-auto">
@@ -658,7 +658,7 @@ const PersonalTaxCalc = () => {
                         Vùng
                       </th>
                       <th className="px-4 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
-                        Mức lương tối thiểu
+                        Chi phí khoảng / khách tối thiểu
                       </th>
                       <th className="px-4 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                         Bảo hiểm thất nghiệp tối đa (20 lần)
@@ -732,7 +732,7 @@ const PersonalTaxCalc = () => {
                         1
                       </td>
                       <td className="px-4 py-2 whitespace-nowrap text-base text-gray-700">
-                        Đến 5 triệu
+                        Đến 5  
                       </td>
                       <td className="px-4 py-2 whitespace-nowrap text-base text-gray-700">
                         5%
@@ -746,7 +746,7 @@ const PersonalTaxCalc = () => {
                         2
                       </td>
                       <td className="px-4 py-2 whitespace-nowrap text-base text-gray-700">
-                        Trên 5 triệu đến 10 triệu
+                        Trên 5   đến 10  
                       </td>
                       <td className="px-4 py-2 whitespace-nowrap text-base text-gray-700">
                         10%
@@ -760,7 +760,7 @@ const PersonalTaxCalc = () => {
                         3
                       </td>
                       <td className="px-4 py-2 whitespace-nowrap text-base text-gray-700">
-                        Trên 10 triệu đến 18 triệu
+                        Trên 10   đến 18  
                       </td>
                       <td className="px-4 py-2 whitespace-nowrap text-base text-gray-700">
                         15%
@@ -774,7 +774,7 @@ const PersonalTaxCalc = () => {
                         4
                       </td>
                       <td className="px-4 py-2 whitespace-nowrap text-base text-gray-700">
-                        Trên 18 triệu đến 32 triệu
+                        Trên 18   đến 32  
                       </td>
                       <td className="px-4 py-2 whitespace-nowrap text-base text-gray-700">
                         20%
@@ -788,7 +788,7 @@ const PersonalTaxCalc = () => {
                         5
                       </td>
                       <td className="px-4 py-2 whitespace-nowrap text-base text-gray-700">
-                        Trên 32 triệu đến 52 triệu
+                        Trên 32   đến 52  
                       </td>
                       <td className="px-4 py-2 whitespace-nowrap text-base text-gray-700">
                         25%
@@ -802,7 +802,7 @@ const PersonalTaxCalc = () => {
                         6
                       </td>
                       <td className="px-4 py-2 whitespace-nowrap text-base text-gray-700">
-                        Trên 52 triệu đến 80 triệu
+                        Trên 52   đến 80  
                       </td>
                       <td className="px-4 py-2 whitespace-nowrap text-base text-gray-700">
                         30%
@@ -816,7 +816,7 @@ const PersonalTaxCalc = () => {
                         7
                       </td>
                       <td className="px-4 py-2 whitespace-nowrap text-base text-gray-700">
-                        Trên 80 triệu
+                        Trên 80  
                       </td>
                       <td className="px-4 py-2 whitespace-nowrap text-base text-gray-700">
                         35%

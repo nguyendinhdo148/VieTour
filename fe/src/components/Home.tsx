@@ -9,7 +9,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import BrandCarousel from "./BrandsCarousel";
+// import BrandCarousel from "./BrandsCarousel";
 import JobMarketDashboard from "./JobMarketDashboard";
 
 const Home = () => {
@@ -39,7 +39,7 @@ const Home = () => {
         <CategoryCarousel />
 
         <LatestJobs />
-        <BrandCarousel />
+        {/* <BrandCarousel /> */}
         <JobMarketDashboard />
         <Footer />
       </motion.div>

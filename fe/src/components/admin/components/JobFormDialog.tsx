@@ -32,10 +32,10 @@ export interface JobFormData {
   salary: number;
   benefits: string[];
   location: string;
-  jobType: string;
+  jobType: string; // Sẽ dùng để lưu Danh mục (Món chính, Khai vị,...)
   experienceLevel: number;
   position: number;
-  category: string;
+  category: string; // Sẽ dùng để lưu Hình thức (Tại chỗ, Giao đi,...)
   company: {
     _id: string;
     name: string;
@@ -68,6 +68,17 @@ const initialFormData: JobFormData = {
   status: "active",
 };
 
+// Đồng bộ CHUẨN 100% với file FilterCard.tsx
+const FILTER_CATEGORIES = [
+  "Khuyến mãi HOT",
+  "Set Menu",
+  "Khai vị",
+  "Món chính",
+  "Đồ uống",
+  "Tráng miệng",
+  "Sự kiện",
+];
+
 export const JobFormDialog = ({
   open,
   onClose,
@@ -92,7 +103,7 @@ export const JobFormDialog = ({
       }
     } catch (error) {
       console.error("Fetch companies error:", error);
-      toast.error("Không thể tải danh sách công ty!");
+      toast.error("Không thể tải danh sách chi nhánh!");
     }
   }, [dispatch]);
 
@@ -113,7 +124,7 @@ export const JobFormDialog = ({
         benefits: job.benefits,
         salary: Number(job.salary) || 0,
         location: job.location,
-        jobType: job.jobType,
+        jobType: job.jobType, 
         experienceLevel: job.experienceLevel,
         position: job.position,
         category: job.category,
@@ -133,27 +144,27 @@ export const JobFormDialog = ({
     e.preventDefault();
 
     if (!formData.title.trim()) {
-      toast.error("Vui lòng nhập tiêu đề công việc");
+      toast.error("Vui lòng nhập tiêu đề");
       return;
     }
     if (!formData.description.trim()) {
-      toast.error("Vui lòng nhập mô tả công việc");
+      toast.error("Vui lòng nhập mô tả");
       return;
     }
     if (!formData.location.trim()) {
-      toast.error("Vui lòng nhập địa điểm làm việc");
+      toast.error("Vui lòng nhập địa điểm");
       return;
     }
     if (!formData.company._id) {
-      toast.error("Vui lòng chọn công ty");
+      toast.error("Vui lòng chọn chi nhánh");
       return;
     }
     if (formData.salary <= 0) {
-      toast.error("Vui lòng nhập mức lương hợp lệ");
+      toast.error("Vui lòng nhập Chi phí trung bình hợp lệ");
       return;
     }
-    if (formData.experienceLevel < 0) {
-      toast.error("Vui lòng nhập số năm kinh nghiệm hợp lệ");
+    if (!formData.jobType) {
+      toast.error("Vui lòng chọn Danh mục để khách dễ tìm kiếm");
       return;
     }
 
@@ -185,7 +196,7 @@ export const JobFormDialog = ({
         `${API}/ai/generate-description`,
         {
           title: formData.title,
-          category: formData.category,
+          category: formData.jobType, // Truyền jobType cho AI hiểu đang làm món gì
         },
         { withCredentials: true }
       );
@@ -195,7 +206,7 @@ export const JobFormDialog = ({
           ...prev,
           description: res.data.description,
         }));
-        toast.success("Đã tạo mô tả công việc thành công!");
+        toast.success("Đã tạo mô tả thành công!");
       } else {
         toast.error("Không tạo được mô tả, vui lòng thử lại!");
       }
@@ -212,18 +223,18 @@ export const JobFormDialog = ({
       <DialogContent className="sm:max-w-[800px] bg-white max-h-[90vh] overflow-y-auto border-none p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-200 ease-in-out">
         <DialogHeader>
           <DialogTitle>
-            {job ? "Chỉnh sửa tin tuyển dụng" : "Đăng tin tuyển dụng mới"}
+            {job ? "Chỉnh sửa tin đăng" : "Đăng món / sự kiện mới"}
           </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* --- Thông tin công việc --- */}
           <div className="space-y-4 border p-4 rounded-xl shadow-sm">
-            <h3 className="text-lg font-semibold">Thông tin công việc</h3>
+            <h3 className="text-lg font-semibold">Thông tin cơ bản</h3>
 
             <div className="grid gap-2">
               <Label htmlFor="company">
-                Công ty <span className="text-red-700">*</span>
+                Nhà hàng / Chi nhánh <span className="text-red-700">*</span>
               </Label>
               <Select
                 value={formData.company._id}
@@ -235,7 +246,7 @@ export const JobFormDialog = ({
                 }
               >
                 <SelectTrigger className="cursor-pointer">
-                  <SelectValue placeholder="Chọn công ty">
+                  <SelectValue placeholder="Chọn chi nhánh">
                     {
                       companies.find((c) => c._id === formData.company._id)
                         ?.name
@@ -258,7 +269,7 @@ export const JobFormDialog = ({
 
             <div className="grid gap-2">
               <Label htmlFor="title">
-                Tiêu đề công việc <span className="text-red-700">*</span>
+                Tiêu đề quảng cáo / Tên món <span className="text-red-700">*</span>
               </Label>
               <Input
                 id="title"
@@ -266,7 +277,7 @@ export const JobFormDialog = ({
                 onChange={(e) =>
                   setFormData({ ...formData, title: e.target.value })
                 }
-                placeholder="VD: Senior Frontend Developer"
+                placeholder="VD: “Một Ngày Mới Bắt Đầu Từ Ly Cà Phê Đậm Vị”"
                 required
               />
             </div>
@@ -289,11 +300,11 @@ export const JobFormDialog = ({
 
           {/* --- Mô tả & Yêu cầu --- */}
           <div className="space-y-4 border p-4 rounded-xl shadow-sm">
-            <h3 className="text-lg font-semibold">Mô tả & Yêu cầu công việc</h3>
+            <h3 className="text-lg font-semibold">Mô tả & Điều kiện</h3>
 
             <div className="grid gap-2">
               <Label htmlFor="description">
-                Mô tả công việc <span className="text-red-700">*</span>
+                Mô tả chi tiết <span className="text-red-700">*</span>
               </Label>
               <Textarea
                 id="description"
@@ -301,17 +312,16 @@ export const JobFormDialog = ({
                 onChange={(e) =>
                   setFormData({ ...formData, description: e.target.value })
                 }
-                placeholder="Mô tả chi tiết về công việc. Mỗi đoạn mô tả đều kết thúc bằng dấu chấm."
+                placeholder="Mô tả chi tiết. Mỗi đoạn đều kết thúc bằng dấu chấm."
                 required
                 rows={5}
               />
 
-              {/* Gen mô tả bằng AI */}
               <Button
                 type="button"
                 size="sm"
                 variant="outline"
-                className="hover:bg-gray-100 cursor-pointer right-2 top-2 text-sm flex gap-2 items-center"
+                className="hover:bg-gray-100 cursor-pointer right-2 top-2 text-sm flex gap-2 items-center w-fit"
                 onClick={handleGenDescription}
                 disabled={isGenerating || !formData.title.trim()}
               >
@@ -328,7 +338,7 @@ export const JobFormDialog = ({
 
             <div className="grid gap-2">
               <Label htmlFor="requirements">
-                Yêu cầu ứng viên <span className="text-red-700">*</span>
+                Điều kiện áp dụng <span className="text-red-700">*</span>
               </Label>
               <Textarea
                 id="requirements"
@@ -341,18 +351,18 @@ export const JobFormDialog = ({
                 }
                 placeholder="Mỗi yêu cầu đều kết thúc bằng dấu chấm."
                 required
-                rows={5}
+                rows={4}
               />
             </div>
           </div>
 
-          {/* --- Phúc lợi & Thông tin thêm --- */}
+          {/* --- Phân loại & Giá --- */}
           <div className="space-y-4 border p-4 rounded-xl shadow-sm">
-            <h3 className="text-lg font-semibold">Phúc lợi & Thông tin thêm</h3>
+            <h3 className="text-lg font-semibold">Phân loại & Giá cả</h3>
 
             <div className="grid gap-2">
               <Label htmlFor="benefits">
-                Quyền lợi <span className="text-red-700">*</span>
+                Quyền lợi khách hàng <span className="text-red-700">*</span>
               </Label>
               <Textarea
                 id="benefits"
@@ -365,13 +375,14 @@ export const JobFormDialog = ({
                 }
                 placeholder="Mỗi quyền lợi đều kết thúc bằng dấu chấm."
                 required
-                rows={5}
+                rows={3}
               />
             </div>
 
+            {/* ĐỒNG BỘ: Danh mục lọc hiển thị trên web -> map vào jobType */}
             <div className="grid gap-2">
               <Label htmlFor="jobType">
-                Hình thức làm việc <span className="text-red-700">*</span>
+                Danh mục (Hiển thị ở bộ lọc) <span className="text-red-700">*</span>
               </Label>
               <Select
                 value={formData.jobType}
@@ -380,32 +391,45 @@ export const JobFormDialog = ({
                 }
               >
                 <SelectTrigger id="jobType" className="cursor-pointer">
+                  <SelectValue placeholder="Chọn danh mục" />
+                </SelectTrigger>
+                <SelectContent className="bg-white max-h-[300px] overflow-y-auto">
+                  {FILTER_CATEGORIES.map((cat) => (
+                    <SelectItem
+                      key={cat}
+                      className="cursor-pointer hover:bg-gray-100"
+                      value={cat}
+                    >
+                      {cat}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Hình thức phục vụ -> map vào category */}
+            <div className="grid gap-2">
+              <Label htmlFor="category">
+                Hình thức phục vụ <span className="text-red-700">*</span>
+              </Label>
+              <Select
+                value={formData.category}
+                onValueChange={(value) =>
+                  setFormData({ ...formData, category: value })
+                }
+              >
+                <SelectTrigger id="category" className="cursor-pointer">
                   <SelectValue placeholder="Chọn hình thức" />
                 </SelectTrigger>
                 <SelectContent className="bg-white max-h-[300px] overflow-y-auto">
-                  <SelectItem
-                    className="cursor-pointer hover:bg-gray-100"
-                    value="Full-Time"
-                  >
-                    Toàn thời gian
+                  <SelectItem className="cursor-pointer hover:bg-gray-100" value="Tại chỗ">
+                    Tại chỗ
                   </SelectItem>
-                  <SelectItem
-                    className="cursor-pointer hover:bg-gray-100"
-                    value="Part-Time"
-                  >
-                    Bán thời gian
+                  <SelectItem className="cursor-pointer hover:bg-gray-100" value="Giao đi">
+                    Giao đi
                   </SelectItem>
-                  <SelectItem
-                    className="cursor-pointer hover:bg-gray-100"
-                    value="Remote"
-                  >
-                    Từ xa
-                  </SelectItem>
-                  <SelectItem
-                    className="cursor-pointer hover:bg-gray-100"
-                    value="Internship"
-                  >
-                    Thực tập
+                  <SelectItem className="cursor-pointer hover:bg-gray-100" value="Tại chỗ và giao đi">
+                    Tại chỗ và giao đi
                   </SelectItem>
                 </SelectContent>
               </Select>
@@ -413,24 +437,7 @@ export const JobFormDialog = ({
 
             <div className="grid gap-2">
               <Label htmlFor="experienceLevel">
-                Chuyên ngành <span className="text-red-700">*</span>
-              </Label>
-              <input
-                type="text"
-                name="category"
-                value={formData.category}
-                onChange={(e) =>
-                  setFormData({ ...formData, category: e.target.value })
-                }
-                className="w-full border rounded-md px-3 py-2 text-gray-800"
-                placeholder="Ví dụ: IT, Kế toán, Marketing..."
-                required
-              />
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="experienceLevel">
-                Kinh nghiệm (năm) <span className="text-red-700">*</span>
+                Kinh nghiệm / Thời gian (năm) <span className="text-red-700">*</span>
               </Label>
               <Input
                 id="experienceLevel"
@@ -450,7 +457,7 @@ export const JobFormDialog = ({
 
             <div className="grid gap-2">
               <Label htmlFor="salary">
-                Mức lương (Triệu) <span className="text-red-700">*</span>
+                Chi phí trung bình (VND) <span className="text-red-700">*</span>
               </Label>
               <Input
                 id="salary"
@@ -462,14 +469,14 @@ export const JobFormDialog = ({
                     salary: parseInt(e.target.value) || 0,
                   })
                 }
-                placeholder="VD: 15"
+                placeholder="VD: 50000"
                 required
               />
             </div>
 
             <div className="grid gap-2">
               <Label htmlFor="position">
-                Số lượng tuyển <span className="text-red-700">*</span>
+                Số lượng / Sức chứa khách <span className="text-red-700">*</span>
               </Label>
               <Input
                 id="position"
@@ -482,7 +489,7 @@ export const JobFormDialog = ({
                     position: parseInt(e.target.value) || 1,
                   })
                 }
-                placeholder="VD: 1"
+                placeholder="VD: 100"
                 required
               />
             </div>
@@ -490,11 +497,11 @@ export const JobFormDialog = ({
 
           {/* --- Trạng thái & Nút --- */}
           <div className="space-y-4 border p-4 rounded-xl shadow-sm">
-            <h3 className="text-lg font-semibold">Trạng thái & Hành động</h3>
+            <h3 className="text-lg font-semibold">Trạng thái</h3>
 
             <div className="grid gap-2">
               <Label htmlFor="status">
-                Trạng thái <span className="text-red-700">*</span>
+                Trạng thái hiển thị <span className="text-red-700">*</span>
               </Label>
               <Select
                 value={formData.status}
@@ -506,22 +513,13 @@ export const JobFormDialog = ({
                   <SelectValue placeholder="Chọn trạng thái" />
                 </SelectTrigger>
                 <SelectContent className="bg-white max-h-[300px] overflow-y-auto">
-                  <SelectItem
-                    className="cursor-pointer hover:bg-gray-100"
-                    value="active"
-                  >
+                  <SelectItem className="cursor-pointer hover:bg-gray-100" value="active">
                     Hoạt động
                   </SelectItem>
-                  <SelectItem
-                    className="cursor-pointer hover:bg-gray-100"
-                    value="draft"
-                  >
+                  <SelectItem className="cursor-pointer hover:bg-gray-100" value="draft">
                     Nháp
                   </SelectItem>
-                  <SelectItem
-                    className="cursor-pointer hover:bg-gray-100"
-                    value="closed"
-                  >
+                  <SelectItem className="cursor-pointer hover:bg-gray-100" value="closed">
                     Đã đóng
                   </SelectItem>
                 </SelectContent>
@@ -541,9 +539,9 @@ export const JobFormDialog = ({
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="text-white bg-blue-600 hover:bg-blue-700 cursor-pointer"
+                className="text-white bg-orange-600 hover:bg-orange-700 cursor-pointer"
               >
-                {isSubmitting ? "Đang xử lý..." : job ? "Cập nhật" : "Đăng tin"}
+                {isSubmitting ? "Đang xử lý..." : job ? "Cập nhật" : "Đăng bài"}
               </Button>
             </div>
           </div>

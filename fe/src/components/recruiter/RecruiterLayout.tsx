@@ -6,6 +6,7 @@ import {
   LogOut,
   Menu,
   LayoutDashboard,
+  Star
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useDispatch, useSelector } from "react-redux";
@@ -36,14 +37,19 @@ const RecruiterLayout = () => {
       icon: Building2,
     },
     {
-      name: "Quản lý việc làm",
+      name: "Quản lý bài quảng cáo",
       href: "/recruiter/jobs",
       icon: BriefcaseIcon,
     },
     {
-      name: "Quản lý ứng viên",
+      name: "Quản lý khách hàng",
       href: "/recruiter/candidates",
       icon: Users,
+    },
+    {
+      name: "Quản lý đánh giá",
+      href: "/recruiter/reviews",
+      icon: Star,
     },
   ];
 

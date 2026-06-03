@@ -29,13 +29,12 @@ const Jobs = () => {
         const response = await axios.get(`${API}/save-job`, {
           withCredentials: true,
         });
-        // Map để lấy chỉ job._id từ mảng savedJobs trả về
         const savedJobIds = response.data.savedJobs.map(
           (savedJob: { job: { _id: string } }) => savedJob.job._id
         );
         setSavedJobs(savedJobIds);
       } catch (error) {
-        console.error("Lỗi khi lấy danh sách công việc đã lưu:", error);
+        console.error("Lỗi khi lấy danh sách đã lưu:", error);
       }
     };
     fetchSavedJobs();
@@ -44,24 +43,16 @@ const Jobs = () => {
   const onJobSaveChange = async (jobId: string, isSaved: boolean) => {
     try {
       if (isSaved) {
-        await axios.post(
-          `${API}/save-job/save/${jobId}`,
-          {},
-          {
-            withCredentials: true,
-          }
-        );
+        await axios.post(`${API}/save-job/save/${jobId}`, {}, { withCredentials: true });
         setSavedJobs((prev) => [...prev, jobId]);
-        toast.success("Lưu thành công!");
+        toast.success("Đã thêm vào danh sách yêu thích!");
       } else {
-        await axios.delete(`${API}/save-job/unsave/${jobId}`, {
-          withCredentials: true,
-        });
+        await axios.delete(`${API}/save-job/unsave/${jobId}`, { withCredentials: true });
         setSavedJobs((prev) => prev.filter((id) => id !== jobId));
-        toast.success("Bỏ lưu thành công!");
+        toast.success("Đã gỡ khỏi danh sách yêu thích!");
       }
     } catch (error) {
-      console.error("Lỗi khi thao tác với công việc đã lưu:", error);
+      console.error("Lỗi khi thao tác:", error);
     }
   };
 
@@ -73,7 +64,6 @@ const Jobs = () => {
 
   useGetAllJobs();
 
-  // Cập nhật state filters từ URL params
   useEffect(() => {
     const queryFilters = {
       location: searchParams.get("location")?.split(",") || [],
@@ -84,7 +74,6 @@ const Jobs = () => {
     setSearchText(searchParams.get("query") || "");
   }, [searchParams]);
 
-  // Cập nhật URL khi lọc thay đổi
   const updateURL = (updatedFilters: typeof filters, search?: string) => {
     const params = new URLSearchParams();
     Object.entries(updatedFilters).forEach(([key, values]) => {
@@ -130,12 +119,11 @@ const Jobs = () => {
   const normalize = (text: string) =>
     text
       .toLowerCase()
-      .normalize("NFD") // xóa dấu tiếng Việt
-      .replace(/[\u0300-\u036f]/g, "") // loại bỏ ký tự dấu
-      .replace(/\s/g, "") // xóa khoảng trắng
-      .replace(/\./g, ""); // xóa dấu chấm nếu có
+      .normalize("NFD") 
+      .replace(/[\u0300-\u036f]/g, "") 
+      .replace(/\s/g, "") 
+      .replace(/\./g, ""); 
 
-  // Lọc job theo filters
   const filteredJobs = allJobs.filter((job) => {
     const matchLocation =
       filters.location.length === 0 ||
@@ -154,13 +142,14 @@ const Jobs = () => {
     const matchSalary =
       filters.salary.length === 0 ||
       filters.salary.some((range) => {
+        const priceNum = Number(job.salary.toString().replace(/\D/g, ''));
         if (range.includes(">")) {
-          return job.salary > 40; // > 40 triệu
+          return priceNum > 500000;
         } else {
           const [min, max] = range
             .split(" - ")
-            .map((x) => Number(x.replace(/\./g, "")) / 1_000_000); // chuyển về triệu
-          return job.salary >= min && job.salary <= max;
+            .map((x) => Number(x.replace(/\./g, ""))); 
+          return priceNum >= min && priceNum <= max;
         }
       });
 
@@ -183,26 +172,40 @@ const Jobs = () => {
   });
 
   return (
-    <div>
+    <div className="bg-gray-50/50 min-h-screen">
       <Navbar />
-      <div className="pt-4 max-w-7xl mx-auto">
-        <div className="flex gap-5">
-          <div className="w-[20%] h-[88vh] overflow-y-auto">
-            <FilterCard
-              filters={filters}
-              onFilterChange={handleFilterChange}
-              onResetFilters={resetFilters}
-              onSearchChange={(text) => {
-                setSearchText(text);
-                updateURL(filters, text);
-              }}
-            />
+      <div className="pt-8 max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {/* Banner hoặc Tiêu đề trang hoành tráng */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">
+            Khám Phá <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-600">Thực Đơn </span>
+          </h1>
+          <p className="text-gray-500 mt-2 text-lg">Hàng trăm ưu đãi không gian ẩm thực sang trọng đang chờ bạn.</p>
+        </div>
+
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Cột Filter (Bên trái) */}
+          <div className="w-full lg:w-[280px] shrink-0">
+            <div className="sticky top-24">
+              <FilterCard
+                filters={filters}
+                onFilterChange={handleFilterChange}
+                onResetFilters={resetFilters}
+                onSearchChange={(text) => {
+                  setSearchText(text);
+                  updateURL(filters, text);
+                }}
+              />
+            </div>
           </div>
-          <div className="flex-1 h-[88vh] overflow-y-auto pb-5">
+          
+          {/* Cột Danh sách (Bên phải) */}
+          <div className="flex-1 pb-10">
             {filteredJobs.length === 0 ? (
               <NoJobFound />
             ) : (
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 auto-rows-fr">
                 {filteredJobs.map((job) => (
                   <Job
                     key={job._id}

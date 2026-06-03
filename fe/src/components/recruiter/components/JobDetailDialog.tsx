@@ -56,7 +56,7 @@ export const JobDetailDialog = ({
               <strong>Kinh nghiệm:</strong> {job.experienceLevel}
             </p>
             <p>
-              <strong>Mức lương:</strong> {job.salary} Triệu
+              <strong>Chi phí khoảng / khách:</strong> {job.salary}  
             </p>
             <p>
               <strong>Ngày tạo:</strong> {new Date(job.createdAt).toLocaleDateString("vi-VN")}
@@ -77,7 +77,7 @@ export const JobDetailDialog = ({
           {job.requirements?.length > 0 && (
             <section className="mb-6">
               <h3 className="font-semibold text-gray-700 mb-1">
-                Yêu cầu ứng viên:
+                Yêu cầu khách hàng:
               </h3>
               <ul className="text-sm text-gray-700 space-y-1">
                 {job.requirements.map((r, i) => (

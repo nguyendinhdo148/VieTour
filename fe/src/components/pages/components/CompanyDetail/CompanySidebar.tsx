@@ -4,12 +4,10 @@ import { Separator } from "@/components/ui/separator";
 import {
   BarChart3,
   Eye,
-  Heart,
   FileText,
   Globe,
   MapPin,
   Calendar,
-  Building,
   Share2,
   ExternalLink,
   Link2,
@@ -28,65 +26,55 @@ const CompanySidebar = ({ company, viewCount }: CompanySidebarProps) => {
   return (
     <div className="space-y-6">
       {/* Quick Stats */}
-      <Card className="shadow-2xl border-0 bg-white/95 backdrop-blur-xl">
-        <CardHeader>
-          <CardTitle className="text-lg font-bold text-gray-800 flex items-center gap-2">
-            <BarChart3 className="h-5 w-5 text-emerald-600" />
-            Thống kê nhanh
+      <Card className="shadow-xl border-0 bg-white/95 backdrop-blur-xl rounded-3xl">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-lg font-bold text-gray-900 flex items-center gap-2">
+            <BarChart3 className="h-5 w-5 text-orange-500" />
+            Tương tác nổi bật
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between p-3 bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
-                <Eye className="h-5 w-5 text-white" />
+        <CardContent className="space-y-4 pt-4">
+          <div className="flex items-center justify-between p-4 bg-orange-50 rounded-2xl border border-orange-100/50">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center shadow-sm shadow-orange-200">
+                <Eye className="h-6 w-6 text-white" />
               </div>
               <div>
-                <p className="text-sm text-gray-600">Lượt xem</p>
-                <p className="font-bold text-gray-800">
+                <p className="text-sm text-gray-600 font-medium">Lượt quan tâm</p>
+                <p className="font-extrabold text-gray-900 text-lg">
                   {viewCount.toLocaleString()}
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="flex items-center justify-between p-3 bg-gradient-to-r from-emerald-50 to-emerald-100 rounded-xl">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center">
-                <Heart className="h-5 w-5 text-white" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-600">Người theo dõi</p>
-                <p className="font-bold text-gray-800">2,847</p>
-              </div>
-            </div>
-          </div>
+          
         </CardContent>
       </Card>
 
       {/* Enhanced Contact Information */}
-      <Card className="shadow-2xl border-0 bg-white/95 backdrop-blur-xl">
-        <CardHeader>
-          <CardTitle className="text-lg font-bold text-gray-800 flex items-center gap-2">
-            <FileText className="h-5 w-5 text-emerald-600" />
+      <Card className="shadow-xl border-0 bg-white/95 backdrop-blur-xl rounded-3xl">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-lg font-bold text-gray-900 flex items-center gap-2">
+            <FileText className="h-5 w-5 text-blue-500" />
             Thông tin liên hệ
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 pt-4">
           {company.website && (
-            <div className="group flex items-center gap-3 p-4 bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl hover:from-blue-100 hover:to-blue-200 transition-all duration-300 cursor-pointer">
-              <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <Globe className="h-6 w-6 text-white" />
+            <div className="group flex items-center gap-4 p-4 bg-gray-50 rounded-2xl hover:bg-blue-50 transition-all duration-300 cursor-pointer border border-gray-100">
+              <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-sm">
+                <Globe className="h-6 w-6 text-blue-500" />
               </div>
               <div className="flex-1">
-                <p className="text-sm text-gray-600 mb-1">Website</p>
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Fanpage / Website</p>
                 <a
                   href={company.website}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-600 hover:text-blue-700 font-semibold flex items-center gap-1"
+                  className="text-gray-900 font-bold flex items-center gap-1 hover:text-blue-600 transition"
                 >
-                  Truy cập website
+                  Truy cập ngay
                   <ExternalLink className="h-4 w-4" />
                 </a>
               </div>
@@ -94,99 +82,89 @@ const CompanySidebar = ({ company, viewCount }: CompanySidebarProps) => {
           )}
 
           {company.location && (
-            <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-emerald-50 to-emerald-100 rounded-xl">
-              <div className="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center">
-                <MapPin className="h-6 w-6 text-white" />
+            <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl border border-gray-100">
+              <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm">
+                <MapPin className="h-6 w-6 text-green-500" />
               </div>
               <div className="flex-1">
-                <p className="text-sm text-gray-600 mb-1">Địa chỉ</p>
-                <p className="text-gray-800 font-semibold">
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Địa chỉ</p>
+                <p className="text-gray-900 font-bold leading-tight">
                   {company.location}
                 </p>
               </div>
             </div>
           )}
 
-          <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-purple-50 to-purple-100 rounded-xl">
-            <div className="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center">
-              <Calendar className="h-6 w-6 text-white" />
+          <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl border border-gray-100">
+            <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm">
+              <Calendar className="h-6 w-6 text-purple-500" />
             </div>
             <div className="flex-1">
-              <p className="text-sm text-gray-600 mb-1">Thành lập</p>
-              <p className="text-gray-800 font-semibold">
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Hoạt động từ</p>
+              <p className="text-gray-900 font-bold">
                 {company.yoe || "N/A"}
               </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-orange-50 to-orange-100 rounded-xl">
-            <div className="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center">
-              <Building className="h-6 w-6 text-white" />
-            </div>
-            <div className="flex-1">
-              <p className="text-sm text-gray-600 mb-1">Ngành nghề</p>
-              <p className="text-gray-800 font-semibold">{company.field}</p>
             </div>
           </div>
         </CardContent>
       </Card>
 
       {/* Enhanced Social Sharing */}
-      <Card className="shadow-2xl border-0 bg-white/95 backdrop-blur-xl">
-        <CardHeader>
-          <CardTitle className="text-lg font-bold text-gray-800 flex items-center gap-2">
-            <Share2 className="h-5 w-5 text-emerald-600" />
-            Chia sẻ công ty
+      <Card className="shadow-xl border-0 bg-white/95 backdrop-blur-xl rounded-3xl">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-lg font-bold text-gray-900 flex items-center gap-2">
+            <Share2 className="h-5 w-5 text-indigo-500" />
+            Chia sẻ với bạn bè
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-4 gap-3 mb-4">
+        <CardContent className="pt-4">
+          <div className="grid grid-cols-4 gap-3 mb-5">
             <Button
               size="sm"
               variant="outline"
-              className="aspect-square p-0 bg-blue-50 hover:bg-blue-100 border-blue-200"
+              className="aspect-square p-0 bg-white hover:bg-blue-50 border-gray-200 hover:border-blue-200 rounded-xl transition"
             >
               <FaFacebookF className="h-5 w-5 text-blue-600" />
             </Button>
             <Button
               size="sm"
               variant="outline"
-              className="aspect-square p-0 bg-sky-50 hover:bg-sky-100 border-sky-200"
+              className="aspect-square p-0 bg-white hover:bg-sky-50 border-gray-200 hover:border-sky-200 rounded-xl transition"
             >
-              <GrTwitter className="h-5 w-5 text-sky-600" />
+              <GrTwitter className="h-5 w-5 text-sky-500" />
             </Button>
             <Button
               size="sm"
               variant="outline"
-              className="aspect-square p-0 bg-blue-50 hover:bg-blue-100 border-blue-200"
+              className="aspect-square p-0 bg-white hover:bg-blue-50 border-gray-200 hover:border-blue-200 rounded-xl transition"
             >
               <GrLinkedin className="h-5 w-5 text-blue-700" />
             </Button>
             <Button
               size="sm"
               variant="outline"
-              className="aspect-square p-0 bg-pink-50 hover:bg-pink-100 border-pink-200"
+              className="aspect-square p-0 bg-white hover:bg-pink-50 border-gray-200 hover:border-pink-200 rounded-xl transition"
             >
               <GrInstagram className="h-5 w-5 text-pink-600" />
             </Button>
           </div>
 
-          <Separator className="my-4" />
+          <Separator className="my-4 bg-gray-100" />
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 bg-gray-50 p-1.5 rounded-xl border border-gray-100">
             <input
               type="text"
               value={window.location.href}
               readOnly
-              className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="flex-1 px-3 py-2 text-sm font-medium text-gray-500 bg-transparent focus:outline-none"
             />
             <Button
               size="default"
               variant="outline"
               onClick={() => handleCopyLink(window.location.href)}
-              className="cursor-pointer aspect-square bg-emerald-50 hover:bg-emerald-100 border-emerald-200"
+              className="cursor-pointer bg-white hover:bg-gray-100 border-gray-200 rounded-lg shadow-sm"
             >
-              <Link2 className="size-5 text-emerald-600" />
+              <Link2 className="size-4 text-gray-700" />
             </Button>
           </div>
         </CardContent>

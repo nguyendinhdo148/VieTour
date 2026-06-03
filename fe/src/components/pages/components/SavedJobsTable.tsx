@@ -30,7 +30,7 @@ const SavedJobsTable = () => {
       fetchSavedJobs();
     } catch (error) {
       console.error("Error unsaving job:", error);
-      toast.error("Lỗi khi hủy lưu việc làm");
+      toast.error("Lỗi khi hủy lưu");
     }
   };
 
@@ -45,7 +45,7 @@ const SavedJobsTable = () => {
       }
     } catch (error) {
       console.error("Error fetching applications:", error);
-      toast.error("Lỗi khi tải danh sách việc đã lưu");
+      toast.error("Lỗi khi tải danh sách đã lưu");
     }
   }, [dispatch]);
 
@@ -59,16 +59,15 @@ const SavedJobsTable = () => {
   return (
     <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-sm">
       {/* Header section with gradient background */}
-      <div className="bg-gradient-to-r from-emerald-900 to-green-500 p-8 rounded-t-lg relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-green-400 opacity-20 rounded-full -mr-20 -mt-20"></div>
-        <div className="absolute top-20 right-10 w-32 h-32 bg-green-400 opacity-20 rounded-full"></div>
+      <div className="bg-gradient-to-r from-orange-800 to-amber-500 p-8 rounded-t-lg relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-orange-400 opacity-20 rounded-full -mr-20 -mt-20"></div>
+        <div className="absolute top-20 right-10 w-32 h-32 bg-orange-400 opacity-20 rounded-full"></div>
         <div className="relative z-10">
           <h1 className="text-white text-4xl font-bold mb-2">
-            Việc làm đã lưu
+            Món Ngon & Ưu Đãi Yêu Thích
           </h1>
           <p className="text-white text-lg max-w-2xl">
-            Xem lại danh sách những việc làm mà bạn đã lưu trước đó. Ứng tuyển
-            ngay để không bỏ lỡ cơ hội nghề nghiệp dành cho bạn.
+            Xem lại danh sách những chương trình khuyến mãi mà bạn đã lưu. Hãy nhanh tay nhận ưu đãi trước khi hết hạn!
           </p>
         </div>
       </div>
@@ -77,10 +76,10 @@ const SavedJobsTable = () => {
       <div className="p-6">
         <h2 className="text-xl font-medium text-gray-800 mb-4">
           Danh sách{" "}
-          <span className="text-green-600 font-semibold">
+          <span className="text-orange-600 font-semibold">
             {jobsForUserIsSaved.length}
           </span>{" "}
-          việc làm đã lưu
+          mục đã lưu
         </h2>
 
         {/* Job listing */}
@@ -89,9 +88,9 @@ const SavedJobsTable = () => {
             {jobsForUserIsSaved.map((saveJob) => (
               <div
                 key={saveJob._id}
-                className="bg-green-50 rounded-lg shadow-sm p-4 flex flex-col md:flex-row items-start gap-4"
+                className="bg-orange-50/50 rounded-lg shadow-sm p-4 flex flex-col md:flex-row items-start gap-4 border border-orange-100"
               >
-                {/* Logo công ty */}
+                {/* Logo công ty (nhà hàng) */}
                 <div className="size-20 rounded-md overflow-hidden flex items-center justify-center bg-white border border-gray-200">
                   <img
                     src={saveJob.job.company.logo}
@@ -100,17 +99,17 @@ const SavedJobsTable = () => {
                   />
                 </div>
 
-                {/* Nội dung công việc */}
+                {/* Nội dung công việc (khuyến mãi) */}
                 <div className="flex-1">
                   <h3 className="text-lg font-bold text-gray-800 mb-1">
                     {saveJob.job.title}
                   </h3>
                   <div className="text-green-600 font-semibold mb-1">
-                    {saveJob.job.salary} Triệu
+                    {saveJob.job.salary}  
                   </div>
                   <div className="text-gray-700 mb-1 max-w-[240px] line-clamp-1">
                     <CustomTooltip content={saveJob.job.company.name}>
-                      <span className="block">{saveJob.job.company.name}</span>
+                      <span className="block font-medium">{saveJob.job.company.name}</span>
                     </CustomTooltip>
                   </div>
                   <div className="text-gray-500 text-sm mb-1">
@@ -145,8 +144,8 @@ const SavedJobsTable = () => {
                     to={`/job/detail/${saveJob.job?.slug}`}
                     className="flex-1"
                   >
-                    <Button className="bg-green-500 hover:bg-green-600 text-white cursor-pointer transition-colors duration-200">
-                      Ứng tuyển
+                    <Button className="bg-orange-500 hover:bg-orange-600 text-white cursor-pointer transition-colors duration-200">
+                      Đặt bàn ngay
                     </Button>
                   </Link>
                   <Button
@@ -164,24 +163,22 @@ const SavedJobsTable = () => {
         ) : (
           <div className="text-gray-600 text-center py-12">
             <div className="flex flex-col items-center justify-center space-y-4">
-              <div className="bg-green-100 text-green-600 rounded-full p-4">
+              <div className="bg-orange-100 text-orange-600 rounded-full p-4">
                 <Clock className="w-10 h-10" />
               </div>
               <p className="text-lg font-semibold">
-                Bạn chưa lưu công việc nào
+                Bạn chưa lưu chương trình nào
               </p>
               <p className="text-sm text-gray-500 max-w-md">
-                Lưu những công việc mà bạn thấy phù hợp để dễ dàng truy cập và
-                ứng tuyển sau này.
+                Lưu những khuyến mãi hoặc món ăn mà bạn thấy hấp dẫn để dễ dàng truy cập lại.
               </p>
               <Button
-                className="bg-green-600 text-white hover:bg-green-700 transition mt-4 cursor-pointer"
+                className="bg-orange-500 text-white hover:bg-orange-600 transition mt-4 cursor-pointer"
                 onClick={() => {
-                  // điều hướng về trang tìm việc
                   window.location.href = "/jobs";
                 }}
               >
-                Khám phá việc làm
+                Khám phá Thực đơn
               </Button>
             </div>
           </div>

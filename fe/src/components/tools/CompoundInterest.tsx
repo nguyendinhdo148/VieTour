@@ -219,11 +219,11 @@ const CompoundInterest = () => {
                 Sinh viên mới ra trường
               </h3>
               <ul className="text-sm text-green-700 space-y-1">
-                <li>• Tiền gốc: 10 triệu VNĐ</li>
-                <li>• Gửi thêm: 2 triệu/tháng</li>
+                <li>• Tiền gốc: 10   VNĐ</li>
+                <li>• Gửi thêm: 2  /tháng</li>
                 <li>• Lãi suất: 8%/năm</li>
                 <li>• Thời gian: 10 năm</li>
-                <li className="font-semibold">→ Kết quả: ~400 triệu VNĐ</li>
+                <li className="font-semibold">→ Kết quả: ~400   VNĐ</li>
               </ul>
             </div>
             <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
@@ -231,8 +231,8 @@ const CompoundInterest = () => {
                 Người đi làm 5 năm
               </h3>
               <ul className="text-sm text-blue-700 space-y-1">
-                <li>• Tiền gốc: 50 triệu VNĐ</li>
-                <li>• Gửi thêm: 5 triệu/tháng</li>
+                <li>• Tiền gốc: 50   VNĐ</li>
+                <li>• Gửi thêm: 5  /tháng</li>
                 <li>• Lãi suất: 10%/năm</li>
                 <li>• Thời gian: 15 năm</li>
                 <li className="font-semibold">→ Kết quả: ~1.8 tỷ VNĐ</li>
@@ -243,8 +243,8 @@ const CompoundInterest = () => {
                 Chuẩn bị hưu trí
               </h3>
               <ul className="text-sm text-purple-700 space-y-1">
-                <li>• Tiền gốc: 100 triệu VNĐ</li>
-                <li>• Gửi thêm: 10 triệu/tháng</li>
+                <li>• Tiền gốc: 100   VNĐ</li>
+                <li>• Gửi thêm: 10  /tháng</li>
                 <li>• Lãi suất: 12%/năm</li>
                 <li>• Thời gian: 20 năm</li>
                 <li className="font-semibold">→ Kết quả: ~8.9 tỷ VNĐ</li>
@@ -580,7 +580,7 @@ const CompoundInterest = () => {
               <div className="bg-white p-4 rounded border border-gray-300">
                 <p className="text-sm font-mono text-center">Lãi = P × r × t</p>
                 <p className="text-xs text-gray-600 text-center mt-2">
-                  Ví dụ: 100 triệu × 8% × 10 năm = 180 triệu
+                  Ví dụ: 100   × 8% × 10 năm = 180  
                 </p>
               </div>
             </div>
@@ -598,7 +598,7 @@ const CompoundInterest = () => {
                   F = P × (1 + r)<sup>t</sup>
                 </p>
                 <p className="text-xs text-gray-600 text-center mt-2">
-                  Ví dụ: 100 triệu × (1.08)<sup>10</sup> = 216 triệu
+                  Ví dụ: 100   × (1.08)<sup>10</sup> = 216  
                 </p>
               </div>
             </div>
@@ -606,7 +606,7 @@ const CompoundInterest = () => {
           <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
             <p className="text-center text-blue-800 font-semibold flex items-center justify-center">
               <CheckCircle className="w-5 h-5 mr-2" />
-              Chênh lệch: 36 triệu VNĐ chỉ với 100 triệu gốc trong 10 năm!
+              Chênh lệch: 36   VNĐ chỉ với 100   gốc trong 10 năm!
             </p>
           </div>
         </div>
@@ -638,7 +638,7 @@ const CompoundInterest = () => {
                 Kiên trì đều đặn
               </h3>
               <p className="text-sm text-green-700">
-                Gửi tiết kiệm đều đặn mỗi tháng, dù chỉ 1-2 triệu. Tính kỷ luật
+                Gửi tiết kiệm đều đặn mỗi tháng, dù chỉ 1-2  . Tính kỷ luật
                 quan trọng hơn số tiền lớn.
               </p>
             </div>
@@ -651,7 +651,7 @@ const CompoundInterest = () => {
               </h3>
               <p className="text-sm text-purple-700">
                 So sánh nhiều kênh đầu tư. Chênh lệch 2-3% lãi suất có thể tạo
-                ra hàng trăm triệu sau 20 năm.
+                ra hàng trăm   sau 20 năm.
               </p>
             </div>
           </div>

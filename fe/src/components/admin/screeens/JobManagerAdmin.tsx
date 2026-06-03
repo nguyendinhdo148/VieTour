@@ -179,7 +179,7 @@ const JobManagerAdmin = () => {
       );
 
       if (response.data.success) {
-        toast.success("Cập nhật tin tuyển dụng thành công!");
+        toast.success("Cập nhật tin bài đăng thành công!");
         await fetchJobs();
       }
     } catch (error) {
@@ -187,7 +187,7 @@ const JobManagerAdmin = () => {
       toast.error(
         axios.isAxiosError(error)
           ? error.response?.data.message
-          : "Không thể cập nhật tin tuyển dụng"
+          : "Không thể cập nhật tin bài đăng"
       );
     }
   };
@@ -501,16 +501,17 @@ const JobManagerAdmin = () => {
                     onCheckedChange={handleSelectAll}
                   />
                 </TableHead>
-                <TableHead className="w-[200px]">Vị trí & Công ty</TableHead>
+                <TableHead className="w-[200px]">Tiêu đề bài đăng</TableHead>
                 <TableHead className="w-[150px]">Địa điểm</TableHead>
                 <TableHead className="w-[120px] text-center">
                   Trạng thái
                 </TableHead>
                 <TableHead className="w-[100px] text-center">
-                  Mức lương
+                  Chi phí khoảng / khách
                 </TableHead>
-                <TableHead className="w-[80px] text-center">KN</TableHead>
-                <TableHead className="w-[60px] text-center">ƯV</TableHead>
+                <TableHead className="w-[80px] text-center">Kinh nghiệm hoạt động</TableHead>
+                <TableHead className="w-[60px] text-center">Khách hàng</TableHead>
+                <TableHead className="w-[80px] text-center">Số khách tham gia</TableHead>
                 <TableHead className="w-[180px] text-center">
                   Thao tác
                 </TableHead>
@@ -571,7 +572,7 @@ const JobManagerAdmin = () => {
                       </Badge>
                     </TableCell>
                     <TableCell className="text-gray-800 font-medium text-center">
-                      {job.salary.toLocaleString()} Triệu VNĐ
+                      {job.salary.toLocaleString()}   VNĐ
                     </TableCell>
                     <TableCell className="text-[14px] text-gray-800 font-medium text-center">
                       {job.experienceLevel} năm
@@ -583,6 +584,20 @@ const JobManagerAdmin = () => {
                         style={{ minWidth: 40, justifyContent: "center" }}
                       >
                         {job.applications?.length || 0}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Badge
+                        variant="outline"
+                        className="text-sm px-3 py-1 rounded-2xl font-medium shadow-sm bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100 transition-all duration-200"
+                        style={{ minWidth: 40, justifyContent: "center" }}
+                      >
+                        {(
+                          job.applications?.reduce(
+                            (sum, app) => sum + (app?.numberOfGuests || 0),
+                            0
+                          ) || 0
+                        ).toLocaleString()}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-center">
@@ -691,7 +706,7 @@ const JobManagerAdmin = () => {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-10">
+                  <TableCell colSpan={10} className="text-center py-10">
                     <div className="text-gray-500 text-lg flex flex-col items-center gap-2">
                       <span>📭 Không có tin tuyển dụng nào</span>
                       <span className="text-sm text-gray-400">

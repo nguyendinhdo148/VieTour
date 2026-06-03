@@ -1,10 +1,10 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Trash2 } from "lucide-react"; // Icon đẹp, nếu bạn dùng Lucide
+import { Trash2 } from "lucide-react"; 
 
 const filteredData = [
   {
-    label: "Địa điểm",
+    label: "Khu vực",
     filterType: "location",
     array: [
       "Hà Nội",
@@ -17,29 +17,23 @@ const filteredData = [
     ],
   },
   {
-    label: "Việc làm",
+    label: "Danh mục",
     filterType: "jobType",
     array: [
-      "Frontend Developer",
-      "Backend Developer",
-      "Fullstack Developer",
-      "DevOps Engineer",
-      "AWS Cloud",
-      "Graphic Designer",
-      "AI Engineer",
-      "Mobile Developer",
-      "Sales",
-      "Marketing",
+      "Nhà hàng",
+      "Cà phê",
+      "Quán ăn",
+      "Quán cơm",
     ],
   },
   {
-    label: "Lương",
+    label: "Mức giá",
     filterType: "salary",
     array: [
-      "0 - 5.000.000",
-      "5.000.000 - 15.000.000",
-      "15.000.000 - 40.000.000",
-      "> 40.000.000",
+      "0 - 100.000",
+      "100.000 - 300.000",
+      "300.000 - 500.000",
+      "> 500.000",
     ],
   },
 ];
@@ -62,10 +56,10 @@ const FilterCard = ({
   return (
     <div className="w-full bg-white p-4 rounded-lg shadow-sm border border-gray-300">
       <div className="flex justify-between items-center mb-4">
-        <h1 className="font-semibold text-sm text-gray-800">Lọc công việc</h1>
+        <h1 className="font-semibold text-sm text-gray-800">Lọc Thực đơn</h1>
         <button
           onClick={onResetFilters}
-          className="flex items-center gap-1 px-3 py-1.5 text-sm text-red-600 border border-red-200 rounded-md hover:bg-red-50 transition-all"
+          className="flex items-center gap-1 px-3 py-1.5 text-sm text-red-600 border border-red-200 rounded-md hover:bg-red-50 transition-all cursor-pointer"
         >
           <Trash2 size={14} />
           Xóa bộ lọc
@@ -75,8 +69,8 @@ const FilterCard = ({
       <div className="mb-4">
         <input
           type="text"
-          placeholder="Tìm theo tên công việc..."
-          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+          placeholder="Tìm tên món, ưu đãi..."
+          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-orange-200"
           onChange={(e) => onSearchChange(e.target.value)}
         />
       </div>
@@ -100,7 +94,7 @@ const FilterCard = ({
                 />
                 <Label
                   htmlFor={`${section.filterType}-${item}`}
-                  className="cursor-pointer text-sm text-gray-700 hover:text-blue-600 transition-colors duration-200"
+                  className="cursor-pointer text-sm text-gray-700 hover:text-orange-600 transition-colors duration-200"
                 >
                   {item}
                 </Label>

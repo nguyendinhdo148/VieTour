@@ -177,16 +177,16 @@ const UnemploymentInsurance = () => {
               : "(Theo Nghị định số 73/2024/NĐ-CP từ 01/07/2024)",
         },
         {
-          label: "Mức lương tháng được đóng BHTN tối đa",
+          label: "Chi phí khoảng / khách tháng được đóng BHTN tối đa",
           value: formatCurrency(maxInsuranceSalary),
           explanation: `(= 20 * ${
             salaryScheme === "state" ? "lương cơ sở" : "lương tối thiểu vùng"
           })`,
         },
         {
-          label: "Mức lương tháng áp dụng tính BHTN",
+          label: "Chi phí khoảng / khách tháng áp dụng tính BHTN",
           value: formatCurrency(calculationSalary),
-          explanation: "(Không vượt quá mức lương tháng đóng BHTN tối đa)",
+          explanation: "(Không vượt quá Chi phí khoảng / khách tháng đóng BHTN tối đa)",
         },
         {
           label: "Mức hưởng trợ cấp thất nghiệp hàng tháng tối đa",
@@ -207,9 +207,9 @@ const UnemploymentInsurance = () => {
               : "Doanh nghiệp tư nhân",
         },
         {
-          label: "Mức trợ cấp hàng tháng theo mức lương áp dụng",
+          label: "Mức trợ cấp hàng tháng theo Chi phí khoảng / khách áp dụng",
           value: formatCurrency(monthlyBenefit),
-          explanation: "(= 0.6 * Mức lương tháng áp dụng tính BHTN)",
+          explanation: "(= 0.6 * Chi phí khoảng / khách tháng áp dụng tính BHTN)",
         },
         {
           label: "Mức hưởng BHTN hàng tháng thực nhận",
@@ -660,8 +660,8 @@ const UnemploymentInsurance = () => {
                   trước khi thất nghiệp × 60%
                 </p>
                 <p className="text-sm text-emerald-700 italic">
-                  Mức hưởng tối đa không quá 5 lần mức lương cơ sở (với chế độ
-                  lương nhà nước) hoặc 5 lần mức lương tối thiểu vùng (với chế
+                  Mức hưởng tối đa không quá 5 lần Chi phí khoảng / khách cơ sở (với chế độ
+                  lương nhà nước) hoặc 5 lần Chi phí khoảng / khách tối thiểu vùng (với chế
                   độ lương doanh nghiệp)
                 </p>
               </div>
@@ -678,7 +678,7 @@ const UnemploymentInsurance = () => {
                   </h4>
                   <p className="text-sm text-gray-600">
                     Anh A làm Nhà nước, đóng bảo hiểm thất nghiệp được 12 tháng
-                    với mức lương trung bình 6 tháng cuối cùng 13,000,000
+                    với Chi phí khoảng / khách trung bình 6 tháng cuối cùng 13,000,000
                     đồng/tháng.
                   </p>
                   <p className="text-sm text-gray-600 mt-2">

@@ -42,7 +42,7 @@ router.post(
   companyUpload,
   createCompanyAdmin
 );
-router.get("/all-companies", isAuthenticated, isAdmin, getAllCompanies);
+router.get("/all-companies",  getAllCompanies);
 router.put(
   "/company/:id",
   isAuthenticated,

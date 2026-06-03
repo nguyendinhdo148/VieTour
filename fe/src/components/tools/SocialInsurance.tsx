@@ -326,7 +326,7 @@ const SocialInsurance = () => {
           </li>
           <li>
             <strong>Hệ số điều chỉnh:</strong> Áp dụng theo Thông tư
-            01/2023/TT-BLĐTBXH để điều chỉnh mức lương đóng BHXH của các năm
+            01/2023/TT-BLĐTBXH để điều chỉnh Chi phí khoảng / khách đóng BHXH của các năm
             trước về giá trị hiện tại.
           </li>
         </ul>
@@ -710,7 +710,7 @@ const SocialInsurance = () => {
 
                       <div className="md:col-span-2">
                         <label className="block text-sm font-semibold text-gray-700 mb-2">
-                          Mức lương đóng BHXH
+                          Chi phí khoảng / khách đóng BHXH
                         </label>
                         <div className="relative">
                           <input
@@ -727,7 +727,7 @@ const SocialInsurance = () => {
                               }
                             }}
                             className="w-full bg-white/80 border border-gray-200 rounded-xl py-3 px-4 pr-16 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 hover:border-blue-300"
-                            placeholder="Nhập mức lương..."
+                            placeholder="Nhập Chi phí khoảng / khách..."
                           />
                           <span className="absolute right-4 top-3 text-gray-500 font-medium">
                             VNĐ
@@ -1083,7 +1083,7 @@ const SocialInsurance = () => {
                       2
                     </span>
                     <p>
-                      Thêm các giai đoạn đóng BHXH với thời gian và mức lương
+                      Thêm các giai đoạn đóng BHXH với thời gian và Chi phí khoảng / khách
                       chính xác
                     </p>
                   </div>

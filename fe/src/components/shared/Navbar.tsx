@@ -105,7 +105,7 @@ const Navbar = () => {
               to={"/jobs"}
               className="text-gray-700 hover:text-indigo-600 font-medium transition-colors relative group"
             >
-              Việc làm
+              Chương trình mới
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-indigo-600 transition-all duration-300 group-hover:w-full"></span>
             </Link>
             <HoverCard openDelay={100} closeDelay={300}>
@@ -130,7 +130,7 @@ const Navbar = () => {
                 {/* Cột 1 */}
                 <div>
                   <h4 className="text-sm font-semibold text-gray-500 mb-4 uppercase tracking-wide">
-                    Hỗ trợ ứng viên
+                    Hỗ trợ khách hàng
                   </h4>
                   <ul className="space-y-3">
                     <li>

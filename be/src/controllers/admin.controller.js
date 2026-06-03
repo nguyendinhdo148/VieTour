@@ -254,6 +254,10 @@ export const getAllJobs = async (req, res, next) => {
       .populate({
         path: "company",
       })
+      .populate({
+        path: "applications",
+        select: "numberOfGuests",
+      })
       .sort({ createdAt: -1 });
 
     if (!jobs) {
@@ -530,7 +534,7 @@ export const getAdminOverview = async (req, res, next) => {
       .select("fullname email createdAt profile.profilePhoto")
       .lean();
 
-    // 4. Các job phổ biến nhất (nhiều ứng viên nhất)
+    // 4. Các job phổ biến nhất (nhiều khách hàng nhất)
     const popularJobs = jobs
       .sort(
         (a, b) => (b.applications?.length || 0) - (a.applications?.length || 0)

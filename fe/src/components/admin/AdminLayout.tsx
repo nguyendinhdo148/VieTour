@@ -37,7 +37,7 @@ const AdminLayout = () => {
       icon: Building2,
     },
     {
-      name: "Quản lý việc làm",
+      name: "Quản lý bài quảng cáo",
       href: "/admin/jobs",
       icon: BriefcaseIcon,
     },

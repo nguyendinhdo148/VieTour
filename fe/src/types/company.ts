@@ -1,6 +1,8 @@
 import { User } from "./user";
 
 export interface Company {
+  featuredImages: any;
+  featuredImages: Company | null | undefined;
   _id: string;
   name: string;
   slug: string;
@@ -21,4 +23,10 @@ export interface Company {
   userId: User; // ID của người dùng tạo công ty
   createdAt: string; // ISO date string
   updatedAt: string; // ISO date string
+  geolocation?: {
+    type: "Point";
+    coordinates: number[]; // [lng, lat]
+  };
+
+  distance?: number;
 }

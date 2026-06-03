@@ -1,5 +1,5 @@
 import Navbar from "../shared/Navbar";
-import Job from "./components/Job";
+import Job from "./components/Job"; // Vẫn giữ nguyên component Job để không vỡ logic
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { setAllJobs, setSearchedQuery } from "@/redux/jobSlice";
@@ -7,7 +7,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { API } from "@/utils/constant";
-import { Search, Filter, Briefcase, ChevronDown } from "lucide-react";
+// Đổi Briefcase thành MapPin cho phù hợp với tìm kiếm địa điểm/dịch vụ
+import { Search, Filter, MapPin, ChevronDown } from "lucide-react";
 
 const Browse = () => {
   const { user } = useSelector((store: RootState) => store.auth);
@@ -20,6 +21,7 @@ const Browse = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  // GIỮ NGUYÊN LOGIC
   useEffect(() => {
     if (user?.role === "recruiter") {
       navigate("/recruiter");
@@ -35,7 +37,7 @@ const Browse = () => {
         );
         setSavedJobs(savedJobIds);
       } catch (error) {
-        console.error("Lỗi khi lấy danh sách công việc đã lưu:", error);
+        console.error("Lỗi khi lấy danh sách đã lưu:", error);
       }
     };
     fetchSavedJobs();
@@ -59,7 +61,7 @@ const Browse = () => {
         setSavedJobs((prev) => prev.filter((id) => id !== jobId));
       }
     } catch (error) {
-      console.error("Lỗi khi thao tác với công việc đã lưu:", error);
+      console.error("Lỗi khi thao tác lưu:", error);
     }
   };
 
@@ -69,7 +71,7 @@ const Browse = () => {
         const res = await axios.get(`${API}/job/all-jobs`);
         dispatch(setAllJobs(res.data.jobs));
       } catch (err) {
-        console.error("Lỗi khi fetch jobs:", err);
+        console.error("Lỗi khi fetch data:", err);
       }
     };
 
@@ -118,25 +120,26 @@ const Browse = () => {
     }
   });
 
+  // GIAO DIỆN ĐÃ ĐƯỢC CHỈNH SỬA LẠI TỪ NGỮ VÀ MÀU SẮC CHO ĐỒNG BỘ NỀN TẢNG
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50/30 to-indigo-50">
       <Navbar />
 
       {/* Hero Section with Search Summary */}
       <div className="bg-white border-b border-gray-100 shadow-sm">
         <div className="max-w-7xl mx-auto px-6 py-8">
           <div className="flex items-center gap-3 mb-4">
-            <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl shadow-lg">
+            <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl shadow-lg">
               <Search className="w-6 h-6 text-white" />
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-1">
-                Kết quả tìm kiếm
+                Khám phá địa điểm & Dịch vụ
               </h1>
               {searchedQuery && (
-                <p className="text-gray-600 flex items-center gap-2">
+                <p className="text-gray-600 flex items-center gap-2 mt-1">
                   <span>Từ khóa:</span>
-                  <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
+                  <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-medium">
                     "{searchedQuery}"
                   </span>
                 </p>
@@ -144,15 +147,15 @@ const Browse = () => {
             </div>
           </div>
 
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-6">
             <div className="flex items-center gap-6 text-sm text-gray-600">
               <span className="flex items-center gap-2 px-4 py-2 bg-green-50 text-green-700 rounded-lg font-medium">
-                <Briefcase className="w-4 h-4" />
-                {filteredJobs.length} việc làm phù hợp
+                <MapPin className="w-4 h-4" />
+                {filteredJobs.length} địa điểm phù hợp
               </span>
             </div>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-4 flex-wrap">
               {/* View Mode Toggle */}
               <div className="flex items-center bg-gray-100 rounded-lg p-1">
                 <button
@@ -182,11 +185,11 @@ const Browse = () => {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="appearance-none bg-white border border-gray-200 rounded-lg px-4 py-2 pr-8 text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer"
+                  className="appearance-none bg-white border border-gray-200 rounded-lg px-4 py-2 pr-8 text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent cursor-pointer"
                 >
                   <option value="newest">Mới nhất</option>
                   <option value="oldest">Cũ nhất</option>
-                  <option value="title">Theo tên</option>
+                  <option value="title">Theo tên (A-Z)</option>
                 </select>
                 <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
               </div>
@@ -194,7 +197,7 @@ const Browse = () => {
               {/* Filter Button */}
               <button
                 onClick={() => setShowFilters(!showFilters)}
-                className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-700"
+                className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
               >
                 <Filter className="w-4 h-4" />
                 Bộ lọc
@@ -213,20 +216,19 @@ const Browse = () => {
               <Search className="w-8 h-8 text-gray-400" />
             </div>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              Không tìm thấy việc làm phù hợp
+              Không tìm thấy địa điểm/dịch vụ phù hợp
             </h3>
             <p className="text-gray-600 mb-6 max-w-md mx-auto">
-              Thử tìm kiếm với từ khóa khác hoặc mở rộng tiêu chí tìm kiếm của
-              bạn
+              Thử tìm kiếm với từ khóa khác hoặc mở rộng tiêu chí bộ lọc để khám phá thêm nhiều lựa chọn tuyệt vời.
             </p>
             <button
               onClick={() => {
                 dispatch(setSearchedQuery(""));
                 navigate("/browse");
               }}
-              className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg font-medium"
+              className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700 transition-all rounded-lg font-medium shadow-md hover:shadow-lg"
             >
-              Xem tất cả việc làm
+              Khám phá tất cả địa điểm
             </button>
           </div>
         ) : (
@@ -242,6 +244,7 @@ const Browse = () => {
           >
             {sortedJobs.map((job) => (
               <div key={job._id}>
+                {/* Vẫn giữ component Job như cũ để không làm gãy code bên trong */}
                 <Job
                   job={job}
                   savedJobs={savedJobs}
@@ -256,7 +259,7 @@ const Browse = () => {
         {filteredJobs.length > 0 && (
           <div className="text-center mt-12">
             <div className="inline-flex items-center gap-2 text-sm text-gray-600 bg-white px-6 py-3 rounded-full shadow-sm border border-gray-200">
-              <span>Hiển thị {filteredJobs.length} việc làm</span>
+              <span>Hiển thị {filteredJobs.length} kết quả</span>
             </div>
           </div>
         )}
@@ -266,7 +269,7 @@ const Browse = () => {
       <div className="fixed bottom-6 right-6 md:hidden">
         <button
           onClick={() => setShowFilters(!showFilters)}
-          className="flex items-center justify-center w-14 h-14 bg-blue-600 text-white rounded-full shadow-lg"
+          className="flex items-center justify-center w-14 h-14 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full shadow-lg hover:shadow-xl transition-shadow"
         >
           <Filter className="w-6 h-6" />
         </button>

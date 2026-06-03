@@ -252,7 +252,7 @@ const CompanyFormDialog = ({
               onChange={(e) =>
                 setFormData({ ...formData, field: e.target.value })
               }
-              placeholder="VD: CNTT, Tài chính, Giáo dục,..."
+              placeholder="VD: Nhà hàng, Cà phê, Quán ăn,..."
             />
           </div>
 

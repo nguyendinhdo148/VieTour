@@ -246,7 +246,7 @@ const MBTIPage = () => {
                 và chính xác nhất trên thế giới. Trong công việc, MBTI giúp mỗi
                 cá nhân có thêm thông tin để định hướng và lựa chọn nghề nghiệp.
                 Nhà tuyển dụng cũng có thể sử dụng MBTI để đánh giá mức độ phù
-                hợp của ứng viên với vị trí công việc và văn hoá doanh nghiệp.
+                hợp của khách hàng với vị trí công việc và văn hoá doanh nghiệp.
               </p>
             </div>
           </div>

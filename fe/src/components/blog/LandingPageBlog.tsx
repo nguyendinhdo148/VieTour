@@ -175,14 +175,14 @@ const LandingPageBlog = () => {
                           <Avatar className="size-8 ring-2 ring-gray-200 shadow-lg">
                             <AvatarImage
                               src={
-                                post.created_by.profile.profilePhoto.url ||
+                                post.created_by?.profile?.profilePhoto?.url ||
                                 "/placeholder.svg"
                               }
                               className="object-cover"
-                              alt={post.created_by.fullname}
+                              alt={post.created_by?.fullname || "Người dùng"}
                             />
                             <AvatarFallback className="text-lg font-semibold bg-primary/10">
-                              {post.created_by.fullname
+                              {(post.created_by?.fullname || "Người dùng")
                                 .split(" ")
                                 .map((n) => n[0])
                                 .join("")}
@@ -190,7 +190,7 @@ const LandingPageBlog = () => {
                           </Avatar>
                         </div>
                         <span className="font-medium truncate">
-                          {post.created_by.fullname}
+                          {post.created_by?.fullname || "Người dùng"}
                         </span>
                       </div>
                       <div className="flex items-center">

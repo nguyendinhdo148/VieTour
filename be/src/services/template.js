@@ -5,12 +5,13 @@ export const buildEmailTemplate = ({
   companyName,
   companyLogo,
   emailRecruiter,
-  jobDetailUrl, // nên truyền thêm từ controller
+  jobDetailUrl, 
+  bookingDate,
 }) => {
   const subject =
     type === "accepted"
-      ? `🎉 Chúc mừng! Bạn đã được nhận vào vị trí ${jobTitle} tại ${companyName}`
-      : `Thông báo kết quả ứng tuyển vị trí ${jobTitle} tại ${companyName}`;
+      ? `🎉 Xác nhận đặt bàn thành công tại ${companyName}`
+      : `Thông báo về đơn đặt bàn của bạn tại ${companyName}`;
 
   const CTAButton =
     type === "accepted" && jobDetailUrl
@@ -19,7 +20,7 @@ export const buildEmailTemplate = ({
              href="${jobDetailUrl}"
              target="_blank"
              style="
-               background-color: #007bff;
+               background-color: #f97316;
                border-radius: 6px;
                color: #ffffff;
                display: inline-block;
@@ -31,48 +32,99 @@ export const buildEmailTemplate = ({
                font-family: Arial, sans-serif;
              "
            >
-             Xem chi tiết công việc
+             Xem chi tiết địa điểm
            </a>
          </div>`
       : "";
+
+  const bookingDateStr = bookingDate ? `<p style="margin: 0 0 16px; font-size: 16px; color: #f97316;">📅 Ngày đến: <strong>${bookingDate}</strong></p>` : "";
 
   const bodyContent =
     type === "accepted"
       ? `
           <p style="margin: 0 0 16px;">Xin chào <strong>${applicantName}</strong>,</p>
-          <p style="margin: 0 0 16px;">Chúng tôi rất vui thông báo rằng bạn đã <strong>được chọn</strong> cho vị trí <strong>${jobTitle}</strong> tại <strong>${companyName}</strong>.</p>
-          <p style="margin: 0 0 16px;">Bộ phận tuyển dụng sẽ sớm liên hệ để sắp xếp phỏng vấn hoặc bước tiếp theo.</p>
-          <p style="margin: 0 0 16px;">Nếu có bất kỳ thắc mắc nào, vui lòng phản hồi qua email: <a href="mailto:${emailRecruiter}">${emailRecruiter}</a>.</p>
+          <p style="margin: 0 0 16px;">Chúng tôi rất vui thông báo rằng đơn đặt bàn của bạn cho <strong>${jobTitle}</strong> tại <strong>${companyName}</strong> đã được <strong>xác nhận thành công</strong>.</p>
+          ${bookingDateStr}
+          <p style="margin: 0 0 16px;">Nhà hàng/Doanh nghiệp sẽ sớm liên hệ với bạn để hỗ trợ tốt nhất. Hãy đến đúng giờ để có trải nghiệm trọn vẹn nhé!</p>
+          <p style="margin: 0 0 16px;">Nếu có bất kỳ thay đổi nào, vui lòng phản hồi qua email: <a href="mailto:${emailRecruiter}">${emailRecruiter}</a>.</p>
           ${CTAButton}
-          <p style="margin: 32px 0 0;">Trân trọng,<br/><strong>Đội ngũ tuyển dụng - ${companyName}</strong></p>
+          <p style="margin: 32px 0 0;">Trân trọng,<br/><strong>Bộ phận CSKH - ${companyName}</strong></p>
         `
       : `
           <p style="margin: 0 0 16px;">Xin chào <strong>${applicantName}</strong>,</p>
-          <p style="margin: 0 0 16px;">Sau khi xem xét kỹ lưỡng, chúng tôi rất tiếc phải thông báo rằng bạn <strong>chưa phù hợp</strong> với vị trí <strong>${jobTitle}</strong> tại thời điểm hiện tại.</p>
-          <p style="margin: 0 0 16px;">Chúng tôi rất trân trọng sự quan tâm của bạn và hy vọng có thể hợp tác trong tương lai.</p>
-          <p style="margin: 32px 0 0;">Trân trọng,<br/><strong>Đội ngũ tuyển dụng - ${companyName}</strong></p>
+          <p style="margin: 0 0 16px;">Cảm ơn bạn đã quan tâm và đặt bàn cho <strong>${jobTitle}</strong> tại <strong>${companyName}</strong>.</p>
+          <p style="margin: 0 0 16px;">Tuy nhiên, chúng tôi rất tiếc phải thông báo rằng hiện tại chúng tôi <strong>không thể sắp xếp</strong> chỗ cho đơn đặt bàn này (có thể do quá tải hoặc sự kiện đã kết thúc).</p>
+          <p style="margin: 0 0 16px;">Mong bạn thông cảm và rất hy vọng có cơ hội phục vụ bạn vào một dịp gần nhất.</p>
+          <p style="margin: 32px 0 0;">Trân trọng,<br/><strong>Bộ phận CSKH - ${companyName}</strong></p>
         `;
 
   const html = `
-      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif; background-color: #f6f9fc; padding: 40px;">
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f8fafc; padding: 40px;">
         <div style="max-width: 600px; margin: auto; background: white; padding: 32px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.06);">
           ${
             companyLogo
               ? `<div style="text-align: center; margin-bottom: 24px;">
-                  <img src="${companyLogo}" alt="${companyName} Logo" style="max-height: 60px;" />
+                  <img src="${companyLogo}" alt="${companyName} Logo" style="max-height: 60px; border-radius: 8px;" />
                 </div>`
               : ""
           }
-          <div style="font-size: 16px; color: #333;">
+          <div style="font-size: 16px; color: #333; line-height: 1.5;">
             ${bodyContent}
           </div>
-          <hr style="margin-top: 40px; border: none; border-top: 1px solid #eee;" />
-          <p style="font-size: 12px; color: #888; text-align: center; margin-top: 24px;">
+          <hr style="margin-top: 40px; border: none; border-top: 1px solid #e2e8f0;" />
+          <p style="font-size: 12px; color: #94a3b8; text-align: center; margin-top: 24px;">
             © ${new Date().getFullYear()} ${companyName}. Mọi quyền được bảo lưu.
           </p>
         </div>
       </div>
     `;
+
+  return { subject, html };
+};
+
+// ==========================================
+// THÊM MỚI: MẪU EMAIL THÔNG BÁO CHO DOANH NGHIỆP KHI CÓ KHÁCH ĐẶT BÀN
+// ==========================================
+export const buildNewBookingToRecruiterTemplate = ({
+  recruiterName,
+  applicantName,
+  applicantEmail,
+  applicantPhone,
+  bookingDate,
+  numberOfGuests,
+  jobTitle,
+  companyName,
+  dashboardUrl
+}) => {
+  const subject = `🔔 Có khách hàng mới đặt bàn tại ${companyName}!`;
+
+  const html = `
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f0fdf4; padding: 40px;">
+      <div style="max-width: 600px; margin: auto; background: white; padding: 32px; border-radius: 12px; border-top: 5px solid #22c55e; box-shadow: 0 4px 12px rgba(0,0,0,0.06);">
+        <h2 style="color: #166534; margin-top: 0;">Thông báo Đặt bàn mới</h2>
+        <p style="font-size: 16px; color: #333;">Xin chào <strong>${recruiterName || "Quản lý"}</strong>,</p>
+        <p style="font-size: 16px; color: #333;">Doanh nghiệp của bạn vừa nhận được một đơn đặt bàn mới trên hệ thống. Dưới đây là thông tin chi tiết:</p>
+        
+        <div style="background-color: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <p style="margin: 0 0 10px;"><strong>👤 Khách hàng:</strong> ${applicantName}</p>
+          <p style="margin: 0 0 10px;"><strong>📞 Số điện thoại:</strong> 0${applicantPhone || "Không cung cấp"}</p>
+          <p style="margin: 0 0 10px;"><strong>✉️ Email:</strong> ${applicantEmail}</p>
+          <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 15px 0;"/>
+          <p style="margin: 0 0 10px;"><strong>🏷 Dịch vụ/Chương trình:</strong> ${jobTitle}</p>
+          <p style="margin: 0 0 10px;"><strong>📅 Ngày đến:</strong> ${bookingDate}</p>
+          <p style="margin: 0;"><strong>👥 Số lượng khách:</strong> <span style="color: #f97316; font-weight: bold; font-size: 18px;">${numberOfGuests}</span> người</p>
+        </div>
+
+        <p style="font-size: 16px; color: #333;">Vui lòng truy cập trang Quản lý để <strong>Xác nhận</strong> hoặc <strong>Từ chối</strong> đơn đặt bàn này, khách hàng đang chờ phản hồi từ bạn!</p>
+        
+        <div style="text-align: center; margin-top: 32px;">
+           <a href="${dashboardUrl}" target="_blank" style="background-color: #22c55e; border-radius: 6px; color: #ffffff; display: inline-block; font-size: 16px; font-weight: 600; padding: 14px 28px; text-decoration: none;">
+             Mở trang Quản lý
+           </a>
+        </div>
+      </div>
+    </div>
+  `;
 
   return { subject, html };
 };
@@ -104,7 +156,7 @@ export const buildJobSuggestionsEmail = (user, suggestedJobs) => {
               job.company?.name || "Công ty"
             }</strong></p>
             <p style="margin: 4px 0;">📍 ${job.location}</p>
-            <p style="margin: 4px 0;">💵 ${job.salary} Triệu VNĐ</p>
+            <p style="margin: 4px 0;">💵 ${job.salary}   VNĐ</p>
             <p style="margin: 4px 0; color: #10b981;">⭐ Độ phù hợp: <strong>${Math.round(
               job.matchScore
             )}%</strong></p>
