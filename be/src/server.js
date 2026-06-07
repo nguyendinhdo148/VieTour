@@ -26,12 +26,21 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
 const corsOptions = {
   origin: process.env.URL_CLIENT,
   credentials: true,
 };
 
 app.use(cors(corsOptions));
+
+// Route mặc định
+app.get("/", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "VieTour Backend is running",
+  });
+});
 
 const PORT = process.env.PORT || 3000;
 
@@ -63,6 +72,7 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   connectDB();
   console.log(`Server running at port ${PORT}`);
+
   // Khởi động notification scheduler
   startNotificationScheduler();
 });
