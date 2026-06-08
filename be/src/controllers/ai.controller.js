@@ -4,7 +4,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { createCanvas } from "canvas";
 import Tesseract from "tesseract.js";
-import axios from "axios";
+import Groq from "groq-sdk";
 
 // Lấy đường dẫn tuyệt đối tới pdf.worker.js
 const __filename = fileURLToPath(import.meta.url);
@@ -18,48 +18,57 @@ const workerPath = path.join(
 pdfjsLib.GlobalWorkerOptions.workerSrc = workerPath;
 
 // ==============================
-// GEMINI CONFIG
+// GROQ CONFIG
 // ==============================
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_MODEL = "gemini-2.5-flash";
-
-const gemini = axios.create({
-  baseURL: "https://generativelanguage.googleapis.com/v1beta",
-  headers: {
-    "Content-Type": "application/json",
-  },
+// Sử dụng đúng tên biến môi trường bạn yêu cầu
+const groq = new Groq({
+  apiKey: process.env.GroqCloud_API_KEY, 
 });
 
+// Sử dụng model Llama 3 70B (Bản thông minh nhất của Llama 3 hiện tại)
+const GROQ_MODEL = "llama-3.3-70b-versatile";
+
 // ==============================
-// GEMINI HELPER
+// GROQ HELPER
 // ==============================
 
-async function callGemini(prompt, config = {}) {
-  const response = await gemini.post(
-    `/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
-    {
-      contents: [
-        {
-          parts: [{ text: prompt }],
-        },
-      ],
-      generationConfig: {
-        temperature: config.temperature || 0.7,
-        maxOutputTokens: config.maxOutputTokens || 2048,
-        responseMimeType:
-          config.responseMimeType || "text/plain",
+async function callGroq(prompt, requireJson = false) {
+  const params = {
+    messages: [
+      {
+        role: "user",
+        content: prompt,
       },
-    }
-  );
+    ],
+    model: GROQ_MODEL,
+    temperature: 0.7,
+    max_tokens: 2048,
+  };
 
-  return (
-    response.data?.candidates?.[0]?.content?.parts?.[0]?.text || ""
-  );
+  // Ép Groq trả về chuẩn JSON 100% nếu cần
+  if (requireJson) {
+    params.response_format = { type: "json_object" };
+  }
+
+  const chatCompletion = await groq.chat.completions.create(params);
+  return chatCompletion.choices[0]?.message?.content || "";
+}
+
+// Hàm dọn dẹp JSON để AI trả về có markdown cũng không bị lỗi parse
+function cleanJsonString(rawStr) {
+  if (!rawStr) return "{}";
+  let cleanStr = rawStr.replace(/^```(json)?|```$/gi, "").trim();
+  const firstBrace = cleanStr.indexOf("{");
+  const lastBrace = cleanStr.lastIndexOf("}");
+  if (firstBrace !== -1 && lastBrace !== -1) {
+    cleanStr = cleanStr.substring(firstBrace, lastBrace + 1);
+  }
+  return cleanStr;
 }
 
 // ==============================
-// REVIEW CV
+// REVIEW CV (Đã cập nhật F&B)
 // ==============================
 
 export const resumeReview = async (req, res, next) => {
@@ -93,9 +102,7 @@ export const resumeReview = async (req, res, next) => {
 
       for (let i = 1; i <= pdf.numPages; i++) {
         const page = await pdf.getPage(i);
-
         const textContent = await page.getTextContent();
-
         const pageText = textContent.items
           .map((item) => item.str)
           .join(" ");
@@ -117,14 +124,8 @@ export const resumeReview = async (req, res, next) => {
         }).promise;
 
         const page = await pdf.getPage(1);
-
         const viewport = page.getViewport({ scale: 2 });
-
-        const canvas = createCanvas(
-          viewport.width,
-          viewport.height
-        );
-
+        const canvas = createCanvas(viewport.width, viewport.height);
         const context = canvas.getContext("2d");
 
         const renderContext = {
@@ -136,13 +137,9 @@ export const resumeReview = async (req, res, next) => {
 
         const imageBuffer = canvas.toBuffer("image/png");
 
-        const result = await Tesseract.recognize(
-          imageBuffer,
-          "eng",
-          {
-            logger: () => {},
-          }
-        );
+        const result = await Tesseract.recognize(imageBuffer, "eng", {
+          logger: () => {},
+        });
 
         extractedText = result.data.text?.trim();
       } catch (err) {}
@@ -151,18 +148,17 @@ export const resumeReview = async (req, res, next) => {
     if (!extractedText || extractedText.length < 30) {
       return res.status(400).json({
         success: false,
-        message:
-          "Could not extract meaningful text from the resume.",
+        message: "Could not extract meaningful text from the resume.",
       });
     }
 
     // ==============================
-    // GEMINI REVIEW
+    // GROQ REVIEW
     // ==============================
 
     try {
       const prompt = `
-Bạn là chuyên gia tuyển dụng và cố vấn nghề nghiệp.
+Bạn là chuyên gia nhân sự ngành F&B (Nhà hàng, Quán ăn, Đồ uống).
 
 Yêu cầu:
 - Viết bằng tiếng Việt tự nhiên, chuyên nghiệp.
@@ -172,10 +168,10 @@ Yêu cầu:
 
 Cấu trúc:
 I. Tóm tắt tổng quan
-II. Điểm mạnh
-III. Điểm yếu / Hạn chế
+II. Điểm mạnh nổi bật
+III. Điểm yếu / Hạn chế cần khắc phục
 IV. Đề xuất cải thiện
-V. Kết luận / Lời khuyên
+V. Lời khuyên định hướng nghề nghiệp
 
 Mỗi phần:
 - 5 đến 6 ý.
@@ -188,10 +184,7 @@ CV:
 ${extractedText}
 `;
 
-      const feedback = await callGemini(prompt, {
-        temperature: 0.7,
-        maxOutputTokens: 2048,
-      });
+      const feedback = await callGroq(prompt);
 
       return res.json({
         success: true,
@@ -200,10 +193,7 @@ ${extractedText}
     } catch (err) {
       return res.status(500).json({
         success: false,
-        message:
-          err?.response?.data?.error?.message ||
-          err.message ||
-          "Gemini API error",
+        message: err.message || "Groq API error",
       });
     }
   } catch (error) {
@@ -212,14 +202,13 @@ ${extractedText}
     return res.status(500).json({
       success: false,
       message:
-        "Resume review failed! " +
-        (error?.message || "Unknown error"),
+        "Resume review failed! " + (error?.message || "Unknown error"),
     });
   }
 };
 
 // ==============================
-// GENERATE DESCRIPTION
+// GENERATE DESCRIPTION (Đã cập nhật F&B)
 // ==============================
 
 export const generate_description = async (req, res, next) => {
@@ -234,7 +223,7 @@ export const generate_description = async (req, res, next) => {
 
   try {
     const prompt = `
-Bạn là chuyên gia content marketing và branding.
+Bạn là chuyên gia content marketing F&B và branding.
 
 Hãy tạo nội dung quảng cáo chuyên nghiệp dựa trên tiêu đề sau:
 
@@ -242,54 +231,47 @@ Tiêu đề:
 "${title}"
 
 Lĩnh vực:
-"${category || "Không xác định"}"
+"${category || "Nhà hàng / Quán ăn"}"
 
 Yêu cầu:
-- Nội dung phù hợp cho bài đăng Facebook, website, landing page.
-- Văn phong hấp dẫn, thu hút khách hàng.
-- Phù hợp với thương hiệu cà phê, đồ ăn, nhà hàng, quán ăn, thương hiệu F&B.
+- Nội dung phù hợp cho bài đăng Facebook, website booking.
+- Văn phong hấp dẫn, gợi sự thèm ăn, thu hút thực khách.
+- Phù hợp với thương hiệu ẩm thực, đồ ăn, nhà hàng, quán ăn, lounge.
 - Có cảm xúc, hiện đại, chuyên nghiệp.
 - Không dùng markdown.
 
 Trả về DUY NHẤT JSON hợp lệ:
 
 {
-  "description": "Đoạn mô tả thương hiệu hấp dẫn khoảng 6-8 câu.",
+  "description": "Đoạn mô tả hương vị, không gian hấp dẫn khoảng 6-8 câu.",
   "targetCustomers": [
-    "Phù hợp với sinh viên cần không gian học tập yên tĩnh.",
-    "Thích hợp cho nhân viên văn phòng gặp gỡ đối tác hoặc làm việc.",
-    "Dành cho khách hàng yêu thích cà phê đậm vị và nguyên chất.",
-    "Phù hợp với nhóm bạn muốn trò chuyện trong không gian rộng rãi.",
-    "Thích hợp cho khách hàng thích chụp ảnh và trải nghiệm không gian đẹp.",
-    "Dành cho người cần nơi thư giãn sau giờ làm việc."
+    "Phù hợp với nhóm bạn cần không gian trò chuyện rộng rãi.",
+    "Thích hợp cho nhân viên văn phòng ăn trưa hoặc tiếp khách.",
+    "Dành cho khách hàng gia đình tìm kiếm bữa ăn ấm cúng.",
+    "Phù hợp cho các cặp đôi hẹn hò cuối tuần.",
+    "Thích hợp cho thực khách thích chụp ảnh check-in."
   ],
   "benefits": [
-    "Không gian hiện đại, thoải mái và có máy lạnh.",
-    "Menu đa dạng từ cà phê, trà đến đồ ăn nhẹ.",
-    "Wifi tốc độ cao phục vụ học tập và làm việc.",
-    "Phục vụ nhanh chóng, thân thiện và chuyên nghiệp.",
-    "Vị trí thuận tiện, dễ tìm và có chỗ giữ xe.",
-    "Nguyên liệu chất lượng mang lại hương vị đặc trưng."
+    "Không gian hiện đại, thoải mái và sang trọng.",
+    "Menu đa dạng món ăn và thức uống độc đáo.",
+    "Dịch vụ đặt bàn tiện lợi, nhanh chóng.",
+    "Phục vụ chuyên nghiệp, tận tâm.",
+    "Vị trí thuận tiện dễ tìm, có bãi đỗ xe rộng rãi."
   ]
 }
 
 Quy tắc:
-- requirements: 5-7 ý.
+- targetCustomers: 5-7 ý.
 - benefits: 5-7 ý.
 - Mỗi chuỗi phải kết thúc bằng dấu chấm.
 - Không trả thêm text ngoài JSON.
 `;
 
-    const content = await callGemini(prompt, {
-      temperature: 0.8,
-      maxOutputTokens: 2048,
-      responseMimeType: "application/json",
-    });
-
+    const content = await callGroq(prompt, true); // true = Bật JSON Mode
     let data;
 
     try {
-      data = JSON.parse(content);
+      data = JSON.parse(cleanJsonString(content));
     } catch (err) {
       console.log("JSON Parse Error:", err);
 
@@ -300,23 +282,25 @@ Quy tắc:
     }
 
     return res.json({
-  success: true,
-  description: data.description || "",
-  requirements:
-    data.targetCustomers ||
-    data.requirements ||
-    [],
-  benefits: data.benefits || [],
-});
+      success: true,
+      description: data.description || "",
+      requirements: data.targetCustomers || data.requirements || [],
+      benefits: data.benefits || [],
+    });
   } catch (error) {
-    console.log("Gemini Error:", error?.response?.data || error);
+    console.log("Groq Error:", error);
+
+    // Bắt lỗi Rate Limit của Groq (Nếu có)
+    if (error?.status === 429) {
+      return res.status(429).json({
+        success: false,
+        message: "Quá tải API, vui lòng thử lại sau giây lát.",
+      });
+    }
 
     return res.status(500).json({
       success: false,
-      message:
-        error?.response?.data?.error?.message ||
-        error.message ||
-        "AI generation failed!",
+      message: error.message || "AI generation failed!",
     });
   }
 };
@@ -341,7 +325,7 @@ export const chat_with_ai = async (req, res, next) => {
     // ==============================
 
     const systemPrompt = `
-Bạn là AI phân tích yêu cầu tìm việc.
+Bạn là AI phân tích yêu cầu tìm kiếm nhà hàng, chương trình ẩm thực.
 
 Hãy trả về JSON hợp lệ.
 
@@ -357,24 +341,17 @@ Hãy trả về JSON hợp lệ.
 
 Quy tắc:
 - intent:
-  - "job_search" nếu tìm việc.
-  - "advice" nếu xin tư vấn.
+  - BẮT BUỘC trả về "job_search" nếu khách muốn tìm nhà hàng, quán ăn, đặt bàn, xem menu, chương trình khuyến mãi.
+  - "advice" nếu xin tư vấn chung.
   - "other" nếu chào hỏi.
 
-- salary:
-  - đơn vị   VNĐ.
-  - 1000 USD = 25.
-
-- "mới ra trường" = 0 năm.
+- salary: đơn vị VNĐ (nếu khách nhắc đến giá tiền, budget).
 
 User:
 "${message}"
 `;
 
-    const raw = await callGemini(systemPrompt, {
-      temperature: 0.1,
-      responseMimeType: "application/json",
-    });
+    const raw = await callGroq(systemPrompt, true); // true = Bật JSON Mode
 
     let parsedData = {
       intent: "other",
@@ -389,7 +366,7 @@ User:
     try {
       parsedData = {
         ...parsedData,
-        ...JSON.parse(raw),
+        ...JSON.parse(cleanJsonString(raw)),
       };
     } catch {
       console.log("Parse AI JSON failed");
@@ -400,7 +377,7 @@ User:
     // ==============================
 
     if (parsedData.intent !== "job_search") {
-      return callGeminiAdvice(message, res);
+      return callGroqAdvice(message, res);
     }
 
     // ==============================
@@ -410,44 +387,36 @@ User:
     const query = {
       status: "active",
       approval: "approved",
-      $or: [
-        ...(parsedData.keywords.length
-          ? parsedData.keywords.map((kw) => ({
-              $or: [
-                {
-                  title: {
-                    $regex: kw,
-                    $options: "i",
-                  },
-                },
-                {
-                  description: {
-                    $regex: kw,
-                    $options: "i",
-                  },
-                },
-                {
-                  category: {
-                    $regex: kw,
-                    $options: "i",
-                  },
-                },
-              ],
-            }))
-          : []),
-
-        ...(parsedData.location
-          ? [
-              {
-                location: {
-                  $regex: parsedData.location,
-                  $options: "i",
-                },
-              },
-            ]
-          : []),
-      ],
     };
+
+    const orConditions = [];
+
+    // Nếu có keywords
+    if (parsedData.keywords && parsedData.keywords.length > 0) {
+      const keywordConditions = parsedData.keywords.map((kw) => ({
+        $or: [
+          { title: { $regex: kw, $options: "i" } },
+          { description: { $regex: kw, $options: "i" } },
+          { category: { $regex: kw, $options: "i" } },
+        ],
+      }));
+      orConditions.push(...keywordConditions);
+    }
+
+    // Nếu có location
+    if (parsedData.location) {
+      orConditions.push({
+        location: {
+          $regex: parsedData.location,
+          $options: "i",
+        },
+      });
+    }
+
+    // Gán orConditions
+    if (orConditions.length > 0) {
+      query.$or = orConditions;
+    }
 
     // ==============================
     // GET JOBS
@@ -482,10 +451,7 @@ User:
         .toLowerCase()
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g, "")
-        .replace(
-          /thanh pho|tp\.?|ho chi minh|hcmc/gi,
-          "hcm"
-        )
+        .replace(/thanh pho|tp\.?|ho chi minh|hcmc/gi, "hcm")
         .trim();
 
     jobs = jobs.filter((job) => {
@@ -493,19 +459,14 @@ User:
 
       if (parsedData.location) {
         const loc1 = normalize(job.location);
-
         const loc2 = normalize(parsedData.location);
-
-        ok =
-          ok &&
-          (loc1.includes(loc2) || loc2.includes(loc1));
+        ok = ok && (loc1.includes(loc2) || loc2.includes(loc1));
       }
 
-      if (parsedData.keywords.length > 0) {
+      if (parsedData.keywords && parsedData.keywords.length > 0) {
         const combined = normalize(
           `${job.title} ${job.description} ${job.category}`
         );
-
         ok =
           ok &&
           parsedData.keywords.some((kw) =>
@@ -515,13 +476,8 @@ User:
 
       if (parsedData.salary) {
         const s = Number(job.salary);
-
         const si = Number(parsedData.salary);
-
-        ok =
-          ok &&
-          !isNaN(s) &&
-          Math.abs(s - si) <= 1;
+        ok = ok && !isNaN(s) && Math.abs(s - si) <= 1;
       }
 
       return ok;
@@ -532,10 +488,7 @@ User:
     // ==============================
 
     if (jobs.length > 0) {
-      const answer = formatJobResults(
-        jobs,
-        parsedData
-      );
+      const answer = formatJobResults(jobs, parsedData);
 
       return res.json({
         success: true,
@@ -543,18 +496,22 @@ User:
       });
     }
 
-    const answer =
-      generateNoResultsMessage(parsedData);
+    const answer = generateNoResultsMessage(parsedData);
 
     return res.json({
       success: true,
       answer,
     });
   } catch (error) {
-    console.log(
-      "❌ chat_with_ai error:",
-      error?.response?.data || error
-    );
+    console.log("❌ chat_with_ai error:", error);
+
+    // Bắt lỗi 429 Limit Quota của Groq
+    if (error?.status === 429) {
+      return res.json({
+        success: true,
+        answer: "😅 Hiện tại hệ thống đang có quá nhiều người truy cập. Bạn vui lòng đợi vài giây rồi hỏi lại mình nhé!"
+      });
+    }
 
     return res.status(500).json({
       success: false,
@@ -575,77 +532,44 @@ function buildSearchQuery(parsedData) {
 
   const conditions = [];
 
-  if (parsedData.keywords.length > 0) {
-    const keywordConditions =
-      parsedData.keywords.map((kw) => ({
-        $or: [
-          {
-            title: {
-              $regex: kw,
-              $options: "i",
-            },
-          },
-          {
-            description: {
-              $regex: kw,
-              $options: "i",
-            },
-          },
-          {
-            category: {
-              $regex: kw,
-              $options: "i",
-            },
-          },
-        ],
-      }));
-
+  if (parsedData.keywords && parsedData.keywords.length > 0) {
+    const keywordConditions = parsedData.keywords.map((kw) => ({
+      $or: [
+        { title: { $regex: kw, $options: "i" } },
+        { description: { $regex: kw, $options: "i" } },
+        { category: { $regex: kw, $options: "i" } },
+      ],
+    }));
     conditions.push(...keywordConditions);
   }
 
   if (parsedData.location) {
     conditions.push({
-      location: {
-        $regex: parsedData.location,
-        $options: "i",
-      },
+      location: { $regex: parsedData.location, $options: "i" },
     });
   }
 
   if (parsedData.jobType) {
     conditions.push({
-      jobType: {
-        $regex: parsedData.jobType,
-        $options: "i",
-      },
+      jobType: { $regex: parsedData.jobType, $options: "i" },
     });
   }
 
   if (parsedData.salary) {
     conditions.push({
-      salary: {
-        $gte: parsedData.salary,
-      },
+      salary: { $gte: parsedData.salary },
     });
   }
 
-  if (
-    parsedData.experienceLevel !== null
-  ) {
+  if (parsedData.experienceLevel !== null) {
     conditions.push({
-      experienceLevel: {
-        $lte:
-          parsedData.experienceLevel + 1,
-      },
+      experienceLevel: { $lte: parsedData.experienceLevel + 1 },
     });
   }
 
   if (parsedData.category) {
     conditions.push({
-      category: {
-        $regex: parsedData.category,
-        $options: "i",
-      },
+      category: { $regex: parsedData.category, $options: "i" },
     });
   }
 
@@ -660,157 +584,116 @@ function buildSearchQuery(parsedData) {
 // FORMAT JOBS
 // ==============================
 
-function formatJobResults(
-  jobs,
-  parsedData
-) {
-  const header = `🔍 Tìm thấy ${jobs.length} việc làm phù hợp${
-    parsedData.keywords.length > 0
-      ? ` cho "${parsedData.keywords.join(", ")}"`
-      : ""
-  }:\n\n`;
+function formatJobResults(jobs, parsedData) {
+  let header = "### 🍽️ Tìm thấy " + jobs.length + " chương trình / địa điểm đang diễn ra";
+  
+  if (parsedData.keywords && parsedData.keywords.length > 0) {
+    header += " cho \"" + parsedData.keywords.join(", ") + "\"";
+  }
+  
+  header += ":\n\n";
 
-  const jobList = jobs
-    .map((job, idx) => {
-      const salary = job.salary
-        ? `💰 ${job.salary}`
-        : "";
+  const jobList = jobs.map((job, idx) => {
+    const price = job.salary ? "💰 Mức giá: **" + job.salary + "**" : "";
+    const exp = job.experienceLevel ? "🏷️ " + job.experienceLevel : "";
+    const location = job.location ? "📍 " + job.location : "";
+    const company = (job.company && job.company.name) ? job.company.name : "[Thương hiệu]";
 
-      const experience =
-        job.experienceLevel
-          ? `📊 ${job.experienceLevel} năm KN`
-          : "";
+    const details = [price, exp, location].filter(Boolean).join(" • ");
+    const url = (process.env.FRONTEND_URL || "http://localhost:5173") + "/job/detail/" + job.slug;
 
-      const location = job.location
-        ? `📍 ${job.location}`
-        : "";
+    return "**" + (idx + 1) + ". " + job.title + " tại " + company + "**\n" + details + "\n🔗 [Xem chi tiết tại đây](" + url + ")";
+  }).join("\n\n---\n\n");
 
-      const company =
-        job.company?.name || "[Công ty]";
+  const footer = "\n\n---\n💡 **Tip:** Bạn có thể yêu cầu mình tìm kiếm theo mức giá, khu vực hoặc tên món ăn nhé!";
 
-      const details = [
-        salary,
-        experience,
-        location,
-      ]
-        .filter(Boolean)
-        .join(" • ");
-
-      return `${idx + 1}. ${job.title} tại ${company}
-${details}
-🔗 ${
-        process.env.FRONTEND_URL ||
-        "http://localhost:5173"
-      }/job/detail/${job.slug}`;
-    })
-    .join("\n\n");
-
-  return (
-    header +
-    jobList +
-    "\n\n💡 Tip: Bạn có thể lọc thêm theo địa điểm, Chi phí khoảng / khách hoặc kinh nghiệm!"
-  );
+  return header + jobList + footer;
 }
 
 // ==============================
 // NO RESULTS
 // ==============================
 
-function generateNoResultsMessage(
-  parsedData
-) {
-  let message =
-    "😔 Hiện tại chưa tìm thấy việc làm phù hợp";
+function generateNoResultsMessage(parsedData) {
+  let message = "😔 **Hiện tại mình chưa tìm thấy chương trình hoặc nhà hàng nào phù hợp**";
 
-  if (parsedData.keywords.length > 0) {
-    message += ` với từ khóa "${parsedData.keywords.join(
-      ", "
-    )}"`;
+  if (parsedData.keywords && parsedData.keywords.length > 0) {
+    message += " với từ khóa \"" + parsedData.keywords.join(", ") + "\"";
   }
 
   const filters = [];
 
   if (parsedData.location) {
-    filters.push(`tại ${parsedData.location}`);
+    filters.push("tại khu vực " + parsedData.location);
   }
 
   if (parsedData.salary) {
-    filters.push(
-      `lương từ ${parsedData.salary}  `
-    );
-  }
-
-  if (
-    parsedData.experienceLevel !== null
-  ) {
-    filters.push(
-      `${parsedData.experienceLevel} năm kinh nghiệm`
-    );
+    filters.push("tầm giá " + parsedData.salary);
   }
 
   if (filters.length > 0) {
-    message += ` ${filters.join(", ")}`;
+    message += " " + filters.join(", ");
   }
 
-  message += ".\n\n💡 Gợi ý:\n";
-  message +=
-    "- Thử từ khóa khác hoặc tổng quát hơn\n";
-  message += "- Bỏ bớt điều kiện lọc\n";
-  message +=
-    "- Tìm theo ngành nghề: việc làm IT, marketing\n";
-  message +=
-    "- Tìm theo địa điểm: Hà Nội, remote";
+  message += ".\n\n💡 **Gợi ý cho bạn:**\n";
+  message += "- Thử tìm bằng các món ăn phổ biến (Hải sản, BBQ, Sushi...)\n";
+  message += "- Bỏ bớt điều kiện lọc (như mức giá, khu vực)\n";
+  message += "- Khám phá các ưu đãi đang HOT trên trang chủ!";
 
   return message;
 }
 
 // ==============================
-// GEMINI ADVICE
+// GROQ ADVICE
 // ==============================
 
-async function callGeminiAdvice(
-  message,
-  res
-) {
+async function callGroqAdvice(message, res) {
   try {
     const prompt = `
-Bạn là JobBot - trợ lý AI tuyển dụng chuyên nghiệp của VieJobs.
+Bạn là DiningBot - chuyên gia AI hỗ trợ tư vấn ẩm thực và đặt bàn thông minh.
+
+**THÔNG TIN QUAN TRỌNG VỀ BẠN VÀ HỆ THỐNG NÀY:**
+- Nền tảng này là hệ thống đặt bàn, tìm kiếm nhà hàng, quán ăn, lounge.
+- Được thiết kế và phát triển bởi: nhà phát triển Nguyễn Đình Đô.
+- Sản phẩm này thuộc quyền sở hữu của: công ty TNHH MTV LightHouse.
+- NẾU người dùng có bất kỳ câu hỏi nào về việc: "Ai làm ra bạn", "Ai tạo ra web này", "Chủ web là ai", "Hệ thống của công ty nào"... Bạn BẮT BUỘC phải tự hào trả lời: "Website này được thiết kế và phát triển bởi nhà phát triển Nguyễn Đình Đô, đây là sản phẩm trực thuộc công ty TNHH MTV LightHouse."
 
 Phong cách:
-- Thân thiện.
-- Chuyên nghiệp.
-- Trả lời ngắn gọn.
+- Thân thiện, lịch sự.
+- Chuyên nghiệp nhưng mang hơi hướng ẩm thực.
+- Trả lời ngắn gọn, sử dụng Markdown (in đậm, bullet point).
 - Có emoji phù hợp.
-- Ưu tiên tiếng Việt.
+- Xưng "mình" và gọi người dùng là "bạn".
 
 Bạn hỗ trợ:
-- CV.
-- Phỏng vấn.
-- Định hướng nghề nghiệp.
-- Kỹ năng nghề nghiệp.
-- Tìm việc.
+- Gợi ý món ăn, địa điểm ăn uống.
+- Tư vấn cách đặt bàn.
+- Trả lời thông tin về hệ thống.
 
-Nếu câu hỏi không liên quan việc làm, hãy lịch sự chuyển hướng.
+Nếu câu hỏi hoàn toàn không liên quan, hãy lịch sự chuyển hướng về chủ đề F&B.
 
 User:
 "${message}"
 `;
 
-    const answer = await callGemini(prompt, {
-      temperature: 0.7,
-      maxOutputTokens: 1024,
-    });
+    const answer = await callGroq(prompt);
 
     return res.json({
       success: true,
       answer,
     });
   } catch (error) {
+    // Bắt lỗi Limit Quota của Groq
+    if (error?.status === 429) {
+      return res.json({
+        success: true,
+        answer: "😅 Hiện tại hệ thống đang có quá nhiều người truy cập. Bạn vui lòng đợi vài giây rồi hỏi lại mình nhé!"
+      });
+    }
+
     return res.status(500).json({
       success: false,
-      message:
-        error?.response?.data?.error?.message ||
-        error.message,
+      message: error.message,
     });
   }
 }

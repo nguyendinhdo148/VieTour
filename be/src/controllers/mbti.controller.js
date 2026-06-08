@@ -1,19 +1,22 @@
-import OpenAI from "openai";
+import Groq from "groq-sdk";
 import { validateMBTI, validateAnswers } from "../utils/validators.js";
 
-// config OpenAI
-const apiKey = process.env.OPENAI_API_KEY;
-let openai;
+// Cấu hình Gemini API
+const apiKey = process.env.GroqCloud_API_KEY;
+
+let groq;
 
 if (apiKey) {
-  openai = new OpenAI({ apiKey });
+  groq = new Groq({
+    apiKey,
+  });
 } else {
   console.warn(
-    "⚠️ CẢNH BÁO: Chưa cấu hình OPENAI_API_KEY. Tính năng phân tích sẽ dùng dữ liệu dự phòng."
+    "⚠️ CẢNH BÁO: Chưa cấu hình GroqCloud_API_KEY. Tính năng phân tích sẽ dùng dữ liệu dự phòng."
   );
 }
 
-const MODEL_NAME = "gpt-4o-mini";
+const GROQ_MODEL = "llama-3.3-70b-versatile";
 const analysisCache = new Map();
 
 // --- Utility Functions ---
@@ -27,7 +30,7 @@ function withTimeout(promise, ms = 30000) {
   ]);
 }
 
-// clean text by removing code block markers
+// Xóa các ký tự code block markdown nếu AI vô tình trả về
 function cleanRawText(text) {
   if (!text) return "";
   return text
@@ -37,7 +40,7 @@ function cleanRawText(text) {
 }
 
 async function callModelWithRetry(prompt, retries = 2) {
-  if (!openai) throw new Error("Missing OpenAI API Key");
+  if (!groq) throw new Error("Missing Groq API Key");
 
   let attempt = 0;
   let lastErr;
@@ -45,33 +48,42 @@ async function callModelWithRetry(prompt, retries = 2) {
   while (attempt <= retries) {
     try {
       const completion = await withTimeout(
-        openai.chat.completions.create({
-          model: MODEL_NAME,
+        groq.chat.completions.create({
+          model: GROQ_MODEL,
+          temperature: 0.7,
+          max_tokens: 2000,
           messages: [
             {
               role: "system",
               content:
                 "Bạn là chuyên gia MBTI. Hãy trả về kết quả định dạng Markdown chuẩn, không dùng code block json hay markdown bao quanh.",
             },
-            { role: "user", content: prompt },
+            {
+              role: "user",
+              content: prompt,
+            },
           ],
-          max_tokens: 2000,
-          temperature: 0.7,
         })
       );
 
-      const text = completion.choices[0]?.message?.content;
-      if (!text) throw new Error("Empty response");
+      const text = completion.choices?.[0]?.message?.content;
+
+      if (!text) {
+        throw new Error("Empty response từ Groq");
+      }
 
       return cleanRawText(text);
     } catch (e) {
       console.warn(`Attempt ${attempt + 1} failed: ${e.message}`);
       lastErr = e;
       attempt++;
+
       if (attempt > retries) break;
+
       await new Promise((r) => setTimeout(r, 1000 * attempt));
     }
   }
+
   throw lastErr;
 }
 
@@ -86,8 +98,7 @@ export const analyzeWithGemini = async (req, res) => {
     }
 
     const cacheKey = `basic-${mbtiType}-${gender}`;
-    // Kiểm tra cache (nếu cần thiết có thể uncomment dòng dưới)
-    // if (analysisCache.has(cacheKey)) return res.json(analysisCache.get(cacheKey));
+    if (analysisCache.has(cacheKey)) return res.json(analysisCache.get(cacheKey));
 
     const prompt = `
 Phân tích chi tiết nhóm tính cách **${mbtiType}** (${
@@ -108,7 +119,6 @@ Viết ngắn gọn, súc tích, tone giọng thân thiện.`;
       text = await callModelWithRetry(prompt, 2);
     } catch (e) {
       console.error("AI Error:", e.message);
-      // Trả về dữ liệu dự phòng nếu AI lỗi
       return res.json({
         mbtiType,
         gender,
@@ -124,7 +134,7 @@ Viết ngắn gọn, súc tích, tone giọng thân thiện.`;
       gender,
       ...parsedData,
       timestamp: new Date(),
-      source: "OpenAI (GPT-4o-mini)",
+      source: `Groq (${GROQ_MODEL})`,
     };
 
     analysisCache.set(cacheKey, analysis);
@@ -135,7 +145,8 @@ Viết ngắn gọn, súc tích, tone giọng thân thiện.`;
   }
 };
 
-// Advanced Analysis
+// --- Controller 2: Advanced Analysis ---
+
 export const advancedMBTIAnalysis = async (req, res) => {
   try {
     const { answers, gender, mbtiType } = req.body || {};
@@ -179,9 +190,9 @@ Tiếng Việt, thực tế, cá nhân hóa.`;
     const analysis = {
       ...parsedData,
       answerPatterns: patterns,
-      version: "advanced-openai-fixed",
+      version: "advanced-gemini-fixed",
       timestamp: new Date(),
-      source: "OpenAI (GPT-4o-mini)",
+      source: `Groq (${GROQ_MODEL})`,
     };
 
     return res.json(analysis);
@@ -192,6 +203,7 @@ Tiếng Việt, thực tế, cá nhân hóa.`;
 };
 
 // --- Helpers Logic ---
+
 function analyzeAnswerPatterns(answers = []) {
   const len = answers.length || 1;
   return {
@@ -212,9 +224,7 @@ function calculateTrend(answers = []) {
   return "Cân bằng";
 }
 
-// format AI response into structured data
 function formatResponse(text = "", type, gender) {
-  // 1. Tách dòng và lọc dòng trống
   const rawLines = text
     .split("\n")
     .map((line) => line.trim())
@@ -224,7 +234,6 @@ function formatResponse(text = "", type, gender) {
   let currentSection = [];
   let currentTitle = "Overview";
 
-  // keywords
   const keywords = {
     overview: ["tổng quan", "đặc điểm", "insight", "giới thiệu", "overview"],
     strengths: ["điểm mạnh", "thế mạnh", "ưu điểm", "strengths"],
@@ -240,17 +249,13 @@ function formatResponse(text = "", type, gender) {
   };
 
   const isHeader = (line) => {
-    // regex check markdown header or bold or numbered list
     const isMarkdownHeader = /^([#]+|\*\*|\d+\.)\s?/.test(line);
-
     const hasKeyword = Object.values(keywords).some((list) =>
       list.some((k) => line.toLowerCase().includes(k))
     );
-
     return (isMarkdownHeader || hasKeyword) && line.length < 60;
   };
 
-  // 2. Quét từng dòng để gom nhóm
   for (const line of rawLines) {
     if (isHeader(line)) {
       if (currentSection.length > 0) {
@@ -266,7 +271,6 @@ function formatResponse(text = "", type, gender) {
     sections.push({ title: currentTitle, content: currentSection });
   }
 
-  // 3. Fail-safe: Nếu AI trả về 1 cục văn bản không chia đoạn
   if (sections.length === 0 && text.length > 0) {
     return {
       type,
@@ -279,7 +283,6 @@ function formatResponse(text = "", type, gender) {
     };
   }
 
-  // 4. Trích xuất nội dung theo từ khóa
   const getContent = (keys) => {
     const found = sections.find((s) =>
       keys.some((k) => s.title.toLowerCase().includes(k))
@@ -293,23 +296,17 @@ function formatResponse(text = "", type, gender) {
     (l) => l.length > 5
   );
 
-  // Xử lý riêng phần nghề nghiệp (Cải tiến Logic Cắt Chuỗi)
   const careersRaw = getContent(keywords.careers);
   const careers = careersRaw
     .map((c) => {
-      // B1: Xóa bullet points và số thứ tự đầu dòng
       let clean = c.replace(/^[-*•\d.]+\s*/, "");
-      
-      // B2: Chỉ cắt mô tả nếu có dấu ngăn cách rõ ràng (":", hoặc " - ")
-      // Tránh cắt nhầm từ ghép có dấu gạch nối (VD: Back-end)
       const splitRegex = /[:(]|\s[-–]\s/;
       const parts = clean.split(splitRegex);
-      
       return parts[0].trim();
     })
     .filter(
       (c) => c.length > 3 && !c.toLowerCase().includes("nghề nghiệp phù hợp")
-    ); // Lọc dòng tiêu đề lặp lại
+    );
 
   const advice = getContent(keywords.advice).join("\n");
 
@@ -326,7 +323,7 @@ function formatResponse(text = "", type, gender) {
 
 function getFallbackData(type) {
   return {
-    overview: `Hệ thống tạm thời sử dụng dữ liệu dự phòng cho ${type}. Vui lòng kiểm tra lại kết nối OpenAI hoặc API Key.`,
+    overview: `Hệ thống tạm thời sử dụng dữ liệu dự phòng cho ${type}. Vui lòng kiểm tra lại kết nối Gemini hoặc API Key.`,
     strengths: ["Tư duy độc lập", "Khả năng thích ứng", "Sáng tạo"],
     weaknesses: ["Cần kiên nhẫn hơn", "Chú ý chi tiết"],
     careers: ["Đang cập nhật..."],

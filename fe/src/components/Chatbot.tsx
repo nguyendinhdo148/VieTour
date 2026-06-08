@@ -1,15 +1,14 @@
-import { API } from "@/utils/constant";
+import { API, URL } from "@/utils/constant";
 import axios from "axios";
 import { Send } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { URL } from "@/utils/constant";
 
 const Chatbot = () => {
   const [messages, setMessages] = useState([
     {
       from: "bot",
-      text: `👋 Xin chào! Tôi là VieJobs Assistant.\n\nTôi có thể giúp bạn:\n• Gợi ý việc làm phù hợp\n• Tạo CV chuyên nghiệp\n• Tư vấn kỹ năng phỏng vấn\n• Tra cứu lương ngành nghề\n• Giải đáp thắc mắc về tuyển dụng\n\n🔗 Xem danh sách việc làm tại VieJobs: ${URL}/jobs\n🔗 Tạo CV tại VieJobs: ${URL}/resume\n\nBạn muốn bắt đầu với điều gì ?`,
+      text: `👋 Xin chào! Tôi là Dining Assistant.\n\nTôi có thể giúp bạn:\n• Tìm kiếm nhà hàng, quán ăn ngon\n• Cập nhật chương trình ưu đãi, voucher\n• Hỗ trợ đặt bàn nhanh chóng\n• Gợi ý món ăn theo sở thích\n\n🔗 Xem danh sách ưu đãi: ${URL}/programs\n\nBạn muốn tìm kiếm món gì hôm nay?`,
       timestamp: new Date(),
     },
   ]);
@@ -27,15 +26,18 @@ const Chatbot = () => {
   const sendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!input.trim()) return;
+    
     const userMsg = { from: "user", text: input, timestamp: new Date() };
     setMessages((msgs) => [...msgs, userMsg]);
     setInput("");
     setLoading(true);
+    
     try {
       const res = await axios.post(`${API}/ai/chat_with_ai`, {
         message: input,
       });
       const answer = res.data.answer;
+      
       setMessages((msgs) => [
         ...msgs,
         {
@@ -49,7 +51,7 @@ const Chatbot = () => {
         ...msgs,
         {
           from: "bot",
-          text: "Có lỗi xảy ra. Vui lòng thử lại sau.",
+          text: "Có lỗi kết nối hệ thống. Vui lòng thử lại sau.",
           timestamp: new Date(),
         },
       ]);
@@ -71,6 +73,7 @@ const Chatbot = () => {
           className="size-12 rounded-full transition-transform hover:scale-110"
         />
       </button>
+
       {open && (
         <>
           {/* Overlay */}
@@ -91,11 +94,11 @@ const Chatbot = () => {
                 />
                 <div>
                   <h3 className="font-bold text-blue-900 text-lg flex items-center gap-1">
-                    VieJobs Assistant
+                    Dining Assistant
                     <span className="ml-1 inline-block w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
                   </h3>
                   <p className="text-xs text-blue-500 font-medium">
-                    Trợ lý AI tìm việc thông minh
+                    Trợ lý AI tư vấn ẩm thực & đặt bàn
                   </p>
                 </div>
               </div>
@@ -107,6 +110,7 @@ const Chatbot = () => {
                 ×
               </button>
             </div>
+
             {/* Messages Container */}
             <div className="flex-1 overflow-y-auto px-4 py-3 space-y-4 bg-gradient-to-b from-blue-50/60 to-white/80 custom-scrollbar">
               {messages.map((msg, i) => (
@@ -142,10 +146,8 @@ const Chatbot = () => {
                     )}
                     {msg.timestamp && (
                       <p
-                        className={`text-xs mt-1 ${
-                          msg.from === "user"
-                            ? "text-blue-100"
-                            : "text-gray-400"
+                        className={`text-xs mt-1.5 ${
+                          msg.from === "user" ? "text-blue-100" : "text-gray-400"
                         }`}
                       >
                         {msg.timestamp.toLocaleTimeString("vi-VN", {
@@ -162,7 +164,7 @@ const Chatbot = () => {
                 <div className="flex justify-start">
                   <div className="bg-white rounded-2xl rounded-bl-md px-4 py-3 border border-blue-100 shadow-sm">
                     <div className="flex items-center gap-2 text-blue-400">
-                      <span className="text-xs">Đang trả lời</span>
+                      <span className="text-xs">Đang tìm kiếm</span>
                       <div className="flex gap-1">
                         <div className="size-1 bg-blue-400 rounded-full animate-bounce"></div>
                         <div
@@ -180,6 +182,7 @@ const Chatbot = () => {
               )}
               <div ref={messagesEndRef} />
             </div>
+
             {/* Input Form */}
             <form
               onSubmit={sendMessage}
@@ -190,7 +193,7 @@ const Chatbot = () => {
                   type="text"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  placeholder="Nhập câu hỏi của bạn..."
+                  placeholder="Nhập món ăn, tên quán hoặc mức giá..."
                   className="flex-1 px-4 py-3 rounded-xl border border-blue-200 focus:ring-2 focus:ring-blue-400/20 outline-none transition-all duration-200 text-sm bg-white focus:bg-blue-50 shadow-sm"
                   disabled={loading}
                   autoFocus
@@ -236,68 +239,149 @@ const Chatbot = () => {
   );
 };
 
-function renderBotMessage(text: string) {
-  if (text.startsWith("Dưới đây là một số việc làm")) {
-    const lines = text.split("\n").filter(Boolean);
-    const jobs = [];
-    for (let i = 1; i < lines.length; i += 2) {
-      const titleLine = lines[i];
-      const linkLine = lines[i + 1] || "";
-      const titleMatch = titleLine.match(/^(\d+)\. (.+)$/);
-      const linkMatch = linkLine.match(/Xem chi tiết: (.+)$/);
-      if (titleMatch && linkMatch) {
-        jobs.push({
-          stt: titleMatch[1],
-          info: titleMatch[2],
-          url: linkMatch[1],
-        });
-      }
+// ==============================
+// CUSTOM PARSER: Xử lý chuỗi AI trả về
+// ==============================
+
+// Hàm xử lý Markdown cơ bản (Bold và Links) an toàn
+function renderInlineMarkdown(text: string) {
+  const boldParts = text.split(/(\*\*.*?\*\*)/g);
+  return boldParts.map((part, index) => {
+    // In đậm: **nội dung**
+    if (part.startsWith("**") && part.endsWith("**")) {
+      return (
+        <strong key={index} className="font-semibold text-blue-900">
+          {part.slice(2, -2)}
+        </strong>
+      );
     }
+
+    // Xử lý link markdown: [text](url)
+    const linkRegex = /\[([^\]]+)\]\((https?:\/\/[^\s]+)\)/g;
+    const linkParts = part.split(linkRegex);
+
+    if (linkParts.length > 1) {
+      const elements = [];
+      for (let i = 0; i < linkParts.length; i += 3) {
+        elements.push(<span key={`text-${i}`}>{linkParts[i]}</span>);
+        if (i + 1 < linkParts.length) {
+          const linkText = linkParts[i + 1];
+          const linkUrl = linkParts[i + 2];
+          elements.push(
+            <a
+              key={`link-${i}`}
+              href={linkUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-700 underline hover:text-blue-900 mx-1"
+            >
+              {linkText}
+            </a>
+          );
+        }
+      }
+      return <span key={index}>{elements}</span>;
+    }
+
+    // Xử lý link trần: https://...
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const plainUrlParts = part.split(urlRegex);
+    return (
+      <span key={index}>
+        {plainUrlParts.map((sub, j) =>
+          urlRegex.test(sub) ? (
+            <a
+              key={`url-${j}`}
+              href={sub}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-700 underline break-all hover:text-blue-900"
+            >
+              {sub}
+            </a>
+          ) : (
+            <span key={`plain-${j}`}>{sub}</span>
+          )
+        )}
+      </span>
+    );
+  });
+}
+
+function renderBotMessage(text: string) {
+  // === 1. NẾU LÀ KẾT QUẢ TÌM KIẾM NHÀ HÀNG / CHƯƠNG TRÌNH ===
+  if (text.includes("### 🍽️ Tìm thấy")) {
+    const headerMatch = text.match(/### 🍽️ ([^\n]+)/);
+    const headerText = headerMatch ? headerMatch[1].replace(/\*\*/g, "") : "Kết quả tìm kiếm:";
+
+    const items = [];
+    // Tách các khối data nhà hàng bằng regex
+    const blockRegex = /\*\*(\d+)\.\s(.*?)\*\*\r?\n(.*?)\r?\n🔗\s\[(.*?)\]\((.*?)\)/g;
+    let match;
+    while ((match = blockRegex.exec(text)) !== null) {
+      items.push({
+        stt: match[1],
+        title: match[2].replace(/\*\*/g, ""),     // VD: Khuyến mãi tại Sushi
+        details: match[3].replace(/\*\*/g, ""),   // VD: 💰 Mức giá... • 📍 Hà Nội
+        url: match[5],                            // Link chi tiết
+      });
+    }
+
     return (
       <div className="p-0">
-        <div className="mb-2 font-semibold text-blue-700 text-[15.5px] flex items-center">
-          <span className="mr-1.5">📝</span>
-          {lines[0]}
+        <div className="mb-3 font-bold text-blue-800 text-[15px] flex items-center leading-snug">
+          <span className="mr-1.5 text-lg">🍽️</span>
+          {headerText}
         </div>
+        
         <div className="flex flex-col gap-3">
-          {jobs.map((job, idx) => {
+          {items.map((item, idx) => {
             const isInternal =
-              job.url.startsWith("/job/detail/") ||
-              job.url.startsWith(window.location.origin + "/job/detail/");
-            const path = job.url.startsWith(window.location.origin)
-              ? job.url.replace(window.location.origin, "")
-              : job.url;
+              item.url.startsWith("/program/detail/") ||
+              item.url.startsWith("/job/detail/") ||
+              item.url.startsWith(window.location.origin);
+              
+            const path = item.url.startsWith(window.location.origin)
+              ? item.url.replace(window.location.origin, "")
+              : item.url;
+
             return (
               <div
                 key={idx}
-                className="bg-blue-50 rounded-lg px-4 py-2 shadow-sm flex flex-col text-[15px] border border-blue-100"
+                className="bg-blue-50/80 rounded-xl p-3 shadow-sm flex flex-col text-[14.5px] border border-blue-100 transition-colors hover:bg-blue-50"
               >
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="w-5 h-5 bg-blue-600 text-white rounded flex items-center justify-center font-bold text-xs shrink-0">
-                    {job.stt}
+                {/* Dòng tên chương trình */}
+                <div className="flex items-start gap-2 mb-1.5">
+                  <span className="w-5 h-5 mt-0.5 bg-blue-600 text-white rounded flex items-center justify-center font-bold text-[11px] shrink-0">
+                    {item.stt}
                   </span>
-                  <span className="font-semibold text-blue-900 text-[15px] leading-tight text-left">
-                    {job.info}
+                  <span className="font-semibold text-blue-900 leading-snug text-left">
+                    {item.title}
                   </span>
                 </div>
-                <div className="pl-7">
+                
+                {/* Dòng mô tả (giá, vị trí) */}
+                <div className="pl-7 flex flex-col gap-1.5">
+                  <span className="text-gray-600 text-[13px] leading-relaxed">
+                    {item.details}
+                  </span>
+                  
+                  {/* Nút xem chi tiết */}
                   {isInternal ? (
                     <Link
                       to={path}
-                      className="text-blue-700 underline font-medium text-[14px] mt-1 flex items-center gap-1 transition-colors duration-200 hover:text-blue-900 break-all"
+                      className="inline-flex items-center gap-1.5 text-blue-700 bg-blue-100/50 hover:bg-blue-200/50 w-fit px-2.5 py-1 rounded-md font-medium text-[13px] transition-colors duration-200"
                     >
-                      <span className="inline-block text-base">🔗</span> Xem chi
-                      tiết
+                      <span>🔗</span> Xem chi tiết và Đặt bàn
                     </Link>
                   ) : (
                     <a
-                      href={job.url}
+                      href={item.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-700 underline font-medium text-[14px] mt-1 flex items-center gap-1 transition-colors duration-200 hover:text-blue-900 break-all"
+                      className="inline-flex items-center gap-1.5 text-blue-700 bg-blue-100/50 hover:bg-blue-200/50 w-fit px-2.5 py-1 rounded-md font-medium text-[13px] transition-colors duration-200"
                     >
-                      <span className="inline-block text-base">🔗</span> Xem chi
-                      tiết
+                      <span>🔗</span> Xem chi tiết và Đặt bàn
                     </a>
                   )}
                 </div>
@@ -305,39 +389,22 @@ function renderBotMessage(text: string) {
             );
           })}
         </div>
+        <div className="mt-4 text-xs text-blue-500 italic">
+          💡 Bạn có thể hỏi thêm về khu vực, mức giá...
+        </div>
       </div>
     );
   }
-  // Nếu không phải danh sách job, render từng dòng riêng biệt
-  const urlRegex = /(https?:\/\/[^\s]+|\/jobs\/description\/\w+)/g;
+
+  // === 2. NẾU LÀ ĐOẠN CHAT / TƯ VẤN THÔNG THƯỜNG ===
   const parts = text.split("\n");
   return (
     <div className="flex flex-col gap-1">
-      {parts.map((line, idx) => {
-        const subparts = line.split(urlRegex);
-        return (
-          <div key={idx}>
-            {subparts.map((part, i) => {
-              if (urlRegex.test(part)) {
-                const isRelative = part.startsWith("/job/detail/");
-                const href = isRelative ? window.location.origin + part : part;
-                return (
-                  <a
-                    key={i}
-                    href={href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-700 underline font-semibold break-all hover:text-blue-900"
-                  >
-                    {part}
-                  </a>
-                );
-              }
-              return <span key={i}>{part}</span>;
-            })}
-          </div>
-        );
-      })}
+      {parts.map((line, idx) => (
+        <div key={idx} className="min-h-[1.25rem] text-[15px]">
+          {renderInlineMarkdown(line)}
+        </div>
+      ))}
     </div>
   );
 }
